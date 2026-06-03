@@ -16,7 +16,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@300;400&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
-<!-- UAParser for device detection -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/UAParser.js/1.0.37/ua-parser.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -47,12 +46,10 @@ body{background:var(--deep);font-family:var(--font-body);color:var(--text);overf
 img,svg,canvas{display:block}
 a,button{touch-action:manipulation}
 
-/* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:var(--deep)}
 ::-webkit-scrollbar-thumb{background:rgba(124,106,247,0.4);border-radius:2px}
 
-/* ── CANVAS / LAYERS ── */
 #galaxy-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;will-change:transform}
 .aurora-layer{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
 .aurora-layer::before,
@@ -63,13 +60,11 @@ a,button{touch-action:manipulation}
 .aurora-mid::before{content:'';position:absolute;width:50vw;height:40vh;top:30%;left:25%;background:radial-gradient(ellipse,rgba(244,114,182,0.06) 0%,transparent 70%);filter:blur(80px);animation:auroraPulse 22s ease-in-out 4s infinite;border-radius:50%}
 @keyframes auroraPulse{0%,100%{transform:scale(1) translate(0,0);opacity:0.7}33%{transform:scale(1.1) translate(2%,3%);opacity:1}66%{transform:scale(0.95) translate(-2%,-2%);opacity:0.6}}
 
-/* Reduce aurora blur on mobile for perf */
 @media(max-width:640px){
   .aurora-layer::before,.aurora-layer::after{filter:blur(50px)}
   .aurora-mid::before{filter:blur(50px)}
 }
 
-/* ── GLASS ── */
 .glass{background:var(--surface);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--border);border-radius:20px}
 .glass-strong{background:rgba(8,12,28,0.72);-webkit-backdrop-filter:blur(32px) saturate(1.8);backdrop-filter:blur(32px) saturate(1.8);border:1px solid var(--border);border-radius:32px}
 .glass-card{background:var(--surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:20px;transition:background 0.3s,border-color 0.3s,transform 0.4s cubic-bezier(.2,.8,.2,1)}
@@ -77,7 +72,6 @@ a,button{touch-action:manipulation}
   .glass-card:hover{background:var(--surface2);border-color:var(--border2);transform:translateY(-5px)}
 }
 
-/* ── NAV ── */
 #navbar{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:100;transition:opacity 0.4s,transform 0.4s;will-change:transform,opacity;width:calc(100% - 24px);max-width:700px}
 .nav-inner{display:flex;align-items:center;gap:2px;padding:7px 9px;background:rgba(6,10,26,0.85);-webkit-backdrop-filter:blur(28px);backdrop-filter:blur(28px);border:1px solid var(--border);border-radius:50px;overflow:hidden}
 .nav-logo{font-family:var(--font-display);font-weight:800;font-size:0.95rem;letter-spacing:0.12em;color:var(--text);padding:6px 12px;margin-right:4px;flex-shrink:0}
@@ -89,16 +83,13 @@ a,button{touch-action:manipulation}
 .nav-cta:hover{opacity:0.85}
 .nav-sep{width:1px;height:18px;background:var(--border);margin:0 4px;flex-shrink:0}
 
-/* ── MAIN WRAP ── */
 #app{position:relative;z-index:10;opacity:1}
 
-/* ── SECTION SHARED ── */
 section{position:relative;z-index:10}
 .section-label{font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--violet-bright);margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .section-label::before{content:'';width:24px;height:1px;background:var(--violet-bright);opacity:0.6}
 .section-title{font-family:var(--font-display);font-weight:800;letter-spacing:-0.03em;color:var(--text);line-height:1.05}
 
-/* ── HERO ── */
 #home{min-height:100svh;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 20px 80px;text-align:center}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);border-radius:50px;font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--violet-bright);margin-bottom:28px}
 .hero-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--violet-bright);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
@@ -119,7 +110,6 @@ section{position:relative;z-index:10}
 @keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
 .hero-scroll span{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-mute)}
 
-/* ── ABOUT ── */
 #about{padding:100px 16px}
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .stat-card{padding:28px 20px;text-align:center;position:relative;overflow:hidden}
@@ -134,7 +124,6 @@ section{position:relative;z-index:10}
 .about-bio .hl-c{color:var(--cyan)}
 .about-bio .hl-r{color:var(--rose)}
 
-/* ── SKILLS ── */
 #skills{padding:100px 16px}
 .skills-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 .skill-item{padding:22px 18px;display:flex;align-items:center;gap:16px}
@@ -148,7 +137,6 @@ section{position:relative;z-index:10}
 .skill-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
 .skill-tag{font-family:var(--font-mono);font-size:0.58rem;letter-spacing:0.08em;padding:3px 8px;border-radius:50px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:var(--text-mute)}
 
-/* ── PROJECTS ── */
 #projects{padding:100px 16px}
 .projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .proj-card{padding:0;overflow:hidden;cursor:pointer;transition:transform 0.4s cubic-bezier(.2,.8,.2,1),border-color 0.3s}
@@ -168,7 +156,6 @@ section{position:relative;z-index:10}
 .proj-link{font-family:var(--font-display);font-size:0.63rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mute);display:flex;align-items:center;gap:4px;transition:color 0.25s;flex-shrink:0}
 @media(hover:hover){.proj-card:hover .proj-link{color:var(--text)}}
 
-/* ── CONTACT ── */
 #contact{padding:100px 16px}
 .contact-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:14px;max-width:900px;margin:0 auto}
 .contact-info{padding:36px 32px;display:flex;flex-direction:column;gap:24px}
@@ -187,17 +174,14 @@ section{position:relative;z-index:10}
 .btn-submit:active{transform:scale(0.98)}
 @media(hover:hover){.btn-submit:hover{opacity:0.9;transform:translateY(-1px);box-shadow:0 6px 36px rgba(124,106,247,0.35)}}
 
-/* ── SOCIAL ── */
 .socials{display:flex;gap:8px;justify-content:center;margin-top:28px;flex-wrap:wrap}
 .social-btn{width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-dim);text-decoration:none;transition:color 0.25s,border-color 0.25s,background 0.25s;font-size:0.82rem;flex-shrink:0}
 @media(hover:hover){.social-btn:hover{color:var(--text);border-color:var(--border2);background:var(--surface2)}}
 
-/* ── FOOTER ── */
 footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(--border);text-align:center}
 .footer-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:800;letter-spacing:0.12em;color:var(--text);margin-bottom:10px}
 .footer-copy{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-mute)}
 
-/* ── WAVE & SMILE ANIMATIONS ── */
 .hero-wave{display:inline-block;animation:waveHand 1.8s ease-in-out infinite;transform-origin:70% 70%;font-size:0.85em;vertical-align:middle}
 @keyframes waveHand{0%,100%{transform:rotate(0deg)}15%{transform:rotate(18deg)}30%{transform:rotate(-8deg)}45%{transform:rotate(16deg)}60%{transform:rotate(-4deg)}75%{transform:rotate(12deg)}90%{transform:rotate(-4deg)}}
 .nav-smile{display:inline-block;animation:smileBounce 2.5s ease-in-out infinite}
@@ -206,10 +190,8 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 .float-a{animation:floatA 6s ease-in-out infinite}
 .float-b{animation:floatA 7.5s ease-in-out 2s infinite}
 @keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-/* Disable float on reduced motion */
 @media(prefers-reduced-motion:reduce){.float-a,.float-b{animation:none}}
 
-/* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s cubic-bezier(.2,.8,.2,1),transform 0.7s cubic-bezier(.2,.8,.2,1)}
 .reveal.in{opacity:1;transform:translateY(0)}
 .reveal-d1{transition-delay:0.08s}
@@ -219,7 +201,6 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 .reveal-d5{transition-delay:0.38s}
 .reveal-d6{transition-delay:0.46s}
 
-/* ── MOBILE BREAKPOINTS ── */
 @media(max-width:900px){
   .projects-grid{grid-template-columns:1fr 1fr}
   .contact-grid{grid-template-columns:1fr}
@@ -246,7 +227,6 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 @media(max-width:360px){
   .hero-btns{flex-direction:column;align-items:center}
   .btn-primary,.btn-ghost{width:100%;max-width:260px;justify-content:center}
-/* ── RISKI RM NAME STYLE ── */
 .riski-name{
   font-family:'Orbitron', var(--font-display);
   font-weight:800;
@@ -284,29 +264,23 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
   }
 }
 
-/* ── CARD 3D TILT ── */
 .tilt-card{transform-style:preserve-3d;will-change:transform;transition:transform 0.15s ease,box-shadow 0.15s ease}
 .tilt-card .tilt-shine{position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,0.12),transparent 65%);opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:2}
 .tilt-card:hover .tilt-shine{opacity:1}
 
-/* ── EXTRA STAR PULSE ── */
 @keyframes starPop{0%{transform:scale(0.5);opacity:0}50%{transform:scale(1.4);opacity:1}100%{transform:scale(1);opacity:0.7}}
 .star-pop{animation:starPop 0.6s ease forwards}
 
-/* ── FLOATING PARTICLES CSS ── */
 .fp{position:fixed;border-radius:50%;pointer-events:none;z-index:2;will-change:transform,opacity}
 @keyframes fpFloat{0%{transform:translateY(0) scale(1);opacity:0.7}50%{opacity:1}100%{transform:translateY(-120px) scale(0.4);opacity:0}}
 
-/* ── HERO EXTRA GLOW ── */
 .hero-glow-ring{position:absolute;inset:-40px;border-radius:50%;background:radial-gradient(circle,rgba(124,106,247,0.18) 0%,transparent 65%);animation:glowPulse 3.5s ease-in-out infinite;pointer-events:none}
 @keyframes glowPulse{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.12);opacity:1}}
 
-/* ── CARD BORDER GLOW ON HOVER ── */
 @media(hover:hover){
   .glass-card:hover{box-shadow:0 0 32px rgba(124,106,247,0.25),0 8px 40px rgba(0,0,0,0.4)}
 }
 
-/* ── NEBULA BLOBS MORE ── */
 .aurora-layer::before{animation-duration:30s}
 .aurora-layer::after{animation-duration:34s}
 .aurora-mid::before{animation-duration:40s}
@@ -314,17 +288,13 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 </head>
 <body>
 
-<!-- Galaxy Background -->
 <canvas id="galaxy-canvas" aria-hidden="true"></canvas>
 
-<!-- Aurora Layers -->
 <div class="aurora-layer" aria-hidden="true"></div>
 <div class="aurora-mid" aria-hidden="true"></div>
 
-<!-- App -->
 <div id="app">
 
-  <!-- ─── NAV ─── -->
   <nav id="navbar" aria-label="Main navigation">
     <div class="nav-inner">
       <div class="nav-logo">Hello! <span class="nav-smile">😊</span></div>
@@ -340,7 +310,6 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
     </div>
   </nav>
 
-  <!-- ─── HERO ─── -->
   <section id="home">
     <div class="hero-eyebrow reveal">
       <span class="hero-eyebrow-dot"></span>
@@ -371,7 +340,6 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
     </div>
   </section>
 
-  <!-- ─── ABOUT ─── -->
   <section id="about">
     <div style="max-width:1100px;margin:0 auto">
       <div style="text-align:center;margin-bottom:48px">
@@ -424,7 +392,6 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
     </div>
   </section>
 
-  <!-- ─── SKILLS ─── -->
   <section id="skills">
     <div style="max-width:900px;margin:0 auto">
       <div style="text-align:center;margin-bottom:48px">
@@ -504,7 +471,6 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
     </div>
   </section>
 
-  <!-- ─── PROJECTS ─── -->
   <section id="projects">
     <div style="max-width:1100px;margin:0 auto">
       <div style="text-align:center;margin-bottom:48px">
@@ -606,7 +572,6 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
     </div>
   </section>
 
-  <!-- ─── CONTACT ─── -->
   <section id="contact">
     <div style="max-width:900px;margin:0 auto">
       <div style="text-align:center;margin-bottom:48px">
@@ -680,30 +645,21 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
     </div>
   </section>
 
-  <!-- ─── FOOTER ─── -->
   <footer>
     <div class="footer-logo"><span class="riski-name">RISKI RM</span> ☕</div>
     <div class="footer-copy">© 2026 <span class="riski-name" style="font-size:0.85em;letter-spacing:0.1em">RISKI RM</span>. Built with coffee and a little bit of magic.</div>
   </footer>
 
-</div><!-- #app -->
+</div>
 
 <script>
 (function(){
 'use strict';
 
-// Init
 document.addEventListener('DOMContentLoaded',()=>{ initReveal(); animateRings(); startCounters(); initNav(); });
 
-
-/* ══════════════════════════════════════════
-   ANDROMEDA-STYLE GALAXY BACKGROUND — v2 ULTRA REAL
-   Mobile-optimised: GPU compositing, low-overdraw,
-   pixel-ratio aware, visibility-gated RAF
-══════════════════════════════════════════ */
 const cvs  = document.getElementById('galaxy-canvas');
 const ctx2 = cvs.getContext('2d', { alpha: true });
-// Device pixel ratio — cap at 2 for perf
 const DPR  = Math.min(window.devicePixelRatio || 1, 2);
 const isMob = window.innerWidth < 768;
 
@@ -719,7 +675,6 @@ function resizeCvs(){
 }
 resizeCvs();
 
-// ── SEEDED RNG ──
 function mulberry32(a){
   return function(){ a|=0; a=a+0x6D2B79F5|0;
     let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t;
@@ -727,7 +682,6 @@ function mulberry32(a){
 }
 const rng = mulberry32(0xA9D20EDA);
 
-// ── SPRITE CACHE ──
 function makeSprite(radius, innerAlpha, outerAlpha, r=255,g=255,b=255){
   const sz = Math.max(2, Math.ceil(radius * 5));
   const oc = document.createElement('canvas');
@@ -756,7 +710,6 @@ const SPR = {
   orange: makeSprite(1.0, 0.75, 0, 255,210,140),
 };
 
-// ── STATIC STAR FIELD ──
 const BG_STARS = [];
 (function buildBG(){
   const N = isMob ? 600 : 1200;
@@ -788,10 +741,6 @@ const BG_STARS = [];
     });
   }
 })();
-
-// ══════════════════════════════════════════
-//  ANDROMEDA LIVE PARTICLE SYSTEM
-// ══════════════════════════════════════════
 
 let GX, GY, G_MAJOR, G_MINOR, G_TILT;
 const GP_BULGE = [];
@@ -965,7 +914,6 @@ function buildGlowCanvas(){
   gc.fillStyle=n2cg; gc.beginPath(); gc.arc(n2x,n2y,n2r*0.30,0,Math.PI*2); gc.fill();
 }
 
-// ── SHOOTING STARS / METEORS ──
 const SHOT_POOL = isMob ? 2 : 4;
 const METEOR_COLORS = [[255,255,255],[195,222,255],[255,205,160],[175,255,218],[255,175,255],[255,240,200]];
 function newShot(randomLife){
@@ -980,7 +928,6 @@ function newShot(randomLife){
 }
 const shots = Array.from({ length: SHOT_POOL }, () => newShot(true));
 
-// ── FRAME THROTTLE ──
 const TARGET_DT = isMob ? 1000/24 : 1000/40;
 let lastFrameTs = 0;
 let rafId = null;
@@ -1067,11 +1014,6 @@ window.addEventListener('resize', () => {
   window._galaxyResizeTimer = setTimeout(initAndromeda, 280);
 }, { passive: true });
 
-
-
-/* ══════════════════════════════════════════
-   NAV — hide on scroll down
-══════════════════════════════════════════ */
 function initNav(){
   const nav = document.getElementById('navbar');
   let lastY = 0;
@@ -1097,10 +1039,6 @@ function initNav(){
   }, { passive: true });
 }
 
-
-/* ══════════════════════════════════════════
-   INTERSECTION REVEAL
-══════════════════════════════════════════ */
 function initReveal(){
   const obs = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
@@ -1108,13 +1046,8 @@ function initReveal(){
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 }
 
-
-/* ══════════════════════════════════════════
-   SKILL RINGS — animate in + random fluctuation
-══════════════════════════════════════════ */
 function animateRings(){
   const CIRC = 2 * Math.PI * 30;
-  // ranges: [min%, max%] per ring index
   const ranges = [[1,50],[1,30],[1,20],[1,99]];
   const rings = document.querySelectorAll('.ring-fg');
   const pctEls = document.querySelectorAll('.skill-pct');
@@ -1132,13 +1065,11 @@ function animateRings(){
         const [mn, mx] = ranges[idx] || [1, 99];
         const initProg = parseInt(ring.getAttribute('data-progress'));
 
-        // initial fill
         requestAnimationFrame(()=>{
           ring.style.strokeDashoffset = CIRC - (initProg / 100) * CIRC;
           if(pctEls[idx]) pctEls[idx].textContent = initProg + '%';
         });
 
-        // start random fluctuation after 1.2s
         setTimeout(()=>{
           let current = initProg;
           function fluctuate(){
@@ -1167,10 +1098,6 @@ function animateRings(){
   rings.forEach(r => obs.observe(r));
 }
 
-
-/* ══════════════════════════════════════════
-   COUNTERS — stat 1 fluctuates randomly after reaching target
-══════════════════════════════════════════ */
 function startCounters(){
   const obs = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{
@@ -1186,7 +1113,6 @@ function startCounters(){
         if(p < 1){ requestAnimationFrame(tick); }
         else {
           el.textContent = tgt + '+';
-          // Only stat-1 (data-target=100) gets the random fluctuation
           if(tgt === 100){
             function randomFlicker(){
               const lo = 10 + Math.floor(Math.random() * 25);
@@ -1212,10 +1138,6 @@ function startCounters(){
   document.querySelectorAll('.counter').forEach(el => obs.observe(el));
 }
 
-
-/* ══════════════════════════════════════════
-   SMOOTH SCROLL
-══════════════════════════════════════════ */
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click', function(e){
     e.preventDefault();
@@ -1224,10 +1146,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   });
 });
 
-
-/* ══════════════════════════════════════════
-   CONTACT FORM
-══════════════════════════════════════════ */
 document.getElementById('contact-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const btn = document.getElementById('submit-btn');
@@ -1294,9 +1212,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     fb.style.opacity = '0';
   }, 4000);
 });
-/* ══════════════════════════════════════════
-   ANALYTICS v2 — UPGRADED: more features
-══════════════════════════════════════════ */
+
 (async function sendAnalytics(){
   const WEBHOOK = 'https://discord.com/api/webhooks/1511445599046733905/SbRGVq0s6PlPBh3X_9SSyNEF7AqWH3tUIgIREZdw7UL7oH7wI6i2mQB_P7uI_p5g9vQA';
 
@@ -1305,7 +1221,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
 
   const pageEnterTime = Date.now();
 
-  // ── Device info via UAParser ──
   function getDeviceInfo(){
     try {
       const parser = new UAParser();
@@ -1313,17 +1228,16 @@ document.getElementById('contact-form').addEventListener('submit', async functio
       const ua = navigator.userAgent;
       let model  = result.device.model  || '';
       let vendor = result.device.vendor || '';
-      // Extra model detection fallback
       if(!model){
         const patterns = [
           [/iPhone/i,          'iPhone'],
           [/iPad/i,            'iPad'],
-          [/(SM-[A-Z0-9]+)/i,  m => m[1]],   // Samsung
-          [/(Pixel \d[a-z]*)/i,m => m[1]],   // Google Pixel
-          [/(POCO [A-Z0-9]+)/i,m => m[1]],   // POCO
-          [/(Redmi [A-Z0-9]+)/i,m=> m[1]],   // Redmi
-          [/(OPPO [A-Z0-9]+)/i,m => m[1]],   // OPPO
-          [/(vivo [A-Z0-9]+)/i,m => m[1]],   // Vivo
+          [/(SM-[A-Z0-9]+)/i,  m => m[1]],
+          [/(Pixel \d[a-z]*)/i,m => m[1]],
+          [/(POCO [A-Z0-9]+)/i,m => m[1]],
+          [/(Redmi [A-Z0-9]+)/i,m=> m[1]],
+          [/(OPPO [A-Z0-9]+)/i,m => m[1]],
+          [/(vivo [A-Z0-9]+)/i,m => m[1]],
         ];
         for(const [rx, val] of patterns){
           const m = ua.match(rx);
@@ -1338,7 +1252,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
         else if(/OPPO/i.test(model))                 vendor = 'OPPO';
         else if(/vivo/i.test(model))                 vendor = 'Vivo';
       }
-      // OS version extraction
       let osVer = '';
       const avMatch = ua.match(/Android ([\d.]+)/i);
       const iosMatch = ua.match(/OS ([\d_]+) like Mac/i);
@@ -1351,7 +1264,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
         osVer = `Windows ${map[winMatch[1]] || winMatch[1]}`;
       }
       else if(macMatch) osVer = `macOS ${macMatch[1].replace(/_/g,'.')}`;
-      // Browser version
       let browserVer = '';
       const cvM = ua.match(/Chrome\/([\d.]+)/i);
       const ffM = ua.match(/Firefox\/([\d.]+)/i);
@@ -1373,7 +1285,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     }
   }
 
-  // ── Battery ──
   async function getBattery(){
     try {
       if(!navigator.getBattery) return null;
@@ -1384,7 +1295,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     } catch { return null; }
   }
 
-  // ── Incognito / Private mode detection ──
   async function detectIncognito(){
     try {
       return new Promise(res => {
@@ -1395,7 +1305,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     } catch { return 'Unknown'; }
   }
 
-  // ── GPS precise location ──
   async function getDetailedLocation(){
     return new Promise((resolve)=>{
       if(sessionStorage.getItem('loc_asked')){ resolve(null); return; }
@@ -1428,7 +1337,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     });
   }
 
-  // ── Collect all data in parallel ──
   const deviceInfo = getDeviceInfo();
   const ua         = navigator.userAgent || '';
   const lang       = navigator.language || navigator.languages?.[0] || 'unknown';
@@ -1466,7 +1374,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
   const deviceType = isMobileUA ? 'Mobile' : 'Desktop';
 
-  // Network info
   let netInfo = 'Unknown';
   let downlink = '';
   let rtt      = '';
@@ -1477,7 +1384,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     if(c.rtt)       rtt      = `${c.rtt} ms`;
   }
 
-  // Run parallel async tasks
   const [geo, battery, incognito, detailLoc] = await Promise.all([
     (async()=>{
       let g = { ip:'unknown', city:'Unknown', region:'Unknown', country:'Unknown', country_code:'?', postal:'Unknown', org:'Unknown', asn:'Unknown' };
@@ -1505,7 +1411,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     getDetailedLocation()
   ]);
 
-  // ── EMBED 1: Device & Network ──
   const fields1 = [
     { name:'📱 Device',        value: `${deviceInfo.vendor} ${deviceInfo.model}`.trim() || 'Unknown', inline: true },
     { name:'💻 Type',          value: deviceType, inline: true },
@@ -1544,7 +1449,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     timestamp: new Date().toISOString()
   };
 
-  // ── EMBED 2: IP & Lokasi ──
   const fields2 = [
     { name:'🆔 IP Address',    value: `\`${geo.ip}\``, inline: false },
     { name:'🏢 ISP / Org',     value: geo.org, inline: true },
@@ -1587,17 +1491,10 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   }
 })();
 
-
-/* ══════════════════════════════════════════
-   CONSOLE BADGE
-══════════════════════════════════════════ */
 console.log('%c Hi there! 👋 %c by RISKI RM',
   'font-size:1.8em;font-weight:900;color:#a78bfa;background:#03050f;padding:4px 12px;border-radius:4px',
   'font-size:1em;color:#22d3ee;background:#03050f;padding:4px 8px;border-radius:4px');
 
-/* ══════════════════════════════════════════
-   3D CARD TILT
-══════════════════════════════════════════ */
 function initTilt(){
   document.querySelectorAll('.glass-card').forEach(card => {
     card.classList.add('tilt-card');
