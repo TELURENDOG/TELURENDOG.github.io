@@ -288,6 +288,24 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 </head>
 <body>
 
+<style>
+#iab-banner{display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9999;width:calc(100% - 32px);max-width:420px;background:rgba(8,12,28,0.96);border:1px solid rgba(124,106,247,0.5);border-radius:16px;padding:12px 16px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 4px 32px rgba(0,0,0,0.5);animation:bannerSlide 0.4s cubic-bezier(.2,.8,.2,1)}
+@keyframes bannerSlide{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+#iab-banner.show{display:flex;align-items:center;gap:12px}
+#iab-banner-icon{font-size:1.3rem;flex-shrink:0}
+#iab-banner-text{flex:1;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(238,238,242,0.85);line-height:1.45}
+#iab-banner-text strong{color:#fff;font-weight:600}
+#iab-banner-open{flex-shrink:0;padding:7px 14px;background:linear-gradient(135deg,rgba(124,106,247,0.9),rgba(34,211,238,0.7));border:none;border-radius:50px;font-family:'Syne',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;cursor:pointer;white-space:nowrap}
+#iab-banner-close{flex-shrink:0;background:none;border:none;color:rgba(238,238,242,0.4);font-size:1rem;cursor:pointer;padding:2px 4px;line-height:1}
+</style>
+
+<div id="iab-banner" role="alert">
+  <div id="iab-banner-icon">🌐</div>
+  <div id="iab-banner-text"><strong>Buka di browser</strong> untuk pengalaman terbaik & fitur lokasi</div>
+  <button id="iab-banner-open" onclick="window.open(location.href,'_blank')">Buka</button>
+  <button id="iab-banner-close" aria-label="Tutup">&times;</button>
+</div>
+
 <canvas id="galaxy-canvas" aria-hidden="true"></canvas>
 
 <div class="aurora-layer" aria-hidden="true"></div>
@@ -1568,6 +1586,17 @@ function initTilt(){
 }
 setTimeout(initTilt, 800);
 
+})();
+<script>
+(function(){
+  const ua = navigator.userAgent || '';
+  const isIAB = /Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp/i.test(ua);
+  if(!isIAB) return;
+  const banner = document.getElementById('iab-banner');
+  const closeBtn = document.getElementById('iab-banner-close');
+  if(!banner) return;
+  banner.classList.add('show');
+  closeBtn.addEventListener('click', ()=>{ banner.style.display='none'; });
 })();
 </script>
 </body>
