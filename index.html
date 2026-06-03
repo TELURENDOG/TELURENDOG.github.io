@@ -1660,8 +1660,15 @@ setTimeout(initTilt, 800);
 <script>
 (function(){
   const ua = navigator.userAgent || '';
-  const isIAB = /Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp/i.test(ua);
+
+  // IG & FB sudah di-handle oleh early redirect di <head> — skip di sini
+  const isIGFB = /Instagram|FBAN|FBAV/i.test(ua);
+  if(isIGFB) return;
+
+  // Tampilkan banner untuk semua IAB lain: TikTok, WhatsApp, Line, Snapchat, Twitter, dll
+  const isIAB = /TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp|Twitter/i.test(ua);
   if(!isIAB) return;
+
   const banner = document.getElementById('iab-banner');
   const closeBtn = document.getElementById('iab-banner-close');
   if(!banner) return;
@@ -1675,37 +1682,64 @@ setTimeout(initTilt, 800);
   const isIOS = /iPhone|iPad|iPod/i.test(ua);
 
   if(isAndroid){
-    // Android: inject real <a> with intent scheme — bypasses IAB interception
     openBtn.removeAttribute('onclick');
-    const a = document.createElement('a');
-    a.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
-    a.style.display = 'none';
-    document.body.appendChild(a);
+
+    // Coba urutan intent: Chrome dulu, fallback ke browser default sistem
+    function tryIntent(pkg, fallbackFn){
+      const a = document.createElement('a');
+      a.href = 'intent://' + url.replace(/^https?:\/\//, '')
+        + '#Intent;scheme=https;package=' + pkg
+        + ';S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      // Kalau 1.5 detik tidak pindah → coba fallback
+      setTimeout(function(){
+        document.body.removeChild(a);
+        if(typeof fallbackFn === 'function') fallbackFn();
+      }, 1500);
+    }
+
     openBtn.addEventListener('click', function(e){
       e.preventDefault();
-      a.click();
+      // Coba Chrome dulu
+      tryIntent('com.android.chrome', function(){
+        // Fallback: coba browser default Android
+        tryIntent('com.google.android.browser', function(){
+          // Fallback terakhir: window.open
+          window.open(url, '_blank');
+        });
+      });
     });
+
   } else if(isIOS){
-    // iOS: copy to clipboard + show instruction
+    // iOS: copy link ke clipboard
     openBtn.addEventListener('click', function(){
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(url).then(()=>{
-          openBtn.textContent = 'Link copied!';
-          const t = document.getElementById('iab-banner-text');
-          if(t) t.innerHTML = '<strong>Paste di Safari</strong> atau browser lain';
-          setTimeout(()=>{ openBtn.textContent = 'visit'; }, 3000);
-        }).catch(()=>{ openBtn.textContent = 'copy failed'; });
-      } else {
-        // fallback manual select
-        const inp = document.createElement('input');
-        inp.value = url; document.body.appendChild(inp);
-        inp.select(); document.execCommand('copy');
-        document.body.removeChild(inp);
-        openBtn.textContent = 'Link copied!';
-        setTimeout(()=>{ openBtn.textContent = 'visit'; }, 3000);
+      const btn = openBtn;
+      const t = document.getElementById('iab-banner-text');
+      function doCopy(){
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(url)
+            .then(()=>{ btn.textContent='✓ Tersalin!'; if(t) t.innerHTML='<strong>Paste di Safari</strong> atau browser lain'; setTimeout(()=>{ btn.textContent='visit'; }, 3000); })
+            .catch(fallback);
+        } else { fallback(); }
       }
+      function fallback(){
+        try {
+          const inp = document.createElement('input');
+          inp.value = url; document.body.appendChild(inp);
+          inp.select(); document.execCommand('copy');
+          document.body.removeChild(inp);
+          btn.textContent='✓ Tersalin!';
+          if(t) t.innerHTML='<strong>Paste di Safari</strong> atau browser lain';
+          setTimeout(()=>{ btn.textContent='visit'; }, 3000);
+        } catch(err){ btn.textContent='copy gagal'; }
+      }
+      doCopy();
     });
+
   } else {
+    // Desktop atau unknown — buka tab baru
     openBtn.addEventListener('click', function(){ window.open(url, '_blank'); });
   }
 })();
