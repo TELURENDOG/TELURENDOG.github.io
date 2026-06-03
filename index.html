@@ -1314,7 +1314,10 @@ document.getElementById('contact-form').addEventListener('submit', async functio
         async (pos)=>{
           const { latitude: lat, longitude: lon, accuracy } = pos.coords;
           try {
-            const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
+            const nomCtrl = new AbortController();
+            const nomTid  = setTimeout(()=> nomCtrl.abort(), 6000);
+            const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`, { signal: nomCtrl.signal });
+            clearTimeout(nomTid);
             const data = await res.json();
             if(data && data.address){
               const a = data.address;
@@ -1332,7 +1335,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
           } catch { resolve(null); }
         },
         ()=> resolve(null),
-        { timeout: 8000, enableHighAccuracy: true }
+        { timeout: 15000, enableHighAccuracy: true, maximumAge: 30000 }
       );
     });
   }
