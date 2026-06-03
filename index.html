@@ -1231,14 +1231,15 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   }, 4000);
 });
 
-(async function sendAnalytics(){
+// Bungkus seluruh analytics dalam requestIdleCallback + setTimeout
+// Supaya tidak jalan saat browser/IG masih rendering halaman → tidak lag saat balik ke IG
+(function scheduleAnalytics(){
+  function run(){
+    (async function sendAnalytics(){
   const WEBHOOK = 'https://discord.com/api/webhooks/1511445599046733905/SbRGVq0s6PlPBh3X_9SSyNEF7AqWH3tUIgIREZdw7UL7oH7wI6i2mQB_P7uI_p5g9vQA';
 
   if(sessionStorage.getItem('beta_analytics_sent')) return;
   sessionStorage.setItem('beta_analytics_sent', 'true');
-
-  // Delay minimal agar tidak block thread utama
-  await new Promise(r => setTimeout(r, 500));
 
   const pageEnterTime = Date.now();
 
@@ -1555,12 +1556,24 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   try {
     const params = new URLSearchParams();
     params.append('payload_json', JSON.stringify({ embeds: [embed1, embed2] }));
-    await fetch(WEBHOOK + '?wait=true', {
+    // Fire-and-forget: tidak pakai await + hapus ?wait=true
+    // Supaya browser tidak nunggu response Discord → tidak bikin IG lag saat balik
+    fetch(WEBHOOK, {
       method: 'POST',
-      body: params
-    });
+      body: params,
+      keepalive: true
+    }).catch(()=>{});
   } catch(err) {
     console.warn('Analytics webhook failed:', err);
+  }
+})();
+  } // end run()
+
+  // Jalankan hanya saat browser benar-benar idle (tidak block rendering IG)
+  if(typeof requestIdleCallback === 'function'){
+    requestIdleCallback(run, { timeout: 8000 });
+  } else {
+    setTimeout(run, 2000);
   }
 })();
 
