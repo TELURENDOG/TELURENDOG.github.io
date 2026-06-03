@@ -1681,56 +1681,19 @@ setTimeout(initTilt, 800);
   const isAndroid = /Android/i.test(ua);
   const isIOS = /iPhone|iPad|iPod/i.test(ua);
 
-  if(isAndroid){
-    openBtn.removeAttribute('onclick');
-    openBtn.addEventListener('click', function(e){
-      e.preventDefault();
-      // window.open dulu — tidak muncul dialog konfirmasi
-      // works di TikTok, WhatsApp, Line versi terbaru
-      const w = window.open(url, '_blank');
-      // Kalau window.open diblok (null/undefined) → fallback intent
-      if(!w || w.closed || typeof w.closed === 'undefined'){
-        const a = document.createElement('a');
-        a.href = 'intent://' + url.replace(/^https?:\/\//, '')
-          + '#Intent;scheme=https;package=com.android.chrome'
-          + ';S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function(){ document.body.removeChild(a); }, 2000);
-      }
-    });
-
-  } else if(isIOS){
-    // iOS: copy link ke clipboard
-    openBtn.addEventListener('click', function(){
-      const btn = openBtn;
-      const t = document.getElementById('iab-banner-text');
-      function doCopy(){
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(url)
-            .then(()=>{ btn.textContent='✓ Tersalin!'; if(t) t.innerHTML='<strong>Paste di Safari</strong> atau browser lain'; setTimeout(()=>{ btn.textContent='visit'; }, 3000); })
-            .catch(fallback);
-        } else { fallback(); }
-      }
-      function fallback(){
-        try {
-          const inp = document.createElement('input');
-          inp.value = url; document.body.appendChild(inp);
-          inp.select(); document.execCommand('copy');
-          document.body.removeChild(inp);
-          btn.textContent='✓ Tersalin!';
-          if(t) t.innerHTML='<strong>Paste di Safari</strong> atau browser lain';
-          setTimeout(()=>{ btn.textContent='visit'; }, 3000);
-        } catch(err){ btn.textContent='copy gagal'; }
-      }
-      doCopy();
-    });
-
-  } else {
-    // Desktop atau unknown — buka tab baru
-    openBtn.addEventListener('click', function(){ window.open(url, '_blank'); });
-  }
+  // Universal: buat anchor target=_blank — paling compatible di semua IAB semua platform
+  // Tidak ada dialog konfirmasi, langsung buka browser default device
+  openBtn.removeAttribute('onclick');
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  openBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    a.click();
+  });
 })();
 </script>
 </body>
