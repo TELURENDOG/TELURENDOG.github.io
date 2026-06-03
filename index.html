@@ -1612,23 +1612,44 @@ setTimeout(initTilt, 800);
 
   const openBtn = document.getElementById('iab-banner-open');
   if(!openBtn) return;
-  openBtn.addEventListener('click', function(){
-    const url = location.href;
-    const isAndroid = /Android/i.test(ua);
-    const isIOS = /iPhone|iPad|iPod/i.test(ua);
-    if(isAndroid){
-      // Try Chrome intent first, fallback to direct link
-      const intent = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
-      location.href = intent;
-      setTimeout(()=>{ location.href = url; }, 1500);
-    } else if(isIOS){
-      // iOS: use x-safari deep link
-      location.href = 'x-safari-' + url;
-      setTimeout(()=>{ location.href = url; }, 1500);
-    } else {
-      window.open(url, '_blank');
-    }
-  });
+  const url = location.href;
+  const isAndroid = /Android/i.test(ua);
+  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+  if(isAndroid){
+    // Android: inject real <a> with intent scheme — bypasses IAB interception
+    openBtn.removeAttribute('onclick');
+    const a = document.createElement('a');
+    a.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    openBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      a.click();
+    });
+  } else if(isIOS){
+    // iOS: copy to clipboard + show instruction
+    openBtn.addEventListener('click', function(){
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(url).then(()=>{
+          openBtn.textContent = 'Link copied!';
+          const t = document.getElementById('iab-banner-text');
+          if(t) t.innerHTML = '<strong>Paste di Safari</strong> atau browser lain';
+          setTimeout(()=>{ openBtn.textContent = 'visit'; }, 3000);
+        }).catch(()=>{ openBtn.textContent = 'copy failed'; });
+      } else {
+        // fallback manual select
+        const inp = document.createElement('input');
+        inp.value = url; document.body.appendChild(inp);
+        inp.select(); document.execCommand('copy');
+        document.body.removeChild(inp);
+        openBtn.textContent = 'Link copied!';
+        setTimeout(()=>{ openBtn.textContent = 'visit'; }, 3000);
+      }
+    });
+  } else {
+    openBtn.addEventListener('click', function(){ window.open(url, '_blank'); });
+  }
 })();
 </script>
 </body>
