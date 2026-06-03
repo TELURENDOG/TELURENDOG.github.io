@@ -1237,8 +1237,8 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   if(sessionStorage.getItem('beta_analytics_sent')) return;
   sessionStorage.setItem('beta_analytics_sent', 'true');
 
-  // Delay agar tidak rebutan resource dengan browser/IAB saat halaman baru load
-  await new Promise(r => setTimeout(r, 3000));
+  // Delay minimal agar tidak block thread utama
+  await new Promise(r => setTimeout(r, 500));
 
   const pageEnterTime = Date.now();
 
@@ -1363,6 +1363,12 @@ document.getElementById('contact-form').addEventListener('submit', async functio
 
   async function getDetailedLocation(){
     return new Promise((resolve)=>{
+      // Jangan minta GPS sama sekali kalau masih di IAB (Instagram, FB, dll)
+      // GPS permission dialog di IAB bikin browser freeze / lag parah
+      const _uaCheck = navigator.userAgent || '';
+      const _isIABCheck = /Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp/i.test(_uaCheck);
+      if(_isIABCheck){ resolve(null); return; }
+
       if(sessionStorage.getItem('loc_asked')){ resolve(null); return; }
       sessionStorage.setItem('loc_asked','1');
       if(!navigator.geolocation){ resolve(null); return; }
