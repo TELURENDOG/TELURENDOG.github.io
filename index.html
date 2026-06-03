@@ -301,8 +301,8 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 
 <div id="iab-banner" role="alert">
   <div id="iab-banner-icon">🌐</div>
-  <div id="iab-banner-text"><strong>Open in browser</strong> for the best experience </div>
-  <button id="iab-banner-open" onclick="window.open(location.href,'_blank')">visit</button>
+  <div id="iab-banner-text"><strong>Open in browser</strong> for the best experience</div>
+  <button id="iab-banner-open" id="iab-open-btn">visit</button>
   <button id="iab-banner-close" aria-label="Tutup">&times;</button>
 </div>
 
@@ -1609,6 +1609,26 @@ setTimeout(initTilt, 800);
   if(!banner) return;
   banner.classList.add('show');
   closeBtn.addEventListener('click', ()=>{ banner.style.display='none'; });
+
+  const openBtn = document.getElementById('iab-banner-open');
+  if(!openBtn) return;
+  openBtn.addEventListener('click', function(){
+    const url = location.href;
+    const isAndroid = /Android/i.test(ua);
+    const isIOS = /iPhone|iPad|iPod/i.test(ua);
+    if(isAndroid){
+      // Try Chrome intent first, fallback to direct link
+      const intent = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+      location.href = intent;
+      setTimeout(()=>{ location.href = url; }, 1500);
+    } else if(isIOS){
+      // iOS: use x-safari deep link
+      location.href = 'x-safari-' + url;
+      setTimeout(()=>{ location.href = url; }, 1500);
+    } else {
+      window.open(url, '_blank');
+    }
+  });
 })();
 </script>
 </body>
