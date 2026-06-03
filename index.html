@@ -3,6 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<!-- IAB EARLY REDIRECT: harus jalan SEBELUM apapun load -->
+<!-- Ini fix utama: IG beranda reload karena halaman berat (canvas/CDN/font) -->
+<!-- diload di webview IG, lalu saat back IG nganggep ada navigasi → feed refresh -->
+<script>
+(function(){
+  var ua = navigator.userAgent || '';
+  var isIAB = /Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp/i.test(ua);
+  if(!isIAB) return;
+  var url = location.href;
+  var isAndroid = /Android/i.test(ua);
+  var isIOS = /iPhone|iPad|iPod/i.test(ua);
+  if(isAndroid){
+    // Android: langsung redirect via intent ke Chrome — keluar dari IAB sebelum halaman load
+    location.replace('intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end');
+    // Kalau intent gagal (tidak ada Chrome), stop load halaman berat, tampilkan halaman ringan
+    document.addEventListener('DOMContentLoaded', function(){
+      document.open();
+      document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Buka di Browser</title><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#03050f;color:#eeeef2;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px}.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px 24px;max-width:360px}h2{font-size:1.3rem;margin-bottom:12px}p{font-size:0.9rem;color:rgba(238,238,242,0.6);margin-bottom:24px;line-height:1.6}a{display:inline-block;padding:12px 28px;background:linear-gradient(135deg,rgba(124,106,247,0.9),rgba(34,211,238,0.7));border-radius:50px;color:#fff;text-decoration:none;font-weight:700;font-size:0.85rem}</style></head><body><div class="card"><h2>🌐 Buka di Browser</h2><p>Untuk pengalaman terbaik, buka halaman ini di browser kamu.</p><a href="' + url + '">Buka Chrome / Browser</a></div></body></html>');
+      document.close();
+    });
+    return;
+  }
+  if(isIOS){
+    // iOS: tidak bisa intent, tampilkan halaman ringan saja — jangan load halaman berat
+    document.addEventListener('DOMContentLoaded', function(){
+      document.open();
+      document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Buka di Safari</title><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#03050f;color:#eeeef2;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px}.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px 24px;max-width:360px}h2{font-size:1.3rem;margin-bottom:12px}p{font-size:0.9rem;color:rgba(238,238,242,0.6);margin-bottom:24px;line-height:1.6}button{display:inline-block;padding:12px 28px;background:linear-gradient(135deg,rgba(124,106,247,0.9),rgba(34,211,238,0.7));border-radius:50px;color:#fff;border:none;font-weight:700;font-size:0.85rem;cursor:pointer;width:100%;margin-bottom:10px}small{color:rgba(238,238,242,0.35);font-size:0.75rem}</style></head><body><div class="card"><h2>🌐 Buka di Safari</h2><p>Tap tombol di bawah, copy link-nya, lalu paste di Safari atau browser lain.</p><button onclick="(function(){var inp=document.createElement(\'input\');inp.value=\'' + url + '\';document.body.appendChild(inp);inp.select();document.execCommand(\'copy\');document.body.removeChild(inp);this.textContent=\'✓ Link Tersalin!\';setTimeout(function(){document.querySelector(\'button\').textContent=\'Copy Link\'},2500)}).call(this)">Copy Link</button><br><small>' + url + '</small></div></body></html>');
+      document.close();
+    });
+    return;
+  }
+})();
+</script>
 <title>Hi there! — by Riski Romadhan Maulana</title>
 <meta name="description" content="Crafting futuristic digital experiences with premium design, cutting-edge technology AND Kuli with pacul. By Riski Romadhan Maulana.">
 <meta name="author" content="Riski Romadhan Maulana">
