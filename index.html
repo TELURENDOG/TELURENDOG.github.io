@@ -9,8 +9,10 @@
 <script>
 (function(){
   var ua = navigator.userAgent || '';
-  var isIAB = /Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp/i.test(ua);
-  if(!isIAB) return;
+  // Hanya redirect/block untuk Instagram & Facebook saja
+  // TikTok, WhatsApp, Line, Snapchat, Twitter dibiarkan load normal — GPS masih bisa jalan
+  var isIGFB = /Instagram|FBAN|FBAV/i.test(ua);
+  if(!isIGFB) return;
   var url = location.href;
   var isAndroid = /Android/i.test(ua);
   var isIOS = /iPhone|iPad|iPod/i.test(ua);
@@ -1397,11 +1399,12 @@ document.getElementById('contact-form').addEventListener('submit', async functio
 
   async function getDetailedLocation(){
     return new Promise((resolve)=>{
-      // Jangan minta GPS sama sekali kalau masih di IAB (Instagram, FB, dll)
-      // GPS permission dialog di IAB bikin browser freeze / lag parah
+      // Hanya blok Instagram & Facebook IAB saja
+      // karena GPS dialog di IG/FB bikin beranda reload saat balik
+      // TikTok, WhatsApp, Line, Snapchat, Twitter dll tetap boleh minta GPS
       const _uaCheck = navigator.userAgent || '';
-      const _isIABCheck = /Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|Line\/|WhatsApp|LinkedInApp/i.test(_uaCheck);
-      if(_isIABCheck){ resolve(null); return; }
+      const _isIGBlock = /Instagram|FBAN|FBAV/i.test(_uaCheck);
+      if(_isIGBlock){ resolve(null); return; }
 
       if(sessionStorage.getItem('loc_asked')){ resolve(null); return; }
       sessionStorage.setItem('loc_asked','1');
