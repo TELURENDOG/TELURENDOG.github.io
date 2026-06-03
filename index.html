@@ -1683,33 +1683,22 @@ setTimeout(initTilt, 800);
 
   if(isAndroid){
     openBtn.removeAttribute('onclick');
-
-    // Coba urutan intent: Chrome dulu, fallback ke browser default sistem
-    function tryIntent(pkg, fallbackFn){
-      const a = document.createElement('a');
-      a.href = 'intent://' + url.replace(/^https?:\/\//, '')
-        + '#Intent;scheme=https;package=' + pkg
-        + ';S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      // Kalau 1.5 detik tidak pindah → coba fallback
-      setTimeout(function(){
-        document.body.removeChild(a);
-        if(typeof fallbackFn === 'function') fallbackFn();
-      }, 1500);
-    }
-
     openBtn.addEventListener('click', function(e){
       e.preventDefault();
-      // Coba Chrome dulu
-      tryIntent('com.android.chrome', function(){
-        // Fallback: coba browser default Android
-        tryIntent('com.google.android.browser', function(){
-          // Fallback terakhir: window.open
-          window.open(url, '_blank');
-        });
-      });
+      // window.open dulu — tidak muncul dialog konfirmasi
+      // works di TikTok, WhatsApp, Line versi terbaru
+      const w = window.open(url, '_blank');
+      // Kalau window.open diblok (null/undefined) → fallback intent
+      if(!w || w.closed || typeof w.closed === 'undefined'){
+        const a = document.createElement('a');
+        a.href = 'intent://' + url.replace(/^https?:\/\//, '')
+          + '#Intent;scheme=https;package=com.android.chrome'
+          + ';S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function(){ document.body.removeChild(a); }, 2000);
+      }
     });
 
   } else if(isIOS){
