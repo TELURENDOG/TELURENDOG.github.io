@@ -1732,21 +1732,74 @@ function initTilt(){
     }
 
     if(isTouch){
-      /* HP: tap → flash shine sebentar lalu reset */
-      card.addEventListener('touchstart', e => {
-        const touch = e.touches[0];
+      function getCardColorT(){
+        const badge = card.querySelector('.proj-badge');
+        if(badge){ const cs = getComputedStyle(badge); return cs.color; }
+        const ring = card.querySelector('.ring-fg');
+        if(ring) return ring.getAttribute('stroke') || '#7c6af7';
+        return '#7c6af7';
+      }
+      function colorToRgbT(col){
+        if(col.startsWith('rgb')){ const m=col.match(/\d+/g); if(m&&m.length>=3) return {r:+m[0],g:+m[1],b:+m[2]}; }
+        const m=col.replace('#','').match(/.{2}/g);
+        if(m) return {r:parseInt(m[0],16),g:parseInt(m[1],16),b:parseInt(m[2],16)};
+        return {r:124,g:106,b:247};
+      }
+      let tcColor = null;
+      let tRaf = null;
+      let tX = 0, tY = 0;
+
+      function applyTouchTilt(){
+        if(!tcColor) tcColor = colorToRgbT(getCardColorT());
+        const {r,g,b} = tcColor;
         const rect = card.getBoundingClientRect();
-        const px = ((touch.clientX - rect.left) / rect.width) * 100;
-        const py = ((touch.clientY - rect.top) / rect.height) * 100;
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (tX - cx) / (rect.width / 2);
+        const dy = (tY - cy) / (rect.height / 2);
+        const tiltX = dy * -18;
+        const tiltY = dx * 18;
+        card.style.transform = `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-8px) scale(1.03)`;
+        card.style.boxShadow = [
+          `${-tiltY*2.5}px ${tiltX*2.5}px 40px rgba(${r},${g},${b},0.5)`,
+          `0 0 30px rgba(${r},${g},${b},0.3)`,
+          `0 16px 50px rgba(0,0,0,0.5)`
+        ].join(', ');
+        card.style.borderColor = `rgba(${r},${g},${b},0.55)`;
         const shine = card.querySelector('.tilt-shine');
         if(shine){
-          shine.style.transition = 'opacity 0.15s';
-          shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.28), transparent 55%)`;
+          const px = ((tX - rect.left) / rect.width) * 100;
+          const py = ((tY - rect.top) / rect.height) * 100;
+          shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.22), transparent 60%)`;
           shine.style.opacity = '1';
-          setTimeout(() => { shine.style.opacity = '0'; }, 350);
         }
+        tRaf = null;
+      }
+
+      function resetTouchTilt(){
+        if(tRaf){ cancelAnimationFrame(tRaf); tRaf = null; }
+        card.style.transform = '';
+        card.style.boxShadow = '';
+        card.style.borderColor = '';
+        const shine = card.querySelector('.tilt-shine');
+        if(shine) shine.style.opacity = '0';
+      }
+
+      card.addEventListener('touchstart', e => {
+        tX = e.touches[0].clientX;
+        tY = e.touches[0].clientY;
+        if(!tRaf) tRaf = requestAnimationFrame(applyTouchTilt);
       }, { passive: true });
-      return; /* skip mouse tilt logic */
+
+      card.addEventListener('touchmove', e => {
+        tX = e.touches[0].clientX;
+        tY = e.touches[0].clientY;
+        if(!tRaf) tRaf = requestAnimationFrame(applyTouchTilt);
+      }, { passive: true });
+
+      card.addEventListener('touchend', resetTouchTilt, { passive: true });
+      card.addEventListener('touchcancel', resetTouchTilt, { passive: true });
+      return;
     }
 
     /* Desktop mouse tilt */
