@@ -4,15 +4,12 @@
 <meta charset="UTF-8">
 
 <!-- ═══════════════════════════════════════════════════════════════════
-     ██  IAB GUARD — LETAKKAN DI PALING ATAS <head>, JANGAN DIPINDAH  ██
-     Mendeteksi In-App Browser (Instagram/TikTok/FB/dll) dan memaksa
-     user membuka di Chrome / Safari. Tidak menyentuh logika bot sama sekali.
-     ═══════════════════════════════════════════════════════════════════ -->
+═══════════════════════════════════════════════════════════════════ -->
 <script>
 (function IABGuard() {
   'use strict';
 
-  /* ── 1. Deteksi User-Agent ─────────────────────────────────────── */
+  /* ── 1.  */
   var ua = navigator.userAgent || '';
 
   /* Sinyal khas In-App Browser dari berbagai platform */
@@ -31,16 +28,16 @@
     /* Google App */   'GSA',
   ];
 
-  /* Jika bukan IAB → diam, tidak lakukan apa-apa */
+  /* */
   var isIAB = IAB_SIGNALS.some(function(sig){ return ua.indexOf(sig) !== -1; });
   if (!isIAB) return;
 
-  /* ── 2. Deteksi Platform ───────────────────────────────────────── */
+  /* ── 2.Platform ───────────────────────────────────────── */
   var isAndroid = /Android/i.test(ua);
   var isIOS     = /iPhone|iPad|iPod/i.test(ua);
   var pageUrl   = window.location.href;
 
-  /* ── 3. Android → Redirect langsung ke Chrome via Intent URL ───── */
+  /* ── 3. Android ───── */
   if (isAndroid) {
     var loc = window.location;
     var intentUrl = 'intent://' + loc.host + loc.pathname + loc.search + loc.hash
@@ -51,17 +48,17 @@
     return; /* stop, tidak perlu modal */
   }
 
-  /* ── 4. iOS → Coba buka di Chrome iOS dulu ────────────────────── */
+  /* ── 4. iOS →────────────────────── */
   if (isIOS) {
     var chromeUrl = pageUrl.replace(/^https?:\/\//i, 'googlechrome://');
     window.location.href = chromeUrl;
-    /* Jika Chrome tidak ada, akan gagal diam-diam → modal akan muncul */
+    /* J */
   }
 
-  /* ── 5. Inject Modal Overlay (iOS & OS lain) ───────────────────── */
+  /* ── 5.  (iOS & OS lain) ───────────────────── */
   var browserLabel = isIOS ? 'Safari / Chrome' : 'Browser Eksternal';
 
-  /* Langkah-langkah sesuai OS */
+  /* L */
   var stepsHTML = isIOS
     ? '<li>Tap tombol <b style="color:#fff">Share ↑</b> di bawah layar</li>'
     + '<li>Pilih <b style="color:#fff">"Open in Safari"</b> dari menu</li>'
@@ -70,9 +67,9 @@
     + '<b style="color:#fff">"Open in External Browser"</b></li>';
 
   function injectModal() {
-    if (document.getElementById('iab-guard-overlay')) return; /* cegah double */
+    if (document.getElementById('iab-guard-overlay')) return; /*  */
 
-    /* ── Buat elemen overlay ── */
+    /* ── ── */
     var overlay = document.createElement('div');
     overlay.id  = 'iab-guard-overlay';
     overlay.setAttribute('role', 'dialog');
@@ -89,7 +86,7 @@
     ].join(';');
 
     overlay.innerHTML = ''
-      /* ── Keyframes & helper styles ── */
+      /* ── ── */
       + '<style>'
         + '@keyframes iabFadeIn{from{opacity:0}to{opacity:1}}'
         + '@keyframes iabSlideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}'
@@ -194,7 +191,7 @@
     });
   }
 
-  /* Inject segera jika body sudah ada, atau tunggu DOMContentLoaded */
+  /*  */
   if (document.body) {
     injectModal();
   } else {
@@ -203,7 +200,7 @@
 
 }());
 </script>
-<!-- ════ /IAB GUARD ════════════════════════════════════════════════ -->
+<!-- ════ ════════════════════════════════════════════════ -->
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Hi there! — by Riski Romadhan Maulana</title>
@@ -520,7 +517,7 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 </head>
 <body>
 
-<!-- ── IAB iOS Toast injected via JS only when needed ──────── -->
+<!-- ────────── -->
 
 <canvas id="galaxy-canvas" aria-hidden="true"></canvas>
 
@@ -1881,9 +1878,7 @@ function initTilt(){
 }
 setTimeout(initTilt, 800);
 
-/* ── IAB Detection & Redirect ────────────────────────────── */
-/* Sudah ditangani oleh IAB Guard di paling atas <head>.      */
-/* Script lama ini dinonaktifkan untuk mencegah konflik.       */
+
 
 })();
 </script>
