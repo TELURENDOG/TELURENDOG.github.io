@@ -266,6 +266,9 @@ a,button{touch-action:manipulation}
 @media(max-width:640px){
   .aurora-layer::before,.aurora-layer::after{filter:blur(50px)}
   .aurora-mid::before{filter:blur(50px)}
+  .glass{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .glass-card{-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .nav-inner{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 }
 
 .glass{background:var(--surface);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--border);border-radius:20px}
@@ -1716,6 +1719,9 @@ console.log('%c Hi there! 👋 %c by RISKI RM',
   'font-size:1em;color:#22d3ee;background:#03050f;padding:4px 8px;border-radius:4px');
 
 function initTilt(){
+  /* Touch device: skip tilt, pakai tap flash ringan saja */
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
   document.querySelectorAll('.glass-card').forEach(card => {
     card.classList.add('tilt-card');
     if(!card.querySelector('.tilt-shine')){
@@ -1725,6 +1731,25 @@ function initTilt(){
       card.appendChild(shine);
     }
 
+    if(isTouch){
+      /* HP: tap → flash shine sebentar lalu reset */
+      card.addEventListener('touchstart', e => {
+        const touch = e.touches[0];
+        const rect = card.getBoundingClientRect();
+        const px = ((touch.clientX - rect.left) / rect.width) * 100;
+        const py = ((touch.clientY - rect.top) / rect.height) * 100;
+        const shine = card.querySelector('.tilt-shine');
+        if(shine){
+          shine.style.transition = 'opacity 0.15s';
+          shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.28), transparent 55%)`;
+          shine.style.opacity = '1';
+          setTimeout(() => { shine.style.opacity = '0'; }, 350);
+        }
+      }, { passive: true });
+      return; /* skip mouse tilt logic */
+    }
+
+    /* Desktop mouse tilt */
     function getCardColor(){
       const badge = card.querySelector('.proj-badge');
       if(badge){ const cs = getComputedStyle(badge); return cs.color; }
