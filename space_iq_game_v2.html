@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:100%;min-height:600px;overflow:hidden;background:#01020a}
+  body{font-family:'Exo 2',sans-serif;color:#eeeef2;position:relative}
+
+  #bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+  #aurora{position:fixed;inset:0;z-index:1;pointer-events:none}
+  .aurora-blob{position:absolute;border-radius:50%;filter:blur(70px);animation:aura 16s ease-in-out infinite;opacity:0}
+  .a1{width:60vw;height:50vh;top:-10%;left:-10%;background:radial-gradient(ellipse,rgba(124,106,247,0.18),transparent 70%);animation-delay:0s}
+  .a2{width:55vw;height:45vh;bottom:-10%;right:-5%;background:radial-gradient(ellipse,rgba(34,211,238,0.13),transparent 70%);animation-delay:-8s}
+  .a3{width:40vw;height:35vh;top:35%;left:30%;background:radial-gradient(ellipse,rgba(244,114,182,0.09),transparent 70%);animation-delay:-13s}
+  @keyframes aura{0%{opacity:0;transform:scale(.9) translate(0,0)}20%{opacity:1}50%{transform:scale(1.1) translate(3%,4%);opacity:.8}80%{opacity:1}100%{opacity:0;transform:scale(.95) translate(-2%,-2%)}}
+
+  .game-wrap{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:600px;padding:24px 16px}
+
+  .screen{display:none;flex-direction:column;align-items:center;width:100%;max-width:520px;animation:fadeIn .4s ease}
+  .screen.active{display:flex}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+  .logo{font-family:'Orbitron',sans-serif;font-size:clamp(1.8rem,7vw,3rem);font-weight:900;letter-spacing:.06em;background:linear-gradient(135deg,#a78bfa 0%,#22d3ee 50%,#f472b6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;text-align:center;filter:drop-shadow(0 0 20px rgba(124,106,247,.4))}
+  .logo-sub{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:.3em;color:rgba(167,139,250,.55);text-transform:uppercase;margin-bottom:32px}
+  .intro-desc{font-size:.88rem;color:rgba(238,238,242,.5);line-height:1.75;text-align:center;max-width:360px;margin-bottom:32px}
+  .intro-desc b{color:#a78bfa}
+
+  .btn-start{padding:14px 44px;border:none;border-radius:50px;cursor:pointer;background:linear-gradient(135deg,rgba(124,106,247,.9),rgba(34,211,238,.7));font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;box-shadow:0 0 40px rgba(124,106,247,.45);transition:transform .25s,box-shadow .25s}
+  .btn-start:hover{transform:translateY(-4px);box-shadow:0 0 60px rgba(124,106,247,.7)}
+  .btn-start:active{transform:scale(.97)}
+
+  .q-header{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:18px}
+  .q-num{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:.2em;color:rgba(167,139,250,.65);text-transform:uppercase}
+  .q-timer{font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:700;color:#22d3ee;transition:color .3s;min-width:24px;text-align:right}
+  .q-timer.urgent{color:#f472b6;animation:tpulse .5s ease-in-out infinite}
+  @keyframes tpulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  .q-progress{width:100%;height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin-bottom:26px;overflow:hidden}
+  .q-progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#7c6af7,#22d3ee);transition:width .5s ease}
+
+  .q-card{width:100%;padding:26px 22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:20px;margin-bottom:18px;position:relative;overflow:hidden}
+  .q-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 0%,rgba(124,106,247,.1),transparent 55%);pointer-events:none}
+  .q-text{font-size:clamp(.95rem,3.2vw,1.15rem);font-weight:600;line-height:1.55;color:#eeeef2;position:relative;z-index:1}
+
+  .q-options{width:100%;display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+  .q-opt{width:100%;padding:13px 18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:13px;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:.88rem;color:#eeeef2;text-align:left;transition:background .2s,border-color .2s,transform .15s}
+  .q-opt:hover{background:rgba(124,106,247,.15);border-color:rgba(124,106,247,.4);transform:translateX(5px)}
+  .q-opt:active{transform:scale(.98)}
+  .q-opt.correct{background:rgba(52,211,153,.14)!important;border-color:#34d399!important;color:#34d399!important}
+  .q-opt.wrong{background:rgba(244,114,182,.12)!important;border-color:#f472b6!important;color:#f472b6!important}
+  .q-opt.disabled{pointer-events:none}
+
+  .q-feedback{min-height:44px;padding:11px 15px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;font-size:.8rem;line-height:1.65;color:rgba(238,238,242,.6);opacity:0;transition:opacity .3s;text-align:center}
+  .q-feedback.show{opacity:1}
+  .q-feedback b{color:#a78bfa}
+
+  .btn-next{margin-top:14px;padding:11px 30px;border:1px solid rgba(124,106,247,.4);border-radius:50px;background:rgba(124,106,247,.14);cursor:pointer;font-family:'Orbitron',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#a78bfa;transition:all .2s;display:none}
+  .btn-next.show{display:block}
+  .btn-next:hover{background:rgba(124,106,247,.28);transform:translateY(-2px)}
+  .btn-next:active{transform:scale(.97)}
+
+  .result-iq{font-family:'Orbitron',sans-serif;font-size:clamp(4rem,16vw,8rem);font-weight:900;background:linear-gradient(135deg,#a78bfa,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:4px;filter:drop-shadow(0 0 30px rgba(124,106,247,.5))}
+  .result-label{font-family:'Orbitron',sans-serif;font-size:.58rem;letter-spacing:.32em;color:rgba(167,139,250,.55);text-transform:uppercase;margin-bottom:22px}
+  .result-title{font-family:'Orbitron',sans-serif;font-size:clamp(.9rem,3.5vw,1.25rem);font-weight:700;color:#eeeef2;margin-bottom:10px;text-align:center}
+  .result-roast{font-size:.85rem;color:rgba(238,238,242,.48);line-height:1.75;text-align:center;max-width:360px;margin-bottom:28px}
+  .result-score{display:flex;gap:28px;margin-bottom:30px}
+  .result-stat{text-align:center}
+  .result-stat-num{font-family:'Orbitron',sans-serif;font-size:1.5rem;font-weight:700;color:#22d3ee}
+  .result-stat-lbl{font-size:.6rem;letter-spacing:.15em;color:rgba(238,238,242,.35);text-transform:uppercase;margin-top:2px}
+
+  .btn-retry{padding:12px 30px;border:1px solid rgba(244,114,182,.4);border-radius:50px;background:rgba(244,114,182,.1);cursor:pointer;font-family:'Orbitron',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#f472b6;transition:all .2s}
+  .btn-retry:hover{background:rgba(244,114,182,.24);transform:translateY(-2px)}
+  .btn-retry:active{transform:scale(.97)}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<div id="aurora">
+  <div class="aurora-blob a1"></div>
+  <div class="aurora-blob a2"></div>
+  <div class="aurora-blob a3"></div>
+</div>
+
+<div class="game-wrap">
+  <div class="screen active" id="screen-intro">
+    <div class="logo">COSMIC IQ</div>
+    <div class="logo-sub">Space Intelligence Test</div>
+    <p class="intro-desc">10 soal yang kelihatannya <b>gampang banget</b>.<br>Tapi jangan salah — otak kamu bakal diuji.<br>Setiap soal ada timer. Pikir cepat, jangan asal!</p>
+    <button class="btn-start" id="btn-start">Mulai Test →</button>
+  </div>
+
+  <div class="screen" id="screen-quiz">
+    <div class="q-header">
+      <div class="q-num" id="q-num">Soal 1 / 10</div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <div class="q-timer" id="q-timer">15</div>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(34,211,238,.55)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+    </div>
+    <div class="q-progress"><div class="q-progress-fill" id="q-pf" style="width:10%"></div></div>
+    <div class="q-card"><div class="q-text" id="q-text"></div></div>
+    <div class="q-options" id="q-options"></div>
+    <div class="q-feedback" id="q-feedback"></div>
+    <button class="btn-next" id="btn-next">Lanjut →</button>
+  </div>
+
+  <div class="screen" id="screen-result">
+    <div class="result-iq" id="result-iq">0</div>
+    <div class="result-label">IQ Score</div>
+    <div class="result-title" id="result-title"></div>
+    <div class="result-roast" id="result-roast"></div>
+    <div class="result-score">
+      <div class="result-stat"><div class="result-stat-num" id="res-c">0</div><div class="result-stat-lbl">Benar</div></div>
+      <div class="result-stat"><div class="result-stat-num" style="color:#f472b6" id="res-w">0</div><div class="result-stat-lbl">Salah</div></div>
+      <div class="result-stat"><div class="result-stat-num" style="color:#a78bfa" id="res-t">0s</div><div class="result-stat-lbl">Avg Waktu</div></div>
+    </div>
+    <button class="btn-retry" id="btn-retry">↺ Ulangi Test</button>
+  </div>
+</div>
+
+<script>
+const Q=[
+  {q:"Kamu punya 3 apel. Kamu ambil 2. Kamu punya berapa apel?",opts:["1 apel","2 apel","3 apel","0 apel"],ans:1,fb:"Kamu yang <b>ambil 2</b>, jadi kamu punya 2. Yang sisa di tempat bukan milikmu."},
+  {q:"Mana yang lebih berat — 1 kg besi atau 1 kg kapas?",opts:["Besi","Kapas","Sama berat","Tergantung jenis besinya"],ans:2,fb:"Keduanya <b>1 kg</b>. Berat sama. Yang beda volumenya. Otak auto-jebak sendiri."},
+  {q:"Seekor ayam betina berdiri di atas atap miring. Ke mana telurnya jatuh?",opts:["Ke kiri","Ke kanan","Ke depan","Ayam tidak bertelur di atap"],ans:3,fb:"<b>Ayam tidak bertelur sambil berdiri di atap.</b> Butuh kondisi nyaman untuk bertelur."},
+  {q:"Ada 10 burung di pohon. Pemburu menembak 1. Berapa yang tersisa?",opts:["9 burung","0 burung","10 burung","1 burung"],ans:1,fb:"Bunyi tembakan bikin <b>semua terbang</b>. Sisa = 0. Yang ditembak jatuh, bukan di pohon."},
+  {q:"Berapa bulan dalam setahun yang punya 28 hari?",opts:["1 bulan (Februari)","2 bulan","6 bulan","12 bulan"],ans:3,fb:"<b>Semua 12 bulan</b> punya minimal 28 hari. Februari cuma 28/29, tapi bulan lain juga melewati tanggal 28."},
+  {q:"Kamu di lomba lari. Kamu menyalip orang di posisi ke-2. Sekarang kamu di posisi berapa?",opts:["Posisi 1","Posisi 2","Posisi 3","Posisi 2 juga"],ans:1,fb:"Kamu menyalip posisi 2, artinya kamu <b>menggantikan posisi 2</b>. Posisi 1 masih di depan."},
+  {q:"Dokter kasih 3 pil, minum 1 tiap setengah jam. Berapa lama pilnya habis?",opts:["1,5 jam","1 jam","30 menit","2 jam"],ans:1,fb:"Minum pil 1 → 30 menit → pil 2 → 30 menit → pil 3. Total = <b>1 jam</b>, bukan 1,5 jam."},
+  {q:"Ada 5 ikan di kolam dan 2 tenggelam. Berapa yang tersisa?",opts:["3 ikan","5 ikan","2 ikan","7 ikan"],ans:1,fb:"<b>Ikan tidak bisa tenggelam</b> — mereka hidup di air. Semua 5 masih ada."},
+  {q:"Petani punya 17 domba. Semua kecuali 9 mati. Berapa yang tersisa?",opts:["8 domba","9 domba","17 domba","Tidak ada"],ans:1,fb:"<b>'Semua kecuali 9 mati'</b> = yang hidup tinggal 9. Bukan 17-9=8. Kata 'kecuali' yang jebak."},
+  {q:"Kata SALAH dieja S-A-L-A-H. Apa yang salah dari kalimat ini?",opts:["Ejaannya salah","Tidak ada yang salah","Hurufnya kurang","Kalimatnya tidak lengkap"],ans:1,fb:"Ejaan <b>S-A-L-A-H</b> itu benar untuk kata 'SALAH'. Tidak ada yang salah. Otak kamu yang ngejebak diri sendiri."}
+];
+
+let cur=0,score=0,tid=null,tl=15,times=[],answered=false,qStart=0;
+const $=id=>document.getElementById(id);
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+
+function startGame(){cur=0;score=0;times=[];answered=false;showScreen('screen-quiz');loadQ()}
+
+function loadQ(){
+  answered=false;
+  const q=Q[cur];
+  $('q-num').textContent=`Soal ${cur+1} / ${Q.length}`;
+  $('q-pf').style.width=`${((cur+1)/Q.length)*100}%`;
+  $('q-text').textContent=q.q;
+  $('q-feedback').classList.remove('show');
+  $('q-feedback').innerHTML='';
+  $('btn-next').classList.remove('show');
+  const opts=$('q-options');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='q-opt';b.textContent=o;
+    b.onclick=()=>pick(i);
+    opts.appendChild(b);
+  });
+  startTimer();qStart=Date.now();
+}
+
+function startTimer(){
+  clearInterval(tid);tl=15;
+  const el=$('q-timer');el.textContent=tl;el.classList.remove('urgent');
+  tid=setInterval(()=>{
+    tl--;el.textContent=tl;
+    if(tl<=5)el.classList.add('urgent');
+    if(tl<=0){clearInterval(tid);if(!answered)timeUp();}
+  },1000);
+}
+
+function timeUp(){
+  answered=true;times.push(15);
+  const q=Q[cur];
+  $('q-options').querySelectorAll('.q-opt').forEach((b,i)=>{b.classList.add('disabled');if(i===q.ans)b.classList.add('correct');});
+  const fb=$('q-feedback');fb.innerHTML='⏰ Waktu habis! '+q.fb;fb.classList.add('show');
+  $('btn-next').classList.add('show');
+}
+
+function pick(idx){
+  if(answered)return;
+  answered=true;clearInterval(tid);
+  times.push((Date.now()-qStart)/1000);
+  const q=Q[cur];
+  $('q-options').querySelectorAll('.q-opt').forEach((b,i)=>{
+    b.classList.add('disabled');
+    if(i===q.ans)b.classList.add('correct');
+    else if(i===idx&&idx!==q.ans)b.classList.add('wrong');
+  });
+  if(idx===q.ans)score++;
+  const fb=$('q-feedback');
+  fb.innerHTML=(idx===q.ans?'✓ Benar! ':'✗ Salah. ')+q.fb;
+  fb.classList.add('show');
+  $('btn-next').classList.add('show');
+}
+
+function nextQ(){cur++;if(cur>=Q.length){showResult();return;}loadQ();}
+
+function showResult(){
+  showScreen('screen-result');
+  const iq=Math.round(70+(score/Q.length)*60);
+  const avg=(times.reduce((a,b)=>a+b,0)/times.length).toFixed(1);
+  $('result-iq').textContent=iq;
+  $('res-c').textContent=score;
+  $('res-w').textContent=Q.length-score;
+  $('res-t').textContent=avg+'s';
+  const data=[
+    {min:9,t:'Luar Biasa, Manusia Langka!',r:'IQ kamu seperti bintang neutron — padat dan jarang ada yang setara. Tapi ini cuma 10 soal di internet, jangan terlalu pede.'},
+    {min:7,t:'Lumayan, Tapi Masih Kejebak',r:'Kamu lebih pintar dari rata-rata, tapi tetap kena jebak beberapa soal. Otak kamu auto-pilot terlalu sering.'},
+    {min:5,t:'Standar. Seperti WiFi Di Rumah.',r:'Tidak terlalu buruk, tidak terlalu bagus. Tepat di tengah — seperti sinyal WiFi yang kadang nyambung, kadang enggak.'},
+    {min:3,t:'Otak Kamu Perlu Di-restart',r:'Soal ini sengaja gampang dan masih banyak salah. Coba tidur dulu, mungkin OS-nya hang.'},
+    {min:0,t:'IQ Setara Sandal Jepit',r:'Entah gimana caranya kamu bisa salah sebanyak ini. Tapi tenang — sandal jepit juga berguna kok. Semangat!'}
+  ];
+  const d=data.find(x=>score>=x.min);
+  $('result-title').textContent=d.t;
+  $('result-roast').textContent=d.r;
+}
+
+$('btn-start').onclick=startGame;
+$('btn-next').onclick=nextQ;
+$('btn-retry').onclick=startGame;
+
+/* ── Stars canvas ── */
+const cvs=$('bg');
+const ctx=cvs.getContext('2d');
+
+function resize(){
+  cvs.width=window.innerWidth||680;
+  cvs.height=window.innerHeight||600;
+}
+resize();
+window.addEventListener('resize',()=>{resize();buildStars();});
+
+let stars=[];
+function buildStars(){
+  const W=cvs.width,H=cvs.height;
+  stars=Array.from({length:280},()=>({
+    x:Math.random()*W, y:Math.random()*H,
+    r:Math.random()*1.4+.2,
+    baseA:.05+Math.random()*.55,
+    phase:Math.random()*Math.PI*2,
+    spd:.4+Math.random()*1.2,
+    col:Math.random()<.15?
+      (Math.random()<.5?'160,210,255':'255,200,150'):
+      '255,255,255'
+  }));
+}
+buildStars();
+
+let t=0;
+function draw(){
+  ctx.clearRect(0,0,cvs.width,cvs.height);
+  t+=0.016;
+  stars.forEach(s=>{
+    const a=s.baseA*(0.5+0.5*Math.sin(t*s.spd+s.phase));
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${s.col},${a.toFixed(2)})`;
+    ctx.fill();
+    if(s.r>1){
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r*2.5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${s.col},${(a*0.08).toFixed(3)})`;
+      ctx.fill();
+    }
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>
