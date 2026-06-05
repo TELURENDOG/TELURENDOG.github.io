@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>🚀 Space Wormate - Riski RM Safe Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --space-deep: #01020a;
+            --space-mid: #040818;
+            --nebula-blue: #0d1f5c;
+            --nebula-purple: #1a0a3c;
+            --star-white: #e8f4ff;
+            --accent-cyan: #00e5ff;
+            --accent-magenta: #ff00cc;
+            --accent-gold: #ffd700;
+            --hud-bg: rgba(5, 10, 30, 0.85);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: var(--space-deep);
+            font-family: 'Orbitron', 'Exo 2', monospace;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+
+        #spaceCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        canvas#gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-board {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            background: var(--hud-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 10px 22px;
+            border-radius: 50px;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            pointer-events: none;
+            z-index: 30;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.2), inset 0 0 20px rgba(0, 229, 255, 0.05);
+            text-shadow: 0 0 10px var(--accent-cyan);
+        }
+        .score-board span { margin-right: 6px; }
+
+        .zoom-controls {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 30;
+        }
+        .zoom-btn {
+            width: 44px;
+            height: 44px;
+            background: var(--hud-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 50%;
+            color: var(--accent-cyan);
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 14px rgba(0, 229, 255, 0.2);
+            transition: all 0.15s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .zoom-btn:active {
+            background: rgba(0, 229, 255, 0.2);
+            box-shadow: 0 0 22px rgba(0, 229, 255, 0.5);
+            transform: scale(0.93);
+        }
+
+        .copyright-tag {
+            position: fixed;
+            bottom: 52px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: rgba(0, 229, 255, 0.2);
+            pointer-events: none;
+            z-index: 20;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .restart-btn {
+            position: fixed;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #00e5ff, #7b2fff);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 900;
+            padding: 16px 38px;
+            border-radius: 80px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 0 40px rgba(0, 229, 255, 0.5), 0 10px 30px rgba(0,0,0,0.6);
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            white-space: nowrap;
+        }
+        .restart-btn:active {
+            transform: translate(-50%, -50%) scale(0.95);
+            box-shadow: 0 0 60px rgba(0, 229, 255, 0.8);
+        }
+        .hide-btn { display: none !important; }
+
+        .control-hint {
+            position: fixed;
+            bottom: 14px;
+            left: 0; right: 0;
+            text-align: center;
+            font-size: 0.65rem;
+            color: rgba(0, 229, 255, 0.5);
+            background: rgba(4, 8, 24, 0.7);
+            backdrop-filter: blur(8px);
+            width: fit-content;
+            margin: 0 auto;
+            padding: 6px 18px;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 229, 255, 0.1);
+            pointer-events: none;
+            z-index: 20;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .gameover-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(1, 2, 10, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 90;
+            pointer-events: none;
+        }
+        .gameover-overlay.hide { display: none; }
+        .gameover-text {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1.6rem, 6vw, 3rem);
+            font-weight: 900;
+            color: var(--accent-magenta);
+            text-shadow: 0 0 30px var(--accent-magenta), 0 0 60px rgba(255,0,204,0.4);
+            letter-spacing: 4px;
+            text-align: center;
+            animation: glitch 1.5s infinite;
+        }
+        .gameover-score {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1rem, 4vw, 1.8rem);
+            color: var(--accent-cyan);
+            margin-top: 12px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 14px var(--accent-cyan);
+        }
+        @keyframes glitch {
+            0%, 90%, 100% { transform: none; }
+            2% { transform: translate(-3px, 1px) skew(-1deg); }
+            4% { transform: translate(3px, -1px) skew(1deg); }
+            6% { transform: translate(-2px, 2px); }
+        }
+
+        @media (max-width: 600px) {
+            .score-board { font-size: 1rem; padding: 8px 16px; top: 12px; left: 12px; }
+            .zoom-btn { width: 40px; height: 40px; font-size: 1.1rem; }
+            .zoom-controls { top: 12px; right: 12px; }
+            .restart-btn { font-size: 1.1rem; padding: 12px 28px; }
+            .control-hint { font-size: 0.58rem; bottom: 10px; }
+            .copyright-tag { font-size: 0.58rem; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="spaceCanvas"></canvas>
+
+<div class="game-container">
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="score-board">
+        <span id="scoreEmoji">⭐</span> <span id="scoreValue">0</span>
+    </div>
+
+    <div class="zoom-controls">
+        <button class="zoom-btn" id="zoomIn" title="Zoom In">+</button>
+        <button class="zoom-btn" id="zoomOut" title="Zoom Out">−</button>
+        <button class="zoom-btn" id="zoomReset" title="Reset Zoom" style="font-size:0.8rem; letter-spacing:-0.5px;">1:1</button>
+    </div>
+
+    <div class="copyright-tag">🚀 MADE BY RISKI RM © 2026</div>
+
+    <div class="gameover-overlay hide" id="gameoverOverlay">
+        <div class="gameover-text">💥 GAME OVER 💥</div>
+        <div class="gameover-score">SKOR: <span id="finalScore">0</span></div>
+    </div>
+
+    <button id="restartButton" class="restart-btn hide-btn">🚀 MAIN LAGI 🎮</button>
+
+    <div class="control-hint">
+        💻 Arahkan Mouse &nbsp;|&nbsp; 📱 Usap Layar &nbsp;|&nbsp; 🔍 Zoom +/−
+    </div>
+</div>
+
+<script>
+(function(){
+    // ===================== SPACE BACKGROUND =====================
+    const spaceCv = document.getElementById('spaceCanvas');
+    const sCtx = spaceCv.getContext('2d');
+    let stars = [], nebulae = [], shootingStars = [];
+    let spaceW, spaceH;
+
+    function resizeSpace() {
+        spaceW = spaceCv.width = window.innerWidth;
+        spaceH = spaceCv.height = window.innerHeight;
+    }
+
+    function genStars(n) {
+        stars = [];
+        for (let i = 0; i < n; i++) {
+            stars.push({
+                x: Math.random() * spaceW,
+                y: Math.random() * spaceH,
+                r: Math.random() * 1.8 + 0.2,
+                alpha: Math.random() * 0.8 + 0.2,
+                twinkleSpeed: Math.random() * 0.02 + 0.005,
+                twinklePhase: Math.random() * Math.PI * 2,
+                color: Math.random() < 0.1 ? '#ffd9a0' : Math.random() < 0.05 ? '#a0c8ff' : '#e8f4ff'
+            });
+        }
+    }
+
+    function genNebulae() {
+        nebulae = [
+            { x: 0.15, y: 0.2, r: 220, c1: 'rgba(60,0,120,0.18)', c2: 'rgba(0,0,0,0)' },
+            { x: 0.8,  y: 0.7, r: 300, c1: 'rgba(0,40,120,0.2)',  c2: 'rgba(0,0,0,0)' },
+            { x: 0.5,  y: 0.5, r: 400, c1: 'rgba(0,80,100,0.1)',  c2: 'rgba(0,0,0,0)' },
+            { x: 0.9,  y: 0.1, r: 180, c1: 'rgba(120,0,60,0.15)', c2: 'rgba(0,0,0,0)' },
+            { x: 0.3,  y: 0.85,r: 250, c1: 'rgba(30,0,80,0.12)',  c2: 'rgba(0,0,0,0)' },
+        ];
+    }
+
+    function spawnShootingStar() {
+        if (Math.random() < 0.003) {
+            shootingStars.push({
+                x: Math.random() * spaceW,
+                y: Math.random() * spaceH * 0.4,
+                len: Math.random() * 100 + 60,
+                speed: Math.random() * 6 + 4,
+                angle: Math.PI / 5 + Math.random() * 0.3,
+                life: 1.0
+            });
+        }
+    }
+
+    let spaceTick = 0;
+    function drawSpace() {
+        spaceTick += 0.016;
+        sCtx.clearRect(0, 0, spaceW, spaceH);
+
+        const bg = sCtx.createRadialGradient(spaceW*0.5, spaceH*0.3, 0, spaceW*0.5, spaceH*0.5, spaceH);
+        bg.addColorStop(0, '#040d2a');
+        bg.addColorStop(0.5, '#02071a');
+        bg.addColorStop(1, '#01020a');
+        sCtx.fillStyle = bg;
+        sCtx.fillRect(0, 0, spaceW, spaceH);
+
+        for (const n of nebulae) {
+            const grd = sCtx.createRadialGradient(n.x*spaceW, n.y*spaceH, 0, n.x*spaceW, n.y*spaceH, n.r);
+            grd.addColorStop(0, n.c1);
+            grd.addColorStop(1, n.c2);
+            sCtx.fillStyle = grd;
+            sCtx.beginPath();
+            sCtx.ellipse(n.x*spaceW, n.y*spaceH, n.r, n.r*0.65, 0.3, 0, Math.PI*2);
+            sCtx.fill();
+        }
+
+        for (const s of stars) {
+            const twinkle = s.alpha * (0.7 + 0.3 * Math.sin(spaceTick * s.twinkleSpeed * 60 + s.twinklePhase));
+            sCtx.beginPath();
+            sCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+            sCtx.globalAlpha = twinkle;
+            sCtx.fillStyle = s.color;
+            sCtx.fill();
+            sCtx.globalAlpha = 1;
+        }
+
+        spawnShootingStar();
+        for (let i = shootingStars.length - 1; i >= 0; i--) {
+            const ss = shootingStars[i];
+            ss.x += Math.cos(ss.angle) * ss.speed;
+            ss.y += Math.sin(ss.angle) * ss.speed;
+            ss.life -= 0.025;
+            if (ss.life <= 0) { shootingStars.splice(i, 1); continue; }
+            const grad = sCtx.createLinearGradient(
+                ss.x, ss.y,
+                ss.x - Math.cos(ss.angle)*ss.len,
+                ss.y - Math.sin(ss.angle)*ss.len
+            );
+            grad.addColorStop(0, `rgba(255,255,255,${ss.life})`);
+            grad.addColorStop(1, 'rgba(255,255,255,0)');
+            sCtx.beginPath();
+            sCtx.moveTo(ss.x, ss.y);
+            sCtx.lineTo(ss.x - Math.cos(ss.angle)*ss.len, ss.y - Math.sin(ss.angle)*ss.len);
+            sCtx.strokeStyle = grad;
+            sCtx.lineWidth = 1.5;
+            sCtx.stroke();
+        }
+
+        requestAnimationFrame(drawSpace);
+    }
+
+    resizeSpace();
+    genStars(280);
+    genNebulae();
+    window.addEventListener('resize', () => { resizeSpace(); genStars(280); genNebulae(); });
+    drawSpace();
+
+    // ===================== GAME MANAGEMENT =====================
+    const MAP_WIDTH = 3000;
+    const MAP_HEIGHT = 3000;
+    const SNAKE_SPEED = 5.5;
+
+    const BASE_HEAD_RADIUS = 16;
+    const BASE_BODY_RADIUS = 13;
+    const BASE_BODY_DISTANCE = 13;
+
+    let currentHeadRadius = BASE_HEAD_RADIUS;
+    let currentBodyRadius = BASE_BODY_RADIUS;
+    let currentBodyDistance = BASE_BODY_DISTANCE;
+
+    let zoomLevel = 1.0;
+    let autoZoomMultiplier = 1.0; 
+    const ZOOM_MIN = 0.35;
+    const ZOOM_MAX = 2.0;
+    const ZOOM_STEP = 0.15;
+
+    const FRUIT_VARIANTS = [
+        { emoji: "⭐", scoreBonus: 10, size: 18 },
+        { emoji: "🌟", scoreBonus: 20, size: 20 },
+        { emoji: "💫", scoreBonus: 15, size: 18 },
+        { emoji: "🌙", scoreBonus: 25, size: 20 },
+        { emoji: "🪐", scoreBonus: 40, size: 26 },
+        { emoji: "☄️", scoreBonus: 35, size: 22 },
+        { emoji: "🌠", scoreBonus: 30, size: 21 },
+        { emoji: "🛸", scoreBonus: 55, size: 26 },
+        { emoji: "👾", scoreBonus: 45, size: 23 },
+        { emoji: "💎", scoreBonus: 60, size: 22 },
+        { emoji: "🔮", scoreBonus: 50, size: 22 },
+        { emoji: "🚀", scoreBonus: 70, size: 24 },
+    ];
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreSpan = document.getElementById('scoreValue');
+    const scoreEmojiSpan = document.getElementById('scoreEmoji');
+    const restartBtn = document.getElementById('restartButton');
+    const gameoverOverlay = document.getElementById('gameoverOverlay');
+    const finalScore = document.getElementById('finalScore');
+
+    let gameActive = true;
+    let score = 0;
+    let snake = [];
+    let foods = [];
+    const TOTAL_FOODS = 150;
+
+    let currentAngle = 0;
+    let camera = { x: 0, y: 0 };
+    let touchStartPos = null;
+
+    document.getElementById('zoomIn').addEventListener('click', () => { zoomLevel = Math.min(ZOOM_MAX, zoomLevel + ZOOM_STEP); });
+    document.getElementById('zoomOut').addEventListener('click', () => { zoomLevel = Math.max(ZOOM_MIN, zoomLevel - ZOOM_STEP); });
+    document.getElementById('zoomReset').addEventListener('click', () => { zoomLevel = 1.0; });
+
+    let lastPinchDist = null;
+    canvas.addEventListener('touchstart', e => {
+        if (e.touches.length === 2) lastPinchDist = null;
+    }, { passive: true });
+    canvas.addEventListener('touchmove', e => {
+        if (e.touches.length === 2) {
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            const dist = Math.hypot(dx, dy);
+            if (lastPinchDist !== null) {
+                const delta = dist - lastPinchDist;
+                zoomLevel = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoomLevel + delta * 0.003));
+            }
+            lastPinchDist = dist;
+        }
+    }, { passive: true });
+    canvas.addEventListener('touchend', e => {
+        if (e.touches.length < 2) lastPinchDist = null;
+    }, { passive: true });
+
+    canvas.addEventListener('wheel', e => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+        zoomLevel = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoomLevel + delta));
+    }, { passive: false });
+
+    // ---- INIT ----
+    function initGame() {
+        gameActive = true;
+        score = 0;
+        currentAngle = 0;
+        zoomLevel = 1.0;
+        autoZoomMultiplier = 1.0;
+        currentHeadRadius = BASE_HEAD_RADIUS;
+        currentBodyRadius = BASE_BODY_RADIUS;
+        currentBodyDistance = BASE_BODY_DISTANCE;
+        updateScoreUI("⭐");
+        gameoverOverlay.classList.add('hide');
+
+        const startX = MAP_WIDTH / 2;
+        const startY = MAP_HEIGHT / 2;
+        snake = [];
+        for (let i = 0; i < 15; i++) snake.push({ x: startX - i * currentBodyDistance, y: startY });
+
+        foods = [];
+        for (let i = 0; i < TOTAL_FOODS; i++) foods.push(generateRandomFood());
+    }
+
+    function generateRandomFood() {
+        const variant = FRUIT_VARIANTS[Math.floor(Math.random() * FRUIT_VARIANTS.length)];
+        return {
+            x: Math.random() * (MAP_WIDTH - 160) + 80,
+            y: Math.random() * (MAP_HEIGHT - 160) + 80,
+            emoji: variant.emoji,
+            scoreBonus: variant.scoreBonus,
+            size: variant.size,
+            pulse: Math.random() * Math.PI * 2
+        };
+    }
+
+    function updateSnakeScale() {
+        const scaleFactor = Math.min(1 + Math.log10(1 + score / 300), 2.5);
+        currentHeadRadius = BASE_HEAD_RADIUS * scaleFactor;
+        currentBodyRadius = BASE_BODY_RADIUS * scaleFactor;
+        currentBodyDistance = BASE_BODY_DISTANCE * scaleFactor;
+
+        // Auto Zoom Out Terbuka Lebar Sempurna!
+        autoZoomMultiplier = Math.max(1 / scaleFactor, 0.45);
+    }
+
+    function updateScoreUI(emoji) {
+        scoreSpan.innerText = score;
+        if (emoji) scoreEmojiSpan.innerText = emoji;
+    }
+
+    function moveSnake() {
+        if (!gameActive || snake.length === 0) return;
+        const head = snake[0];
+        let newX = head.x + Math.cos(currentAngle) * SNAKE_SPEED;
+        let newY = head.y + Math.sin(currentAngle) * SNAKE_SPEED;
+
+        if (newX <= currentHeadRadius/2 || newX >= MAP_WIDTH - currentHeadRadius/2 ||
+            newY <= currentHeadRadius/2 || newY >= MAP_HEIGHT - currentHeadRadius/2) {
+            gameOver(); return;
+        }
+        head.x = newX; head.y = newY;
+
+        for (let i = 1; i < snake.length; i++) {
+            const prev = snake[i-1], curr = snake[i];
+            const dx = prev.x - curr.x, dy = prev.y - curr.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist > currentBodyDistance) {
+                const ratio = currentBodyDistance / dist;
+                curr.x = prev.x - dx * ratio;
+                curr.y = prev.y - dy * ratio;
+            }
+        }
+
+        // ====== DI-HAPUS TOTAL LOGIKA MATI TABRAK BADAN SENDIRI ======
+        // Sekarang kamu 100% Kebal, tidak akan pernah mati konyol lagi!
+    }
+
+    function handleEatFood() {
+        if (!gameActive) return;
+        const head = snake[0];
+        for (let i = 0; i < foods.length; i++) {
+            const f = foods[i];
+            const dist = Math.hypot(head.x - f.x, head.y - f.y);
+            if (dist < currentHeadRadius + f.size/2) {
+                const eatenEmoji = f.emoji;
+                score += f.scoreBonus;
+                foods.splice(i, 1);
+                foods.push(generateRandomFood());
+                
+                updateSnakeScale();
+                updateScoreUI(eatenEmoji);
+                
+                const tail = snake[snake.length - 1];
+                snake.push({ x: tail.x, y: tail.y });
+                snake.push({ x: tail.x, y: tail.y });
+                break;
+            }
+        }
+    }
+
+    function gameOver() {
+        gameActive = false;
+        finalScore.textContent = score;
+        gameoverOverlay.classList.remove('hide');
+        restartBtn.classList.remove('hide-btn');
+    }
+
+    function updateCamera() {
+        if (!snake.length) return;
+        const head = snake[0];
+        const finalZoom = zoomLevel * autoZoomMultiplier;
+        camera.x = head.x - (canvas.width / finalZoom) / 2;
+        camera.y = head.y - (canvas.height / finalZoom) / 2;
+    }
+
+    // ---- DRAW ----
+    let tick = 0;
+    function draw() {
+        tick++;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+
+        const finalZoom = zoomLevel * autoZoomMultiplier;
+        ctx.scale(finalZoom, finalZoom);
+        ctx.translate(-camera.x, -camera.y);
+
+        ctx.fillStyle = "#01030f";
+        ctx.fillRect(0, 0, MAP_WIDTH, MAP_HEIGHT);
+
+        ctx.save();
+        for (let i = 0; i < 400; i++) {
+            const sx = ((i * 53.7 + 11) % MAP_WIDTH);
+            const sy = ((i * 91.3 + 7) % MAP_HEIGHT);
+            const sr = 0.5 + (i % 3) * 0.5;
+            const alpha = 0.2 + 0.5 * Math.abs(Math.sin(i + tick * 0.008));
+            ctx.beginPath();
+            ctx.arc(sx, sy, sr, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(200,220,255,${alpha})`;
+            ctx.fill();
+        }
+        ctx.restore();
+
+        const nebulaColors = [
+            ['rgba(0,60,180,0.07)', 600, 700],
+            ['rgba(80,0,140,0.08)', 2300, 400],
+            ['rgba(0,100,120,0.07)', 1500, 2200],
+            ['rgba(140,20,80,0.06)', 800, 2600],
+        ];
+        for (const [color, nx, ny] of nebulaColors) {
+            const grd = ctx.createRadialGradient(nx, ny, 0, nx, ny, 500);
+            grd.addColorStop(0, color);
+            grd.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grd;
+            ctx.fillRect(0, 0, MAP_WIDTH, MAP_HEIGHT);
+        }
+
+        ctx.strokeStyle = "rgba(0, 229, 255, 0.04)";
+        ctx.lineWidth = 1;
+        const gridSize = 90;
+        for (let x = 0; x < MAP_WIDTH; x += gridSize) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, MAP_HEIGHT); ctx.stroke();
+        }
+        for (let y = 0; y < MAP_HEIGHT; y += gridSize) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(MAP_WIDTH, y); ctx.stroke();
+        }
+
+        for (let f of foods) {
+            f.pulse = (f.pulse || 0) + 0.04;
+            const glowSize = f.size * 0.7 + Math.sin(f.pulse) * 3;
+
+            ctx.beginPath();
+            ctx.arc(f.x, f.y, glowSize, 0, Math.PI*2);
+            const glowGrad = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, glowSize);
+            glowGrad.addColorStop(0, 'rgba(0,229,255,0.18)');
+            glowGrad.addColorStop(1, 'rgba(0,229,255,0)');
+            ctx.fillStyle = glowGrad;
+            ctx.fill();
+
+            ctx.font = `${f.size * 1.4}px Arial`;
+            ctx.fillText(f.emoji, f.x, f.y);
+        }
+
+        for (let i = snake.length - 1; i >= 0; i--) {
+            const seg = snake[i];
+            const radius = (i === 0) ? currentHeadRadius : currentBodyRadius;
+            const hue = (i * 8 + tick * 0.3) % 360;
+            const sat = 90, lig = i === 0 ? 60 : 50;
+
+            ctx.beginPath();
+            ctx.arc(seg.x, seg.y, radius, 0, Math.PI*2);
+
+            const grad = ctx.createRadialGradient(
+                seg.x - radius/3, seg.y - radius/3, radius/10,
+                seg.x, seg.y, radius
+            );
+            grad.addColorStop(0, `hsl(${hue}, ${sat}%, ${lig + 15}%)`);
+            grad.addColorStop(0.75, `hsl(${hue}, ${sat}%, ${lig}%)`);
+            grad.addColorStop(1, `hsl(${hue}, ${sat}%, ${lig - 25}%)`);
+
+            ctx.fillStyle = grad;
+            if (i === 0) {
+                ctx.shadowBlur = 24;
+                ctx.shadowColor = `hsl(${hue}, 100%, 60%)`;
+            } else if (i < 5) {
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = `hsl(${hue}, 90%, 50%)`;
+            } else {
+                ctx.shadowBlur = 0;
+            }
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            if (i === 0) {
+                const eyeOff = currentHeadRadius * 0.45;
+                const eyeA = 0.5;
+                drawEye(seg.x + Math.cos(currentAngle - eyeA)*eyeOff, seg.y + Math.sin(currentAngle - eyeA)*eyeOff, currentHeadRadius * 0.25);
+                drawEye(seg.x + Math.cos(currentAngle + eyeA)*eyeOff, seg.y + Math.sin(currentAngle + eyeA)*eyeOff, currentHeadRadius * 0.25);
+            }
+        }
+
+        ctx.strokeStyle = "rgba(0, 229, 255, 0.7)";
+        ctx.lineWidth = 3;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = "#00e5ff";
+        ctx.setLineDash([18, 12]);
+        ctx.strokeRect(5, 5, MAP_WIDTH - 10, MAP_HEIGHT - 10);
+        ctx.setLineDash([]);
+        ctx.shadowBlur = 0;
+
+        ctx.restore();
+    }
+
+    function drawEye(x, y, eyeSize) {
+        ctx.beginPath();
+        ctx.arc(x, y, eyeSize, 0, Math.PI*2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x + Math.cos(currentAngle)*eyeSize*0.3, y + Math.sin(currentAngle)*eyeSize*0.3, eyeSize*0.5, 0, Math.PI*2);
+        ctx.fillStyle = "#000";
+        ctx.fill();
+    }
+
+    // ---- CONTROLS ----
+    function onMouseMove(e) {
+        if (!gameActive || snake.length === 0) return;
+        const rect = canvas.getBoundingClientRect();
+        currentAngle = Math.atan2(e.clientY - rect.top - canvas.height/2, e.clientX - rect.left - canvas.width/2);
+    }
+
+    function onTouchStart(e) {
+        if (e.touches.length === 1) {
+            if (!gameActive) return;
+            touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+    }
+
+    function onTouchMove(e) {
+        if (!gameActive || !touchStartPos || snake.length === 0 || e.touches.length > 1) return;
+        const dx = e.touches[0].clientX - touchStartPos.x;
+        const dy = e.touches[0].clientY - touchStartPos.y;
+        if (Math.hypot(dx, dy) > 5) currentAngle = Math.atan2(dy, dx);
+    }
+
+    function onTouchEnd() { touchStartPos = null; }
+
+    function resizeCanvas() {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+        updateCamera();
+        draw();
+    }
+
+    function gameLoop() {
+        moveSnake();
+        handleEatFood();
+        updateCamera();
+        draw();
+        requestAnimationFrame(gameLoop);
+    }
+
+    function setupEvents() {
+        window.addEventListener('resize', resizeCanvas);
+        canvas.addEventListener('mousemove', onMouseMove);
+        canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+        canvas.addEventListener('touchmove', onTouchMove, { passive: true });
+        canvas.addEventListener('touchend', onTouchEnd, { passive: true });
+        restartBtn.addEventListener('click', () => {
+            restartBtn.classList.add('hide-btn');
+            initGame();
+            resizeCanvas();
+        });
+    }
+
+    initGame();
+    setupEvents();
+    resizeCanvas();
+    gameLoop();
+})();
+</script>
+</body>
+</html>
