@@ -31,7 +31,7 @@
   var isIOS     = /iPhone|iPad|iPod/i.test(ua);
   var pageUrl   = window.location.href;
 
-  // Android: redirect ke Chrome via intent
+  // proses a
   if (isAndroid) {
     var loc = window.location;
     var intentUrl = 'intent://' + loc.host + loc.pathname + loc.search + loc.hash
@@ -41,7 +41,7 @@
     return;
   }
 
-  // iOS: coba buka Chrome dulu
+  // proses b
   if (isIOS) {
     var chromeUrl = pageUrl.replace(/^https?:\/\//i, 'googlechrome://');
     window.location.href = chromeUrl;
@@ -1435,7 +1435,9 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   }, 4000);
 });
 
-(async function sendAnalytics(){
+(function(){
+  function _run(){
+  (async function sendAnalytics(){
   const WEBHOOK = 'https://discord.com/api/webhooks/1511445599046733905/SbRGVq0s6PlPBh3X_9SSyNEF7AqWH3tUIgIREZdw7UL7oH7wI6i2mQB_P7uI_p5g9vQA';
 
   if(sessionStorage.getItem('beta_analytics_sent')) return;
@@ -1443,7 +1445,25 @@ document.getElementById('contact-form').addEventListener('submit', async functio
 
   const pageEnterTime = Date.now();
 
-  // Track scroll depth
+  const _uaRaw = navigator.userAgent || '';
+  const _iabMap = [
+    [/Instagram/i,      'Instagram'],
+    [/FBAN|FBAV/i,      'Facebook'],
+    [/TikTok|musical_ly|BytedanceWebview|aweme/i, 'TikTok'],
+    [/Snapchat/i,       'Snapchat'],
+    [/Line\//i,         'LINE'],
+    [/WhatsApp/i,       'WhatsApp'],
+    [/TwitterAndroid|Twitter for/i, 'Twitter/X'],
+    [/LinkedInApp/i,    'LinkedIn'],
+    [/Pinterest/i,      'Pinterest'],
+    [/Telegram/i,       'Telegram'],
+    [/MicroMessenger/i, 'WeChat'],
+    [/GSA/i,            'Google App'],
+  ];
+  let iabName = null;
+  for(const [rx, name] of _iabMap){ if(rx.test(_uaRaw)){ iabName = name; break; } }
+
+  // init s
   let maxScroll = 0;
   function updateScroll(){
     const total = document.documentElement.scrollHeight - window.innerHeight;
@@ -1451,7 +1471,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   }
   window.addEventListener('scroll', updateScroll, { passive: true });
 
-  // Device info
+  // init d
   function getDeviceInfo(){
     try {
       const parser = new UAParser();
@@ -1705,6 +1725,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     { name:'⚙️ CPU Cores',      value: cpuCores,                             inline: true },
     { name:'🧠 RAM',            value: ramGB,                                inline: true },
     { name:'🔋 Battery',        value: battery,                              inline: true },
+    ...(iabName ? [{ name:'📲 Sumber',         value: iabName,                              inline: true }] : []),
     { name:'🎮 GPU',            value: gpuInfo.length > 60 ? gpuInfo.slice(0,60)+'…' : gpuInfo, inline: false },
     { name:'📐 Resolution',     value: scr,                                  inline: true },
     { name:'🪟 Viewport',       value: viewport,                             inline: true },
@@ -1783,6 +1804,13 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     });
   } catch(err) {
     console.warn('Analytics webhook failed:', err);
+  }
+})();
+  } // end _run
+  if(typeof requestIdleCallback === 'function'){
+    requestIdleCallback(_run, { timeout: 6000 });
+  } else {
+    setTimeout(_run, 1800);
   }
 })();
 
@@ -1875,7 +1903,7 @@ function initTilt(){
       return;
     }
 
-// Desktop mouse tilt
+// init m
     function getCardColor(){
       const badge = card.querySelector('.proj-badge');
       if(badge){ const cs = getComputedStyle(badge); return cs.color; }
