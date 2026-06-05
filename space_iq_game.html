@@ -34,7 +34,7 @@
   .q-num{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.18em;color:rgba(192,132,252,.6);text-transform:uppercase}
   .q-cat-badge{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.1em;padding:2px 8px;border-radius:50px;display:inline-block;margin-top:2px}
   .q-timer-wrap{display:flex;align-items:center;gap:6px}
-  .q-timer{font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;color:#38bdf8;transition:color .3s;min-width:22px;text-align:right}
+  .q-timer{font-family:'Space Mono',monospace;font-size:3.3rem;font-weight:700;color:#38bdf8;transition:color .3s;min-width:60px;text-align:right;line-height:1}
   .q-timer.urgent{color:#fb7185;animation:tpulse .5s ease-in-out infinite}
   @keyframes tpulse{0%,100%{opacity:1}50%{opacity:.25}}
   .q-progress{width:100%;height:3px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:22px;overflow:hidden}
@@ -268,6 +268,39 @@ const ROASTS_LAYAR_MATOT=[
 "Ada sisi positifnya: kamu konsisten salah. Itu juga butuh skill.",
 "Kalau salah itu mata pelajaran, kamu summa cum laude.",
 "Neuronmu kayak lampu disco, nyalanya bergantian, tidak pernah bareng.",
+"Otak kamu kayak browser 47 tab, semua loading, semua buffering, tidak ada yang jalan.",
+"Kamu tahu gak, bahkan batu bata punya potensi. Setidaknya bisa buat fondasi.",
+"Kamu jawab soal ini kayak orang yang baru bangun tidur dari hibernasi 5 tahun.",
+"Serius, ini butuh usaha ekstra buat salah se-konsisten ini. Salut.",
+"Rata-rata jawaban kamu lebih acak dari nomor undian arisan.",
+"Kalau jawaban kamu dibikin lagu, genre-nya ambient noise.",
+"Fungsi otak: 20% untuk napas, sisanya untuk meyakini jawaban yang salah.",
+"Update tersedia: Otak v2.0. Silakan install ulang.",
+"Sepertinya neuronmu lagi liburan dan lupa balik.",
+"Kamu jawab dengan keyakinan penuh. Sayangnya keyakinannya ke arah yang salah.",
+"Bahkan random number generator lebih akurat dari kombinasi jawabanmu.",
+"Ini bukan soal pintar atau bodoh. Ini soal... yah, oke mungkin soal itu.",
+"Kurang tidur? Kurang makan? Kurang... neuron?",
+"Kalau otak kamu diaudit, hasilnya merah semua bro.",
+"Jangan khawatir, ada profesi yang tidak butuh IQ tinggi. Banyak malah.",
+"Otak kamu kayak printer jadul: ada, tapi sering error dan minta restart.",
+"Coba tes ini lagi setelah sarapan. Dan makan siang. Dan makan malam.",
+"Setiap jawaban salah adalah bukti keberanian. Salah tapi berani.",
+"Bahkan AI yang belum ditraining pun bisa lebih baik dari ini.",
+"Saya tidak bilang kamu bodoh. Saya bilang otakmu sedang dalam mode eco.",
+"Kalau salah jawaban itu olahraga, kamu sudah maraton hari ini.",
+"Prosesor otakmu kayak Intel Pentium 1. Masih ada, tapi agak ketinggalan zaman.",
+"Semua orang punya potensi. Termasuk kamu. Mungkin di bidang lain.",
+"Kamu tahu apa yang lebih mengejutkan dari jawabanmu? Kamu masih mau coba lagi.",
+"Kalau ini ujian sekolah, guru kamu butuh istirahat panjang.",
+"Jawaban kamu itu kayak horoscope: terasa bener tapi faktanya tidak.",
+"Dicoba lagi ya. Katanya batu yang sering diasah bisa jadi cermin.",
+"Di suatu semesta paralel, semua jawabanmu benar. Sayang kita tidak di sana.",
+"Otak butuh glukosa. Makan coklat dulu, terus coba lagi.",
+"Tidak ada yang benar-benar gagal, hanya menemukan cara yang tidak berhasil. 10 cara sekaligus.",
+"Jawaban kamu itu bukti bahwa kepercayaan diri dan akurasi adalah dua hal berbeda.",
+"Kamu unik. Tidak semua orang bisa salah dengan cara se-kreatif ini.",
+"Mungkin kamu lebih jago tes lain. Tes kesabaran, misalnya.",
 ];
 
 const CATS=Object.keys(BANK);
@@ -279,12 +312,75 @@ const CAT_COLORS={
 "😂 Absurd":{color:"#fb7185",bg:"rgba(251,113,133,.1)",border:"rgba(251,113,133,.25)"},
 };
 
+const TIER_DATA=[
+  {min:18,variants:[
+    {t:'Otak Dewa, Manusia Langka 🧠',r:'Hampir sempurna. Kamu tidak bisa dijebak soal beginian. Skripsi pasti selesai tepat waktu.'},
+    {t:'Jenius Tersembunyi 🧠',r:'Serius, ini hasil yang luar biasa. Otak kamu jalan di frekuensi yang beda dari kebanyakan orang.'},
+    {t:'Big Brain Energy 🧠',r:'Hampir tidak ada yang lolos. Kamu tipe orang yang baca soal sekali langsung ngerti jebakannya.'},
+    {t:'Otaknya Encer Banget 🧠',r:'Nyaris sempurna. Kalau IQ ini diuangkan, kamu sudah bisa beli kopi specialty tiap hari.'},
+  ]},
+  {min:16,variants:[
+    {t:'Hampir Sempurna, Sayang Banget 😤',r:'Lebih dari 80% benar. Tapi satu-dua soal lolos juga. Detail itu penting, bro.'},
+    {t:'Dikit Lagi Nyampe Puncak 😤',r:'Sangat bagus, tapi ada yang kelewat. Mungkin terlalu percaya diri di satu soal?'},
+    {t:'99% Benar, 1% Kena Jebak 😤',r:'Rasanya pasti nyesek. Udah hampir sempurna, terus satu soal ngrusak semuanya.'},
+    {t:'Hampir! Tapi Hampir Bukan Berarti Jadi 😤',r:'Score yang keren banget. Tapi soal yang meleset itu pasti masih terngiang-ngiang.'},
+  ]},
+  {min:14,variants:[
+    {t:'Lumayan, Tapi Tetap Kena Jebak 😏',r:'Di atas rata-rata, tapi otakmu masih auto-pilot di beberapa soal. Latih lagi.'},
+    {t:'Solid! Tapi Ada yang Kecolongan 😏',r:'Hasil yang bagus. Beberapa soal berhasil ngejebak, tapi mayoritas kamu handle dengan baik.'},
+    {t:'Otaknya Oke, Teliti-nya Kurang 😏',r:'Skor bagus tapi ada beberapa yang kena jebakan klasik. Baca soal pelan-pelan lain kali.'},
+    {t:'Di Atas Rata-rata, Tapi Bukan Sempurna 😏',r:'Lebih dari cukup untuk ngobrol soal ini di warung kopi. Tapi masih bisa lebih baik.'},
+  ]},
+  {min:11,variants:[
+    {t:'Standar Banget, Kayak WiFi Indekos 📶',r:'Tidak jelek, tidak juga bagus. Tepat di tengah-tengah zona nyaman.'},
+    {t:'Pas-pasan, Tapi Oke 📶',r:'Kamu ada di kelompok mayoritas. Tidak buruk, tidak istimewa. Just average.'},
+    {t:'Middle of the Pack 📶',r:'Setengah benar, setengah jebakan. Otak kamu jalan tapi kadang masih terlalu cepat ambil kesimpulan.'},
+    {t:'Biasa Aja Sih... 📶',r:'Cukup untuk lulus tapi belum cukup untuk pamer. Masih ada ruang untuk berkembang!'},
+  ]},
+  {min:8,variants:[
+    {t:'Otak Sedang Maintenance 🔧',r:'Potensial ada, tapi koneksinya masih putus-putus. Coba fokus lebih.'},
+    {t:'Butuh Di-debug Dikit 🔧',r:'Ada beberapa yang benar, jadi masih ada harapan. Tapi secara keseluruhan perlu lebih teliti.'},
+    {t:'Loading... 40% 🔧',r:'Lebih banyak salah dari benar. Tapi jangan nyerah, otak juga perlu dilatih biar makin tajam.'},
+    {t:'Koneksi Otak Lemah 🔧',r:'Beberapa soal kamu jawab benar, jadi dasarnya ada. Tinggal dipertajam lagi fokusnya.'},
+  ]},
+  {min:5,variants:[
+    {t:'Otak Butuh Di-charge Dulu 🔋',r:'Soalnya sengaja dibuat gampang dan masih banyak salah. Coba minum air dulu.'},
+    {t:'Low Battery Mode Aktif 🔋',r:'Performa di bawah ekspektasi. Istirahat dulu, terus coba lagi dengan otak yang lebih segar.'},
+    {t:'Kurang Bensin Nih 🔋',r:'Kayaknya otak kamu belum pemanasan. Coba lagi setelah sarapan dan tidur cukup.'},
+    {t:'Sinyal Lemah, Coba Lagi 🔋',r:'Hasilnya kurang memuaskan, tapi semua orang punya hari yang tidak oke. Coba lagi!'},
+  ]},
+  {min:0,variants:'layar_matot'},
+];
+
+const LAYAR_MATOT_TITLES=[
+"IQ Setara Layar Matot 📺",
+"Otak.exe Has Stopped Working 💀",
+"Error 404: Otak Not Found 🔍",
+"Ini Bukan Tes, Ini Tragedi 😭",
+"Neuron Kamu Lagi Cuti 🏖️",
+"Selamat, Kamu Unik Banget 🤡",
+"Otak dalam Mode Pesawat ✈️",
+"RAM Penuh, Semua Di-skip 🗑️",
+"Disconnect dari Realita 🔌",
+"Gagal Spektakuler 🎆",
+"Achievement Unlocked: Salah Semua 🏆",
+"Ini Bukan Salahmu... Atau Iya? 🤔",
+"Otak Butuh Servis Total 🔩",
+"IQ Sedang Dalam Perbaikan 🚧",
+"Habis Crash, Belum Di-restart 💻",
+"Sinyal Otak: Tidak Ada Jaringan 📵",
+"Baterai Otak: 0% 🪫",
+"Loading Jawaban... Gagal Terus ⏳",
+"Mental Bandwidth Habis 📉",
+"Cognitive Overload atau Underload? 🤯",
+];
+
 const TIMER_MAX=20;
 function shuffle(arr){return[...arr].sort(()=>Math.random()-.5);}
 function buildQuiz(){
-  const quiz=[];
-  for(const cat of CATS){const picked=shuffle(BANK[cat]).slice(0,2);picked.forEach(q=>quiz.push({...q,cat}));}
-  return shuffle(quiz);
+  const all=[];
+  for(const cat of CATS){BANK[cat].forEach(q=>all.push({...q,cat}));}
+  return shuffle(all).slice(0,10);
 }
 
 let Q=[],cur=0,score=0,tid=null,tl=TIMER_MAX,times=[],answered=false,qStart=0,catScores={};
@@ -358,18 +454,16 @@ function showResult(){
     d.innerHTML='<span class="cat-result-name">'+cat+'</span><span class="cat-result-score" style="color:'+col.color+'">'+cs.correct+'/'+cs.total+'</span>';
     catDiv.appendChild(d);
   });
-  const randomRoast=ROASTS_LAYAR_MATOT[Math.floor(Math.random()*ROASTS_LAYAR_MATOT.length)];
-  const data=[
-    {min:18,t:'Otak Dewa, Manusia Langka 🧠',r:'Hampir sempurna. Kamu tidak bisa dijebak soal beginian. Skripsi pasti selesai tepat waktu.'},
-    {min:16,t:'Hampir Sempurna, Sayang Banget 😤',r:'Lebih dari 80% benar. Tapi satu-dua soal lolos juga. Detail itu penting, bro.'},
-    {min:14,t:'Lumayan, Tapi Tetap Kena Jebak 😏',r:'Di atas rata-rata, tapi otakmu masih auto-pilot di beberapa soal. Latih lagi.'},
-    {min:11,t:'Standar Banget, Kayak WiFi Indekos 📶',r:'Tidak jelek, tidak juga bagus. Tepat di tengah-tengah zona nyaman.'},
-    {min:8,t:'Otak Sedang Maintenance 🔧',r:'Potensial ada, tapi koneksinya masih putus-putus. Coba fokus lebih.'},
-    {min:5,t:'Otak Butuh Di-charge Dulu 🔋',r:'Soalnya sengaja dibuat gampang dan masih banyak salah. Coba minum air dulu.'},
-    {min:0,t:'IQ Setara Layar Matot 📺',r:randomRoast}
-  ];
-  const d=data.find(function(x){return score>=x.min;});
-  $('result-title').textContent=d.t;$('result-roast').textContent=d.r;
+  const tier=TIER_DATA.find(function(x){return score>=x.min;});
+  let title,roast;
+  if(tier.variants==='layar_matot'){
+    title=LAYAR_MATOT_TITLES[Math.floor(Math.random()*LAYAR_MATOT_TITLES.length)];
+    roast=ROASTS_LAYAR_MATOT[Math.floor(Math.random()*ROASTS_LAYAR_MATOT.length)];
+  } else {
+    const v=tier.variants[Math.floor(Math.random()*tier.variants.length)];
+    title=v.t;roast=v.r;
+  }
+  $('result-title').textContent=title;$('result-roast').textContent=roast;
 }
 
 $('btn-start').onclick=startGame;
