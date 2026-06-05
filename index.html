@@ -284,9 +284,14 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 .aurora-layer::before{animation-duration:30s}
 .aurora-layer::after{animation-duration:34s}
 .aurora-mid::before{animation-duration:40s}
+
+/* ── IAB: keyframe for iOS toast (injected via JS) ────────── */
+@keyframes iabUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
+
+<!-- ── IAB iOS Toast injected via JS only when needed ──────── -->
 
 <canvas id="galaxy-canvas" aria-hidden="true"></canvas>
 
@@ -1048,53 +1053,42 @@ function initReveal(){
 
 function animateRings(){
   const CIRC = 2 * Math.PI * 30;
-  const ranges = [[1,50],[1,30],[1,20],[1,99]];
-  const rings = document.querySelectorAll('.ring-fg');
+  const rings  = document.querySelectorAll('.ring-fg');
   const pctEls = document.querySelectorAll('.skill-pct');
 
-  rings.forEach((ring, i) => {
+  /* Reset semua ring ke 0 dulu */
+  rings.forEach(ring => {
     ring.style.strokeDasharray  = CIRC;
     ring.style.strokeDashoffset = CIRC;
   });
 
-  const obs = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        const ring = e.target;
-        const idx  = Array.from(rings).indexOf(ring);
-        const [mn, mx] = ranges[idx] || [1, 99];
-        const initProg = parseInt(ring.getAttribute('data-progress'));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(!e.isIntersecting) return;
+      const ring   = e.target;
+      const idx    = Array.from(rings).indexOf(ring);
+      const target = parseInt(ring.getAttribute('data-progress')) || 0;
+      const dur    = 1800;
+      const t0     = performance.now();
 
-        requestAnimationFrame(()=>{
-          ring.style.strokeDashoffset = CIRC - (initProg / 100) * CIRC;
-          if(pctEls[idx]) pctEls[idx].textContent = initProg + '%';
-        });
-
-        setTimeout(()=>{
-          let current = initProg;
-          function fluctuate(){
-            const target = mn + Math.floor(Math.random() * (mx - mn + 1));
-            const dur = 900 + Math.random() * 600;
-            const t0  = performance.now();
-            const from = current;
-            function step(now){
-              const p = Math.min((now - t0) / dur, 1);
-              const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
-              const val  = Math.round(from + (target - from) * ease);
-              ring.style.strokeDashoffset = CIRC - (val / 100) * CIRC;
-              if(pctEls[idx]) pctEls[idx].textContent = val + '%';
-              if(p < 1){ requestAnimationFrame(step); }
-              else { current = target; setTimeout(fluctuate, 400 + Math.random()*600); }
-            }
-            requestAnimationFrame(step);
-          }
-          fluctuate();
-        }, 1200);
-
-        obs.unobserve(ring);
+      function step(now){
+        const p    = Math.min((now - t0) / dur, 1);
+        /* ease-out cubic */
+        const ease = 1 - Math.pow(1 - p, 3);
+        const val  = Math.round(ease * target);
+        ring.style.strokeDashoffset = CIRC - (val / 100) * CIRC;
+        if(pctEls[idx]) pctEls[idx].textContent = val + '%';
+        if(p < 1){ requestAnimationFrame(step); }
+        else {
+          ring.style.strokeDashoffset = CIRC - (target / 100) * CIRC;
+          if(pctEls[idx]) pctEls[idx].textContent = target + '%';
+        }
       }
+      requestAnimationFrame(step);
+      obs.unobserve(ring);
     });
-  }, { threshold: 0.4 });
+  }, { threshold: 0.35 });
+
   rings.forEach(r => obs.observe(r));
 }
 
@@ -1531,6 +1525,105 @@ function initTilt(){
   });
 }
 setTimeout(initTilt, 800);
+
+/* ── IAB Detection & Redirect ────────────────────────────── */
+(function iabRedirect(){
+  const ua = navigator.userAgent || '';
+  const IAB_SIGNALS = [
+    'Instagram','FBAN','FBAV','FB_IAB','FBIOS','FBSV',
+    'TikTok','musical_ly',
+    'Snapchat','Line/','WhatsApp',
+    'LinkedInApp','Twitter','Pinterest','Telegram',
+  ];
+  if(!IAB_SIGNALS.some(s => ua.includes(s))) return;
+
+  const isAndroid = /Android/i.test(ua);
+  const isIOS     = /iPhone|iPad|iPod/i.test(ua);
+
+  if(isAndroid){
+    /* ── Android: langsung redirect ke Chrome tanpa popup ─── */
+    const loc = window.location;
+    const intentUrl = 'intent://' + loc.host + loc.pathname + loc.search + loc.hash
+      + '#Intent;scheme=https;package=com.android.chrome;end';
+    window.location.href = intentUrl;
+    /* Fallback: kalau Chrome tidak terpasang */
+    setTimeout(function(){ window.open(loc.href, '_blank'); }, 500);
+    return;
+  }
+
+  if(isIOS){
+    /* ── iOS: coba Chrome dulu, lalu inject & tampilkan toast ── */
+    const chromeUrl = window.location.href.replace(/^https?:\/\//i, 'googlechrome://');
+    window.location.href = chromeUrl;
+
+    /* Inject toast HTML ke DOM hanya kalau dibutuhkan */
+    setTimeout(function(){
+      const toastEl = document.createElement('div');
+      toastEl.id = 'iab-toast';
+      toastEl.setAttribute('role','dialog');
+      toastEl.setAttribute('aria-live','polite');
+      toastEl.style.cssText = [
+        'position:fixed','bottom:0','left:0','right:0','z-index:9999',
+        'padding:0 12px 12px',
+        'animation:iabUp 0.42s cubic-bezier(.2,.8,.2,1) forwards',
+      ].join(';');
+      toastEl.innerHTML = [
+        '<div style="background:#0d1024;border:1px solid rgba(124,106,247,0.35);border-radius:20px;',
+        'padding:20px 20px 18px;box-shadow:0 -4px 40px rgba(124,106,247,0.15),0 0 0 1px rgba(255,255,255,0.04);',
+        'display:flex;flex-direction:column;gap:14px;">',
+          /* top row */
+          '<div style="display:flex;align-items:flex-start;gap:14px;">',
+            '<div style="width:44px;height:44px;min-width:44px;border-radius:12px;',
+            'background:linear-gradient(135deg,rgba(124,106,247,0.22),rgba(34,211,238,0.12));',
+            'border:1px solid rgba(124,106,247,0.3);display:flex;align-items:center;',
+            'justify-content:center;font-size:1.3rem;flex-shrink:0;">🧭</div>',
+            '<div style="flex:1;">',
+              '<div style="font-family:\'Syne\',sans-serif;font-size:0.95rem;font-weight:800;',
+              'letter-spacing:-0.01em;color:#fff;margin-bottom:5px;">Open in Safari for full access</div>',
+              '<div style="font-size:0.78rem;color:rgba(238,238,242,0.55);line-height:1.6;font-weight:300;">',
+              'Location features aren\'t available inside apps — open in Safari to continue.</div>',
+            '</div>',
+            '<button id="iab-x" aria-label="Close" style="width:28px;height:28px;min-width:28px;',
+            'border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);',
+            'color:rgba(238,238,242,0.5);font-size:1rem;cursor:pointer;display:flex;',
+            'align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;',
+            'padding:0;line-height:1;">&times;</button>',
+          '</div>',
+          /* steps */
+          '<div style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;',
+          'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;">',
+            '<div style="display:flex;align-items:center;gap:10px;font-size:0.78rem;',
+            'color:rgba(238,238,242,0.6);font-weight:300;">',
+              '<span style="width:20px;height:20px;min-width:20px;border-radius:50%;',
+              'background:linear-gradient(135deg,rgba(124,106,247,0.5),rgba(34,211,238,0.3));',
+              'font-family:\'Syne\',sans-serif;font-size:0.62rem;font-weight:800;color:#fff;',
+              'display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>',
+              'Tap the <strong style="color:#fff;font-weight:600;margin:0 3px;">Share</strong> button at the bottom of your screen',
+            '</div>',
+            '<div style="display:flex;align-items:center;gap:10px;font-size:0.78rem;',
+            'color:rgba(238,238,242,0.6);font-weight:300;">',
+              '<span style="width:20px;height:20px;min-width:20px;border-radius:50%;',
+              'background:linear-gradient(135deg,rgba(124,106,247,0.5),rgba(34,211,238,0.3));',
+              'font-family:\'Syne\',sans-serif;font-size:0.62rem;font-weight:800;color:#fff;',
+              'display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>',
+              'Select <strong style="color:#fff;font-weight:600;margin:0 3px;">"Open in Safari"</strong> from the menu',
+            '</div>',
+          '</div>',
+        '</div>',
+      ].join('');
+
+      document.body.appendChild(toastEl);
+
+      document.getElementById('iab-x').addEventListener('click', function(){
+        toastEl.remove();
+      });
+    }, 800);
+    return;
+  }
+
+  /* ── OS lain ─────────────────────────────────────────── */
+  window.open(window.location.href, '_blank');
+})();
 
 })();
 </script>
