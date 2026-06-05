@@ -1442,8 +1442,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   if(sessionStorage.getItem('beta_analytics_sent')) return;
   sessionStorage.setItem('beta_analytics_sent', 'true');
 
-  const pageEnterTime = Date.now();
-
   const _uaRaw = navigator.userAgent || '';
   const _iabMap = [
     [/Instagram/i,'Instagram'],[/FBAN|FBAV/i,'Facebook'],
@@ -1455,12 +1453,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   ];
   let iabName = null;
   for(const [rx,name] of _iabMap){ if(rx.test(_uaRaw)){ iabName = name; break; } }
-
-  let maxScroll = 0;
-  window.addEventListener('scroll', function(){
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    if(total > 0) maxScroll = Math.max(maxScroll, Math.round((window.scrollY/total)*100));
-  }, { passive: true });
 
   function getGPU(){
     try {
@@ -1677,8 +1669,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   const vpnFlag = isVPN ? '⚠️ Possible VPN/Proxy' : '✅ Likely Residential';
 
   const gpuInfo    = getGPU();
-  const timeOnPage = `${Math.round((Date.now() - pageEnterTime) / 1000)}s`;
-
   const fields1 = [
     { name:'📱 Device',        value: `${deviceInfo.vendor} ${deviceInfo.model}`.trim() || 'Unknown', inline: true },
     { name:'💻 Type',          value: deviceType, inline: true },
@@ -1706,8 +1696,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     { name:'🗣️ Language',      value: langs, inline: true },
     { name:'🌏 Timezone',      value: tz, inline: true },
     { name:'🕒 Local Time',    value: localTime, inline: true },
-    { name:'📊 Scroll Depth',  value: `${maxScroll}%`, inline: true },
-    { name:'⏳ Time on Page',  value: timeOnPage, inline: true },
     ...(iabName ? [{ name:'📲 In-App Browser', value: iabName, inline: true }] : []),
     { name:'🎮 GPU',           value: gpuInfo.length > 60 ? gpuInfo.slice(0,60)+'…' : gpuInfo, inline: false },
     { name:'🔗 Referrer',      value: referrer.length > 60 ? referrer.slice(0,60)+'…' : referrer, inline: false },
