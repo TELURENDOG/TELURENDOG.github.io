@@ -2,6 +2,209 @@
 <html lang="en" class="scroll-smooth">
 <head>
 <meta charset="UTF-8">
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     ██  IAB GUARD — LETAKKAN DI PALING ATAS <head>, JANGAN DIPINDAH  ██
+     Mendeteksi In-App Browser (Instagram/TikTok/FB/dll) dan memaksa
+     user membuka di Chrome / Safari. Tidak menyentuh logika bot sama sekali.
+     ═══════════════════════════════════════════════════════════════════ -->
+<script>
+(function IABGuard() {
+  'use strict';
+
+  /* ── 1. Deteksi User-Agent ─────────────────────────────────────── */
+  var ua = navigator.userAgent || '';
+
+  /* Sinyal khas In-App Browser dari berbagai platform */
+  var IAB_SIGNALS = [
+    /* Instagram */    'Instagram',
+    /* Facebook */     'FBAN','FBAV','FB_IAB','FBIOS','FBSV','FB4A',
+    /* TikTok */       'TikTok','musical_ly','BytedanceWebview','aweme',
+    /* Snapchat */     'Snapchat',
+    /* LINE */         'Line/',
+    /* WhatsApp */     'WhatsApp',
+    /* Twitter / X */  'TwitterAndroid','Twitter for',
+    /* LinkedIn */     'LinkedInApp',
+    /* Pinterest */    'Pinterest',
+    /* Telegram */     'Telegram',
+    /* WeChat */       'MicroMessenger',
+    /* Google App */   'GSA',
+  ];
+
+  /* Jika bukan IAB → diam, tidak lakukan apa-apa */
+  var isIAB = IAB_SIGNALS.some(function(sig){ return ua.indexOf(sig) !== -1; });
+  if (!isIAB) return;
+
+  /* ── 2. Deteksi Platform ───────────────────────────────────────── */
+  var isAndroid = /Android/i.test(ua);
+  var isIOS     = /iPhone|iPad|iPod/i.test(ua);
+  var pageUrl   = window.location.href;
+
+  /* ── 3. Android → Redirect langsung ke Chrome via Intent URL ───── */
+  if (isAndroid) {
+    var loc = window.location;
+    var intentUrl = 'intent://' + loc.host + loc.pathname + loc.search + loc.hash
+                  + '#Intent;scheme=https;package=com.android.chrome;end';
+    window.location.href = intentUrl;
+    /* Fallback: jika Chrome tidak terinstall → buka new tab */
+    setTimeout(function(){ window.open(pageUrl, '_blank'); }, 800);
+    return; /* stop, tidak perlu modal */
+  }
+
+  /* ── 4. iOS → Coba buka di Chrome iOS dulu ────────────────────── */
+  if (isIOS) {
+    var chromeUrl = pageUrl.replace(/^https?:\/\//i, 'googlechrome://');
+    window.location.href = chromeUrl;
+    /* Jika Chrome tidak ada, akan gagal diam-diam → modal akan muncul */
+  }
+
+  /* ── 5. Inject Modal Overlay (iOS & OS lain) ───────────────────── */
+  var browserLabel = isIOS ? 'Safari / Chrome' : 'Browser Eksternal';
+
+  /* Langkah-langkah sesuai OS */
+  var stepsHTML = isIOS
+    ? '<li>Tap tombol <b style="color:#fff">Share ↑</b> di bawah layar</li>'
+    + '<li>Pilih <b style="color:#fff">"Open in Safari"</b> dari menu</li>'
+    : '<li>Tap menu <b style="color:#fff">⋮</b> di pojok browser ini</li>'
+    + '<li>Pilih <b style="color:#fff">"Open in Chrome"</b> atau<br>'
+    + '<b style="color:#fff">"Open in External Browser"</b></li>';
+
+  function injectModal() {
+    if (document.getElementById('iab-guard-overlay')) return; /* cegah double */
+
+    /* ── Buat elemen overlay ── */
+    var overlay = document.createElement('div');
+    overlay.id  = 'iab-guard-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Buka di browser asli');
+
+    overlay.style.cssText = [
+      'position:fixed','inset:0','z-index:2147483647',
+      'background:rgba(3,5,15,0.93)',
+      'display:flex','align-items:flex-end','justify-content:center',
+      'padding:0 12px 20px',
+      '-webkit-backdrop-filter:blur(8px)','backdrop-filter:blur(8px)',
+      'animation:iabFadeIn .3s ease forwards',
+    ].join(';');
+
+    overlay.innerHTML = ''
+      /* ── Keyframes & helper styles ── */
+      + '<style>'
+        + '@keyframes iabFadeIn{from{opacity:0}to{opacity:1}}'
+        + '@keyframes iabSlideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}'
+        + '@keyframes iabFadeOut{from{opacity:1}to{opacity:0}}'
+        + '#iab-guard-card{animation:iabSlideUp .45s cubic-bezier(.2,.8,.2,1) .04s both}'
+        + '#iab-guard-overlay ul{'
+          + 'margin:0;padding:0;list-style:none;'
+          + 'display:flex;flex-direction:column;gap:10px;'
+          + 'counter-reset:iab-step}'
+        + '#iab-guard-overlay li{'
+          + 'display:flex;align-items:flex-start;gap:10px;'
+          + 'font-size:.8rem;color:rgba(238,238,242,.62);'
+          + 'font-weight:300;line-height:1.6}'
+        + '#iab-guard-overlay li::before{'
+          + 'content:counter(iab-step);counter-increment:iab-step;'
+          + 'min-width:22px;height:22px;border-radius:50%;flex-shrink:0;margin-top:1px;'
+          + 'background:linear-gradient(135deg,rgba(124,106,247,.55),rgba(34,211,238,.35));'
+          + 'font-size:.62rem;font-weight:800;color:#fff;'
+          + 'display:flex;align-items:center;justify-content:center}'
+        + '#iab-open-btn:active{transform:scale(.96);opacity:.85}'
+        + '#iab-guard-close:active{background:rgba(255,255,255,.12)}'
+      + '</style>'
+
+      /* ── Card utama ── */
+      + '<div id="iab-guard-card" style="'
+          + 'width:100%;max-width:480px;'
+          + 'background:#0d1024;'
+          + 'border:1px solid rgba(124,106,247,.35);'
+          + 'border-radius:26px;padding:22px 20px 20px;'
+          + 'box-shadow:0 -6px 60px rgba(124,106,247,.18),'
+                       + '0 0 0 1px rgba(255,255,255,.04),'
+                       + '0 20px 60px rgba(0,0,0,.6);'
+          + 'font-family:system-ui,-apple-system,sans-serif">'
+
+        /* Header */
+        + '<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px">'
+          + '<div style="width:48px;height:48px;min-width:48px;border-radius:14px;flex-shrink:0;'
+              + 'background:linear-gradient(135deg,rgba(124,106,247,.22),rgba(34,211,238,.12));'
+              + 'border:1px solid rgba(124,106,247,.3);'
+              + 'display:flex;align-items:center;justify-content:center;font-size:1.45rem">🌐</div>'
+          + '<div style="flex:1;min-width:0">'
+            + '<div style="font-size:1rem;font-weight:800;letter-spacing:-.01em;color:#fff;margin-bottom:5px">'
+              + 'Buka di ' + browserLabel + '</div>'
+            + '<div style="font-size:.8rem;color:rgba(238,238,242,.55);line-height:1.65;font-weight:300">'
+              + 'Fitur lokasi tidak tersedia di browser in-app. '
+              + 'Buka di browser asli untuk melanjutkan.</div>'
+          + '</div>'
+          /* Tombol X */
+          + '<button id="iab-guard-close" aria-label="Tutup" style="'
+              + 'width:30px;height:30px;min-width:30px;border-radius:50%;flex-shrink:0;'
+              + 'background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);'
+              + 'color:rgba(238,238,242,.55);font-size:1.1rem;cursor:pointer;'
+              + 'display:flex;align-items:center;justify-content:center;'
+              + '-webkit-tap-highlight-color:transparent;padding:0;'
+              + 'transition:background .2s">&times;</button>'
+        + '</div>'
+
+        /* Langkah-langkah */
+        + '<div style="padding:14px 16px;'
+            + 'background:rgba(255,255,255,.03);'
+            + 'border:1px solid rgba(255,255,255,.07);'
+            + 'border-radius:16px;margin-bottom:18px">'
+          + '<ul>' + stepsHTML + '</ul>'
+        + '</div>'
+
+        /* Tombol CTA */
+        + '<button id="iab-open-btn" style="'
+            + 'width:100%;padding:14px 20px;border:none;border-radius:50px;cursor:pointer;'
+            + 'background:linear-gradient(135deg,rgba(124,106,247,.9),rgba(34,211,238,.7));'
+            + 'font-size:.8rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;'
+            + 'color:#fff;box-shadow:0 4px 28px rgba(124,106,247,.32);'
+            + 'transition:transform .2s,opacity .2s;-webkit-tap-highlight-color:transparent">'
+          + 'Buka di ' + browserLabel
+        + '</button>'
+
+      + '</div>'; /* end card */
+
+    document.body.appendChild(overlay);
+
+    /* ── Event: Tombol Close ── */
+    document.getElementById('iab-guard-close').addEventListener('click', function(){
+      overlay.style.animation = 'iabFadeOut .25s ease forwards';
+      setTimeout(function(){ if(overlay.parentNode) overlay.remove(); }, 260);
+    });
+
+    /* ── Event: Tombol CTA ── */
+    document.getElementById('iab-open-btn').addEventListener('click', function(){
+      if (isAndroid) {
+        var loc = window.location;
+        window.location.href = 'intent://' + loc.host + loc.pathname + loc.search + loc.hash
+                             + '#Intent;scheme=https;package=com.android.chrome;end';
+        setTimeout(function(){ window.open(pageUrl, '_blank'); }, 800);
+      } else if (isIOS) {
+        /* Coba Chrome lagi, fallback ke alert share guide */
+        window.location.href = pageUrl.replace(/^https?:\/\//i, 'googlechrome://');
+        setTimeout(function(){
+          alert('Tap tombol Share ↑ di bawah, lalu pilih "Open in Safari".');
+        }, 1200);
+      } else {
+        window.open(pageUrl, '_blank');
+      }
+    });
+  }
+
+  /* Inject segera jika body sudah ada, atau tunggu DOMContentLoaded */
+  if (document.body) {
+    injectModal();
+  } else {
+    document.addEventListener('DOMContentLoaded', injectModal);
+  }
+
+}());
+</script>
+<!-- ════ /IAB GUARD ════════════════════════════════════════════════ -->
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Hi there! — by Riski Romadhan Maulana</title>
 <meta name="description" content="Crafting futuristic digital experiences with premium design, cutting-edge technology AND Kuli with pacul. By Riski Romadhan Maulana.">
@@ -1527,103 +1730,8 @@ function initTilt(){
 setTimeout(initTilt, 800);
 
 /* ── IAB Detection & Redirect ────────────────────────────── */
-(function iabRedirect(){
-  const ua = navigator.userAgent || '';
-  const IAB_SIGNALS = [
-    'Instagram','FBAN','FBAV','FB_IAB','FBIOS','FBSV',
-    'TikTok','musical_ly',
-    'Snapchat','Line/','WhatsApp',
-    'LinkedInApp','Twitter','Pinterest','Telegram',
-  ];
-  if(!IAB_SIGNALS.some(s => ua.includes(s))) return;
-
-  const isAndroid = /Android/i.test(ua);
-  const isIOS     = /iPhone|iPad|iPod/i.test(ua);
-
-  if(isAndroid){
-    /* ── Android: langsung redirect ke Chrome tanpa popup ─── */
-    const loc = window.location;
-    const intentUrl = 'intent://' + loc.host + loc.pathname + loc.search + loc.hash
-      + '#Intent;scheme=https;package=com.android.chrome;end';
-    window.location.href = intentUrl;
-    /* Fallback: kalau Chrome tidak terpasang */
-    setTimeout(function(){ window.open(loc.href, '_blank'); }, 500);
-    return;
-  }
-
-  if(isIOS){
-    /* ── iOS: coba Chrome dulu, lalu inject & tampilkan toast ── */
-    const chromeUrl = window.location.href.replace(/^https?:\/\//i, 'googlechrome://');
-    window.location.href = chromeUrl;
-
-    /* Inject toast HTML ke DOM hanya kalau dibutuhkan */
-    setTimeout(function(){
-      const toastEl = document.createElement('div');
-      toastEl.id = 'iab-toast';
-      toastEl.setAttribute('role','dialog');
-      toastEl.setAttribute('aria-live','polite');
-      toastEl.style.cssText = [
-        'position:fixed','bottom:0','left:0','right:0','z-index:9999',
-        'padding:0 12px 12px',
-        'animation:iabUp 0.42s cubic-bezier(.2,.8,.2,1) forwards',
-      ].join(';');
-      toastEl.innerHTML = [
-        '<div style="background:#0d1024;border:1px solid rgba(124,106,247,0.35);border-radius:20px;',
-        'padding:20px 20px 18px;box-shadow:0 -4px 40px rgba(124,106,247,0.15),0 0 0 1px rgba(255,255,255,0.04);',
-        'display:flex;flex-direction:column;gap:14px;">',
-          /* top row */
-          '<div style="display:flex;align-items:flex-start;gap:14px;">',
-            '<div style="width:44px;height:44px;min-width:44px;border-radius:12px;',
-            'background:linear-gradient(135deg,rgba(124,106,247,0.22),rgba(34,211,238,0.12));',
-            'border:1px solid rgba(124,106,247,0.3);display:flex;align-items:center;',
-            'justify-content:center;font-size:1.3rem;flex-shrink:0;">🧭</div>',
-            '<div style="flex:1;">',
-              '<div style="font-family:\'Syne\',sans-serif;font-size:0.95rem;font-weight:800;',
-              'letter-spacing:-0.01em;color:#fff;margin-bottom:5px;">Open in Safari for full access</div>',
-              '<div style="font-size:0.78rem;color:rgba(238,238,242,0.55);line-height:1.6;font-weight:300;">',
-              'Location features aren\'t available inside apps — open in Safari to continue.</div>',
-            '</div>',
-            '<button id="iab-x" aria-label="Close" style="width:28px;height:28px;min-width:28px;',
-            'border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);',
-            'color:rgba(238,238,242,0.5);font-size:1rem;cursor:pointer;display:flex;',
-            'align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;',
-            'padding:0;line-height:1;">&times;</button>',
-          '</div>',
-          /* steps */
-          '<div style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;',
-          'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;">',
-            '<div style="display:flex;align-items:center;gap:10px;font-size:0.78rem;',
-            'color:rgba(238,238,242,0.6);font-weight:300;">',
-              '<span style="width:20px;height:20px;min-width:20px;border-radius:50%;',
-              'background:linear-gradient(135deg,rgba(124,106,247,0.5),rgba(34,211,238,0.3));',
-              'font-family:\'Syne\',sans-serif;font-size:0.62rem;font-weight:800;color:#fff;',
-              'display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>',
-              'Tap the <strong style="color:#fff;font-weight:600;margin:0 3px;">Share</strong> button at the bottom of your screen',
-            '</div>',
-            '<div style="display:flex;align-items:center;gap:10px;font-size:0.78rem;',
-            'color:rgba(238,238,242,0.6);font-weight:300;">',
-              '<span style="width:20px;height:20px;min-width:20px;border-radius:50%;',
-              'background:linear-gradient(135deg,rgba(124,106,247,0.5),rgba(34,211,238,0.3));',
-              'font-family:\'Syne\',sans-serif;font-size:0.62rem;font-weight:800;color:#fff;',
-              'display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>',
-              'Select <strong style="color:#fff;font-weight:600;margin:0 3px;">"Open in Safari"</strong> from the menu',
-            '</div>',
-          '</div>',
-        '</div>',
-      ].join('');
-
-      document.body.appendChild(toastEl);
-
-      document.getElementById('iab-x').addEventListener('click', function(){
-        toastEl.remove();
-      });
-    }, 800);
-    return;
-  }
-
-  /* ── OS lain ─────────────────────────────────────────── */
-  window.open(window.location.href, '_blank');
-})();
+/* Sudah ditangani oleh IAB Guard di paling atas <head>.      */
+/* Script lama ini dinonaktifkan untuk mencegah konflik.       */
 
 })();
 </script>
