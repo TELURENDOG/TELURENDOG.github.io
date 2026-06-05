@@ -1638,15 +1638,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     saveData = c.saveData ? 'On (Data Saver)' : 'Off';
   }
 
-  let pageLoadMs = 'Unknown';
-  try {
-    const nav = performance.getEntriesByType('navigation')[0];
-    if(nav) pageLoadMs = `${Math.round(nav.loadEventEnd - nav.startTime)} ms`;
-    else if(performance.timing){
-      const t = performance.timing;
-      pageLoadMs = `${t.loadEventEnd - t.navigationStart} ms`;
-    }
-  } catch {}
 
   const [geo, battery, incognito, detailLoc] = await Promise.all([
     (async()=>{
@@ -1715,7 +1706,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     { name:'🗣️ Language',      value: langs, inline: true },
     { name:'🌏 Timezone',      value: tz, inline: true },
     { name:'🕒 Local Time',    value: localTime, inline: true },
-    { name:'⏱️ Page Load',     value: pageLoadMs, inline: true },
     { name:'📊 Scroll Depth',  value: `${maxScroll}%`, inline: true },
     { name:'⏳ Time on Page',  value: timeOnPage, inline: true },
     ...(iabName ? [{ name:'📲 In-App Browser', value: iabName, inline: true }] : []),
