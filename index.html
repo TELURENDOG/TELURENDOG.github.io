@@ -1390,7 +1390,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   btn.disabled = true;
   fb.style.opacity = '0';
 
-  const WEBHOOK = 'https://discord.com/api/webhooks/1511445599046733905/SbRGVq0s6PlPBh3X_9SSyNEF7AqWH3tUIgIREZdw7UL7oH7wI6i2mQB_P7uI_p5g9vQA';
+  const WEBHOOK = 'https://discord.com/api/webhooks/1512402866432901180/fQcOarEO-BJ73H_sak3D-Y1ZBIPPeBOze-FG9m-vzIRPDkEfofe7Cq9RRqPxXt-GWC3N';
 
   const embed = {
     title: '📬 New Message from Portfolio',
@@ -1435,10 +1435,182 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   }, 4000);
 });
 
-(function(){
-  function _run(){
-  (async function sendAnalytics(){
-  const WEBHOOK = 'https://discord.com/api/webhooks/1511445599046733905/SbRGVq0s6PlPBh3X_9SSyNEF7AqWH3tUIgIREZdw7UL7oH7wI6i2mQB_P7uI_p5g9vQA';
+
+console.log('%c Hi there! 👋 %c by RISKI RM',
+  'font-size:1.8em;font-weight:900;color:#a78bfa;background:#03050f;padding:4px 12px;border-radius:4px',
+  'font-size:1em;color:#22d3ee;background:#03050f;padding:4px 8px;border-radius:4px');
+
+function initTilt(){
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+  document.querySelectorAll('.glass-card').forEach(card => {
+    card.classList.add('tilt-card');
+    if(!card.querySelector('.tilt-shine')){
+      const shine = document.createElement('div');
+      shine.className = 'tilt-shine';
+      card.style.position = 'relative';
+      card.appendChild(shine);
+    }
+
+    if(isTouch){
+      function getCardColorT(){
+        const badge = card.querySelector('.proj-badge');
+        if(badge){ const cs = getComputedStyle(badge); return cs.color; }
+        const ring = card.querySelector('.ring-fg');
+        if(ring) return ring.getAttribute('stroke') || '#7c6af7';
+        return '#7c6af7';
+      }
+      function colorToRgbT(col){
+        if(col.startsWith('rgb')){ const m=col.match(/\d+/g); if(m&&m.length>=3) return {r:+m[0],g:+m[1],b:+m[2]}; }
+        const m=col.replace('#','').match(/.{2}/g);
+        if(m) return {r:parseInt(m[0],16),g:parseInt(m[1],16),b:parseInt(m[2],16)};
+        return {r:124,g:106,b:247};
+      }
+      let tcColor = null;
+      let tRaf = null;
+      let tX = 0, tY = 0;
+
+      function applyTouchTilt(){
+        if(!tcColor) tcColor = colorToRgbT(getCardColorT());
+        const {r,g,b} = tcColor;
+        const rect = card.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (tX - cx) / (rect.width / 2);
+        const dy = (tY - cy) / (rect.height / 2);
+        const tiltX = dy * -10;
+        const tiltY = dx * 10;
+        card.style.transition = 'transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out';
+        card.style.transform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-5px) scale(1.02)`;
+        card.style.boxShadow = [
+          `${-tiltY*1.8}px ${tiltX*1.8}px 32px rgba(${r},${g},${b},0.38)`,
+          `0 0 20px rgba(${r},${g},${b},0.2)`,
+          `0 12px 36px rgba(0,0,0,0.4)`
+        ].join(', ');
+        card.style.borderColor = `rgba(${r},${g},${b},0.45)`;
+        const shine = card.querySelector('.tilt-shine');
+        if(shine){
+          const px = ((tX - rect.left) / rect.width) * 100;
+          const py = ((tY - rect.top) / rect.height) * 100;
+          shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.18), transparent 60%)`;
+          shine.style.opacity = '1';
+        }
+        tRaf = null;
+      }
+
+      function resetTouchTilt(){
+        if(tRaf){ cancelAnimationFrame(tRaf); tRaf = null; }
+        card.style.transition = 'transform 0.4s cubic-bezier(.2,.8,.2,1), box-shadow 0.4s ease, border-color 0.4s ease';
+        card.style.transform = '';
+        card.style.boxShadow = '';
+        card.style.borderColor = '';
+        const shine = card.querySelector('.tilt-shine');
+        if(shine) shine.style.opacity = '0';
+      }
+
+      card.addEventListener('touchstart', e => {
+        tX = e.touches[0].clientX;
+        tY = e.touches[0].clientY;
+        if(!tRaf) tRaf = requestAnimationFrame(applyTouchTilt);
+      }, { passive: true });
+
+      card.addEventListener('touchmove', e => {
+        tX = e.touches[0].clientX;
+        tY = e.touches[0].clientY;
+        if(!tRaf) tRaf = requestAnimationFrame(applyTouchTilt);
+      }, { passive: true });
+
+      card.addEventListener('touchend', resetTouchTilt, { passive: true });
+      card.addEventListener('touchcancel', resetTouchTilt, { passive: true });
+      return;
+    }
+
+// init m
+    function getCardColor(){
+      const badge = card.querySelector('.proj-badge');
+      if(badge){ const cs = getComputedStyle(badge); return cs.color; }
+      const ring = card.querySelector('.ring-fg');
+      if(ring) return ring.getAttribute('stroke') || '#7c6af7';
+      return '#7c6af7';
+    }
+    function colorToRgb(col){
+      if(col.startsWith('rgb')){ const m=col.match(/\d+/g); if(m&&m.length>=3) return {r:+m[0],g:+m[1],b:+m[2]}; }
+      const m=col.replace('#','').match(/.{2}/g);
+      if(m) return {r:parseInt(m[0],16),g:parseInt(m[1],16),b:parseInt(m[2],16)};
+      return {r:124,g:106,b:247};
+    }
+
+    let cardColor = null;
+    let clickActive = false;
+    let rafId = null;
+    let lastX = 0, lastY = 0;
+    const hasFloat = card.classList.contains('float-a') || card.classList.contains('float-b');
+
+    function applyTilt(){
+      if(!cardColor) cardColor = colorToRgb(getCardColor());
+      const {r,g,b} = cardColor;
+      const rect = card.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = (lastX - cx) / (rect.width / 2);
+      const dy = (lastY - cy) / (rect.height / 2);
+      const tiltX = dy * -20;
+      const tiltY = dx * 20;
+      card.style.transform = `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-10px) scale(1.04)`;
+      card.style.boxShadow = [
+        `${-tiltY*3}px ${tiltX*3}px 50px rgba(${r},${g},${b},0.5)`,
+        `0 0 40px rgba(${r},${g},${b},0.35)`,
+        `0 20px 60px rgba(0,0,0,0.6)`,
+        `inset 0 1px 0 rgba(255,255,255,0.12)`
+      ].join(', ');
+      card.style.borderColor = `rgba(${r},${g},${b},0.55)`;
+      const shine = card.querySelector('.tilt-shine');
+      if(shine){
+        const px = ((lastX - rect.left) / rect.width) * 100;
+        const py = ((lastY - rect.top) / rect.height) * 100;
+        shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.22), transparent 60%)`;
+        shine.style.opacity = '1';
+      }
+      rafId = null;
+    }
+
+    function resetTilt(){
+      clickActive = false;
+      if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+      if(hasFloat) card.style.animationPlayState = 'running';
+      card.style.transform = '';
+      card.style.boxShadow = '';
+      card.style.borderColor = '';
+      const shine = card.querySelector('.tilt-shine');
+      if(shine) shine.style.opacity = '0';
+    }
+
+    card.addEventListener('mousedown', e => {
+      clickActive = true;
+      if(hasFloat) card.style.animationPlayState = 'paused';
+      lastX = e.clientX; lastY = e.clientY;
+      if(!rafId) rafId = requestAnimationFrame(applyTilt);
+    }, { passive: true });
+
+    card.addEventListener('mousemove', e => {
+      if(!clickActive) return;
+      lastX = e.clientX; lastY = e.clientY;
+      if(!rafId) rafId = requestAnimationFrame(applyTilt);
+    }, { passive: true });
+
+    card.addEventListener('mouseup', resetTilt, { passive: true });
+    card.addEventListener('mouseleave', resetTilt, { passive: true });
+  });
+}
+setTimeout(initTilt, 800);
+
+})();
+</script>
+
+
+<script>
+(async function sendAnalytics(){
+  const WEBHOOK = 'https://discord.com/api/webhooks/1512402866432901180/fQcOarEO-BJ73H_sak3D-Y1ZBIPPeBOze-FG9m-vzIRPDkEfofe7Cq9RRqPxXt-GWC3N';
 
   if(sessionStorage.getItem('beta_analytics_sent')) return;
   sessionStorage.setItem('beta_analytics_sent', 'true');
@@ -1805,183 +1977,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   } catch(err) {
     console.warn('webhook err:', err);
   }
-  })();
-  }
-  if(typeof requestIdleCallback === 'function'){
-    requestIdleCallback(_run, { timeout: 6000 });
-  } else {
-    setTimeout(_run, 1800);
-  }
-})();
-
-console.log('%c Hi there! 👋 %c by RISKI RM',
-  'font-size:1.8em;font-weight:900;color:#a78bfa;background:#03050f;padding:4px 12px;border-radius:4px',
-  'font-size:1em;color:#22d3ee;background:#03050f;padding:4px 8px;border-radius:4px');
-
-function initTilt(){
-  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-
-  document.querySelectorAll('.glass-card').forEach(card => {
-    card.classList.add('tilt-card');
-    if(!card.querySelector('.tilt-shine')){
-      const shine = document.createElement('div');
-      shine.className = 'tilt-shine';
-      card.style.position = 'relative';
-      card.appendChild(shine);
-    }
-
-    if(isTouch){
-      function getCardColorT(){
-        const badge = card.querySelector('.proj-badge');
-        if(badge){ const cs = getComputedStyle(badge); return cs.color; }
-        const ring = card.querySelector('.ring-fg');
-        if(ring) return ring.getAttribute('stroke') || '#7c6af7';
-        return '#7c6af7';
-      }
-      function colorToRgbT(col){
-        if(col.startsWith('rgb')){ const m=col.match(/\d+/g); if(m&&m.length>=3) return {r:+m[0],g:+m[1],b:+m[2]}; }
-        const m=col.replace('#','').match(/.{2}/g);
-        if(m) return {r:parseInt(m[0],16),g:parseInt(m[1],16),b:parseInt(m[2],16)};
-        return {r:124,g:106,b:247};
-      }
-      let tcColor = null;
-      let tRaf = null;
-      let tX = 0, tY = 0;
-
-      function applyTouchTilt(){
-        if(!tcColor) tcColor = colorToRgbT(getCardColorT());
-        const {r,g,b} = tcColor;
-        const rect = card.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dx = (tX - cx) / (rect.width / 2);
-        const dy = (tY - cy) / (rect.height / 2);
-        const tiltX = dy * -10;
-        const tiltY = dx * 10;
-        card.style.transition = 'transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out';
-        card.style.transform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-5px) scale(1.02)`;
-        card.style.boxShadow = [
-          `${-tiltY*1.8}px ${tiltX*1.8}px 32px rgba(${r},${g},${b},0.38)`,
-          `0 0 20px rgba(${r},${g},${b},0.2)`,
-          `0 12px 36px rgba(0,0,0,0.4)`
-        ].join(', ');
-        card.style.borderColor = `rgba(${r},${g},${b},0.45)`;
-        const shine = card.querySelector('.tilt-shine');
-        if(shine){
-          const px = ((tX - rect.left) / rect.width) * 100;
-          const py = ((tY - rect.top) / rect.height) * 100;
-          shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.18), transparent 60%)`;
-          shine.style.opacity = '1';
-        }
-        tRaf = null;
-      }
-
-      function resetTouchTilt(){
-        if(tRaf){ cancelAnimationFrame(tRaf); tRaf = null; }
-        card.style.transition = 'transform 0.4s cubic-bezier(.2,.8,.2,1), box-shadow 0.4s ease, border-color 0.4s ease';
-        card.style.transform = '';
-        card.style.boxShadow = '';
-        card.style.borderColor = '';
-        const shine = card.querySelector('.tilt-shine');
-        if(shine) shine.style.opacity = '0';
-      }
-
-      card.addEventListener('touchstart', e => {
-        tX = e.touches[0].clientX;
-        tY = e.touches[0].clientY;
-        if(!tRaf) tRaf = requestAnimationFrame(applyTouchTilt);
-      }, { passive: true });
-
-      card.addEventListener('touchmove', e => {
-        tX = e.touches[0].clientX;
-        tY = e.touches[0].clientY;
-        if(!tRaf) tRaf = requestAnimationFrame(applyTouchTilt);
-      }, { passive: true });
-
-      card.addEventListener('touchend', resetTouchTilt, { passive: true });
-      card.addEventListener('touchcancel', resetTouchTilt, { passive: true });
-      return;
-    }
-
-// init m
-    function getCardColor(){
-      const badge = card.querySelector('.proj-badge');
-      if(badge){ const cs = getComputedStyle(badge); return cs.color; }
-      const ring = card.querySelector('.ring-fg');
-      if(ring) return ring.getAttribute('stroke') || '#7c6af7';
-      return '#7c6af7';
-    }
-    function colorToRgb(col){
-      if(col.startsWith('rgb')){ const m=col.match(/\d+/g); if(m&&m.length>=3) return {r:+m[0],g:+m[1],b:+m[2]}; }
-      const m=col.replace('#','').match(/.{2}/g);
-      if(m) return {r:parseInt(m[0],16),g:parseInt(m[1],16),b:parseInt(m[2],16)};
-      return {r:124,g:106,b:247};
-    }
-
-    let cardColor = null;
-    let clickActive = false;
-    let rafId = null;
-    let lastX = 0, lastY = 0;
-    const hasFloat = card.classList.contains('float-a') || card.classList.contains('float-b');
-
-    function applyTilt(){
-      if(!cardColor) cardColor = colorToRgb(getCardColor());
-      const {r,g,b} = cardColor;
-      const rect = card.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = (lastX - cx) / (rect.width / 2);
-      const dy = (lastY - cy) / (rect.height / 2);
-      const tiltX = dy * -20;
-      const tiltY = dx * 20;
-      card.style.transform = `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-10px) scale(1.04)`;
-      card.style.boxShadow = [
-        `${-tiltY*3}px ${tiltX*3}px 50px rgba(${r},${g},${b},0.5)`,
-        `0 0 40px rgba(${r},${g},${b},0.35)`,
-        `0 20px 60px rgba(0,0,0,0.6)`,
-        `inset 0 1px 0 rgba(255,255,255,0.12)`
-      ].join(', ');
-      card.style.borderColor = `rgba(${r},${g},${b},0.55)`;
-      const shine = card.querySelector('.tilt-shine');
-      if(shine){
-        const px = ((lastX - rect.left) / rect.width) * 100;
-        const py = ((lastY - rect.top) / rect.height) * 100;
-        shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.22), transparent 60%)`;
-        shine.style.opacity = '1';
-      }
-      rafId = null;
-    }
-
-    function resetTilt(){
-      clickActive = false;
-      if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
-      if(hasFloat) card.style.animationPlayState = 'running';
-      card.style.transform = '';
-      card.style.boxShadow = '';
-      card.style.borderColor = '';
-      const shine = card.querySelector('.tilt-shine');
-      if(shine) shine.style.opacity = '0';
-    }
-
-    card.addEventListener('mousedown', e => {
-      clickActive = true;
-      if(hasFloat) card.style.animationPlayState = 'paused';
-      lastX = e.clientX; lastY = e.clientY;
-      if(!rafId) rafId = requestAnimationFrame(applyTilt);
-    }, { passive: true });
-
-    card.addEventListener('mousemove', e => {
-      if(!clickActive) return;
-      lastX = e.clientX; lastY = e.clientY;
-      if(!rafId) rafId = requestAnimationFrame(applyTilt);
-    }, { passive: true });
-
-    card.addEventListener('mouseup', resetTilt, { passive: true });
-    card.addEventListener('mouseleave', resetTilt, { passive: true });
-  });
-}
-setTimeout(initTilt, 800);
-
 })();
 </script>
 </body>
