@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{width:100%;min-height:600px;overflow:hidden;background:#060410}
+  html,body{width:100%;min-height:100vh;background:#060410}
   body{font-family:'DM Sans',sans-serif;color:#f0eeff;position:relative}
   #bg{position:fixed;inset:0;z-index:0;pointer-events:none}
   #aurora{position:fixed;inset:0;z-index:1;pointer-events:none}
@@ -19,7 +20,7 @@
   .footer-hints{display:flex;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:50px;padding:5px 14px;gap:10px}
   .footer-hint{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.1em;color:rgba(192,132,252,.4);display:flex;align-items:center;gap:4px;white-space:nowrap}
   .footer-sep{color:rgba(255,255,255,.12);font-size:.6rem;margin:0 2px}
-  .game-wrap{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:600px;padding:24px 16px 80px}
+  .game-wrap{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:24px 16px 80px}
   .screen{display:none;flex-direction:column;align-items:center;width:100%;max-width:500px;animation:fadeIn .4s ease}
   .screen.active{display:flex}
   @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
@@ -376,7 +377,7 @@ $('btn-next').onclick=nextQ;
 $('btn-retry').onclick=startGame;
 
 const cvs=$('bg'),ctx=cvs.getContext('2d');
-function resize(){cvs.width=window.innerWidth||680;cvs.height=window.innerHeight||600;}
+function resize(){cvs.width=window.innerWidth||window.screen.width;cvs.height=window.innerHeight||window.screen.height;}
 resize();window.addEventListener('resize',function(){resize();buildStars();});
 let stars=[];
 function buildStars(){
