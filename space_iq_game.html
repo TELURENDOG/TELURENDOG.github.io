@@ -13,24 +13,21 @@
   .a2{width:50vw;height:45vh;bottom:-10%;right:-5%;background:radial-gradient(ellipse,rgba(56,189,248,0.12),transparent 70%);animation-delay:-9s}
   .a3{width:38vw;height:38vh;top:40%;left:35%;background:radial-gradient(ellipse,rgba(251,113,133,0.08),transparent 70%);animation-delay:-14s}
   @keyframes aura{0%{opacity:0;transform:scale(.88) translate(0,0)}20%{opacity:1}50%{transform:scale(1.12) translate(4%,5%);opacity:.75}80%{opacity:1}100%{opacity:0;transform:scale(.93) translate(-3%,-3%)}}
-
   .footer-tag{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;align-items:center;gap:7px;pointer-events:none}
   .footer-made{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.22em;color:rgba(192,132,252,.45);text-transform:uppercase;display:flex;align-items:center;gap:5px}
   .footer-made span{color:rgba(192,132,252,.65)}
   .footer-hints{display:flex;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:50px;padding:5px 14px;gap:10px}
   .footer-hint{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.1em;color:rgba(192,132,252,.4);display:flex;align-items:center;gap:4px;white-space:nowrap}
   .footer-sep{color:rgba(255,255,255,.12);font-size:.6rem;margin:0 2px}
-
   .game-wrap{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:600px;padding:24px 16px 80px}
   .screen{display:none;flex-direction:column;align-items:center;width:100%;max-width:500px;animation:fadeIn .4s ease}
   .screen.active{display:flex}
   @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-
   .logo{font-family:'Syne',sans-serif;font-size:clamp(2rem,8vw,3.2rem);font-weight:800;letter-spacing:-.02em;background:linear-gradient(130deg,#c084fc 0%,#38bdf8 55%,#fb7185 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;filter:drop-shadow(0 0 24px rgba(192,132,252,.35))}
-  .logo-sub{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.35em;color:rgba(192,132,252,.45);text-transform:uppercase;margin-top:5px;margin-bottom:32px}
+  .logo-sub{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.35em;color:rgba(192,132,252,.45);text-transform:uppercase;margin-top:5px;margin-bottom:4px}
+  .logo-sub2{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.18em;color:rgba(251,113,133,.75);text-transform:lowercase;margin-bottom:32px;font-style:italic}
   .btn-start{padding:14px 48px;border:none;border-radius:50px;cursor:pointer;background:linear-gradient(130deg,rgba(139,92,246,.9),rgba(56,189,248,.7));font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff;box-shadow:0 0 40px rgba(139,92,246,.4);transition:transform .25s,box-shadow .25s}
   .btn-start:hover{transform:translateY(-4px);box-shadow:0 0 64px rgba(139,92,246,.65)}
-
   .q-header{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:14px}
   .q-meta{display:flex;flex-direction:column;gap:2px}
   .q-num{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.18em;color:rgba(192,132,252,.6);text-transform:uppercase}
@@ -39,14 +36,11 @@
   .q-timer{font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;color:#38bdf8;transition:color .3s;min-width:22px;text-align:right}
   .q-timer.urgent{color:#fb7185;animation:tpulse .5s ease-in-out infinite}
   @keyframes tpulse{0%,100%{opacity:1}50%{opacity:.25}}
-
   .q-progress{width:100%;height:3px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:22px;overflow:hidden}
   .q-progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#8b5cf6,#38bdf8);transition:width .5s ease}
-
   .q-card{width:100%;padding:24px 20px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:18px;margin-bottom:14px;position:relative;overflow:hidden}
   .q-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 10% 0%,rgba(139,92,246,.09),transparent 55%);pointer-events:none}
   .q-text{font-family:'DM Sans',sans-serif;font-size:clamp(.92rem,3vw,1.1rem);font-weight:500;line-height:1.6;color:#f0eeff;position:relative;z-index:1}
-
   .q-options{width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
   .q-opt{width:100%;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.86rem;color:#e2deff;text-align:left;transition:background .18s,border-color .18s,transform .15s;display:flex;align-items:center;gap:12px}
   .q-opt-letter{font-family:'Space Mono',monospace;font-size:.62rem;color:rgba(192,132,252,.5);min-width:14px}
@@ -56,15 +50,12 @@
   .q-opt.wrong{background:rgba(251,113,133,.1)!important;border-color:#fb7185!important;color:#fb7185!important}
   .q-opt.wrong .q-opt-letter{color:#fb7185!important}
   .q-opt.disabled{pointer-events:none}
-
   .q-feedback{min-height:42px;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;font-size:.78rem;line-height:1.7;color:rgba(240,238,255,.55);opacity:0;transition:opacity .3s;text-align:center}
   .q-feedback.show{opacity:1}
   .q-feedback b{color:#c084fc}
-
   .btn-next{margin-top:12px;padding:10px 28px;border:1px solid rgba(139,92,246,.38);border-radius:50px;background:rgba(139,92,246,.12);cursor:pointer;font-family:'Space Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#c084fc;transition:all .2s;display:none}
   .btn-next.show{display:block}
   .btn-next:hover{background:rgba(139,92,246,.26);transform:translateY(-2px)}
-
   .result-iq{font-family:'Syne',sans-serif;font-size:clamp(4.5rem,18vw,9rem);font-weight:800;background:linear-gradient(130deg,#c084fc,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:2px;filter:drop-shadow(0 0 32px rgba(139,92,246,.45))}
   .result-label{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.35em;color:rgba(192,132,252,.45);text-transform:uppercase;margin-bottom:18px}
   .result-title{font-family:'Syne',sans-serif;font-size:clamp(.9rem,3.5vw,1.2rem);font-weight:700;color:#f0eeff;margin-bottom:8px;text-align:center}
@@ -88,9 +79,8 @@
   <div class="aurora-blob a2"></div>
   <div class="aurora-blob a3"></div>
 </div>
-
 <div class="footer-tag">
-  <div class="footer-made">🚀 <span>OTAK GOCEK</span> &nbsp;·&nbsp; MADE BY <span>RISKI RM</span> &nbsp;©&nbsp;2025</div>
+  <div class="footer-made">🧠 <span>TES IQ</span> &nbsp;·&nbsp; MADE BY <span>RISKI RM</span> &nbsp;©&nbsp;2025</div>
   <div class="footer-hints">
     <div class="footer-hint">🧠 Baca soal baik-baik</div>
     <div class="footer-sep">|</div>
@@ -99,18 +89,16 @@
     <div class="footer-hint">🎲 Soal selalu acak</div>
   </div>
 </div>
-
 <div class="game-wrap">
   <div class="screen active" id="screen-intro">
-    <div class="logo">OTAK GOCEK</div>
-    <div class="logo-sub">Tes Kecerdasan Premium</div>
+    <div class="logo">TES IQ</div>
+    <div class="logo-sub2">— if u smart —</div>
     <button class="btn-start" id="btn-start">Mulai Diuji →</button>
   </div>
-
   <div class="screen" id="screen-quiz">
     <div class="q-header">
       <div class="q-meta">
-        <div class="q-num" id="q-num">Soal 1 / 10</div>
+        <div class="q-num" id="q-num">Soal 1 / 20</div>
         <span class="q-cat-badge" id="q-cat-badge"></span>
       </div>
       <div class="q-timer-wrap">
@@ -118,13 +106,12 @@
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,.5)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
       </div>
     </div>
-    <div class="q-progress"><div class="q-progress-fill" id="q-pf" style="width:10%"></div></div>
+    <div class="q-progress"><div class="q-progress-fill" id="q-pf" style="width:5%"></div></div>
     <div class="q-card"><div class="q-text" id="q-text"></div></div>
     <div class="q-options" id="q-options"></div>
     <div class="q-feedback" id="q-feedback"></div>
     <button class="btn-next" id="btn-next">Lanjut →</button>
   </div>
-
   <div class="screen" id="screen-result">
     <div class="result-iq" id="result-iq">0</div>
     <div class="result-label">IQ Score</div>
@@ -139,82 +126,159 @@
     <button class="btn-retry" id="btn-retry">🎲 Soal Lain, Berani?</button>
   </div>
 </div>
-
 <script>
 const BANK={
-  "🧠 Logika":[
-    {q:"Kamu punya 3 apel. Kamu ambil 2. Kamu punya berapa?",opts:["1","2","3","0"],ans:1,fb:"Kamu yang <b>ambil 2</b>, jadi kamu pegang 2. Yang 1 sisa di tempat bukan punyamu."},
-    {q:"Ada 10 burung di pohon. 1 ditembak. Berapa yang tersisa?",opts:["9","0","10","1"],ans:1,fb:"Bunyi tembakan bikin <b>semua terbang kabur</b>. Yang tertembak jatuh. Sisa = 0."},
-    {q:"Kamu di lomba lari, menyalip orang ke-2. Kamu di posisi berapa?",opts:["Posisi 1","Posisi 2","Posisi 3","Posisi 4"],ans:1,fb:"Kamu gantiin posisi 2. <b>Posisi 1 masih di depan.</b> Belum menang bro."},
-    {q:"Dokter kasih 3 pil, minum tiap 30 menit. Habis dalam berapa menit?",opts:["90 menit","60 menit","30 menit","120 menit"],ans:1,fb:"Pil 1 diminum → 30 menit → Pil 2 → 30 menit → Pil 3. Total = <b>60 menit</b>, bukan 90."},
-    {q:"Rumah 4 sudut, kucing di tiap sudut. Tiap kucing lihat 3 kucing lain. Berapa kucing total?",opts:["4","16","12","8"],ans:0,fb:"Tetap <b>4 kucing</b>. Masing-masing lihat 3 lainnya. Ga ada kucing tambahan."},
-    {q:"Pria lihat foto: 'Itu anak ayahku, tapi aku tak punya saudara.' Siapa di foto?",opts:["Temannya","Anaknya sendiri","Saudaranya","Bapaknya"],ans:1,fb:"'Anak dari ayahku' = anaknya sendiri. Dia <b>tidak punya saudara</b>, jadi ya anaknya."},
-    {q:"Berapa kali kamu bisa ambil 6 dari 30?",opts:["5 kali","Sekali","Tidak bisa","30 kali"],ans:1,fb:"<b>Sekali</b>. Habis ambil pertama, 30 sudah bukan 30 lagi."},
-    {q:"Ada 6 ikan di kolam dan 3 tenggelam. Berapa yang tersisa?",opts:["3","6","0","9"],ans:1,fb:"<b>Ikan tidak bisa tenggelam</b> — mereka hidup di air. Semua 6 masih ada."},
-    {q:"Petani punya 17 domba, semua kecuali 9 mati. Berapa yang hidup?",opts:["8","9","17","Tidak ada"],ans:1,fb:"'<b>Semua kecuali 9</b>' = 9 yang masih hidup. Bukan 17-9=8. Kata 'kecuali' yang ngejebak."},
-    {q:"Naik ke lantai 5 dari lantai 1. Berapa kali naik tangga antar lantai?",opts:["5 kali","4 kali","3 kali","6 kali"],ans:1,fb:"1→2, 2→3, 3→4, 4→5 = <b>4 kali</b> naik. Bukan 5."},
-  ],
-  "🔢 Matematika":[
-    {q:"Mana yang lebih berat — 1 kg besi atau 1 kg kapas?",opts:["Besi","Kapas","Sama berat","Tergantung"],ans:2,fb:"Keduanya <b>1 kg</b>. Berat sama persis. Yang beda cuma volumenya."},
-    {q:"Berapa bulan dalam setahun yang punya 28 hari?",opts:["1 (Februari)","2","6","12"],ans:3,fb:"<b>Semua 12 bulan</b> punya minimal 28 hari. Februari cuma 28/29, tapi bulan lain juga lewati tanggal 28."},
-    {q:"1000 + 40 + 1000 + 30 + 1000 + 20 + 1000 + 10 = ?",opts:["5000","4100","4000","4010"],ans:1,fb:"Coba hitung ulang perlahan: hasilnya <b>4100</b>, bukan 5000! Otak auto-isi 5000."},
-    {q:"10 dibagi setengah, ditambah 10. Hasilnya?",opts:["15","25","30","Lainnya"],ans:2,fb:"10 ÷ ½ = 10 × 2 = 20. Lalu 20 + 10 = <b>30</b>. 'Dibagi setengah' ≠ dibagi 2!"},
-    {q:"Ada 3 pembunuh di ruangan. Masuk 1 orang, bunuh 1. Berapa pembunuh sekarang?",opts:["2","3","4","0"],ans:1,fb:"Yang baru masuk juga pembunuh. Pembunuh lama tetap pembunuh. Total masih <b>3</b>."},
-    {q:"Apapun dikali 0 hasilnya?",opts:["0","Angka itu sendiri","Tidak terdefinisi","1"],ans:0,fb:"Apapun dikali 0 = <b>0</b>. Aturan paling dasar matematika."},
-    {q:"Ada 30 sapi, 20 makan rumput. Sisanya berapa?",opts:["10","30","0","20"],ans:0,fb:"30 - 20 = <b>10 sapi</b> yang tidak makan rumput. Gampang tapi bikin curiga kan?"},
-    {q:"Jika ada 12 ikan di akuarium dan setengahnya 'tenggelam', berapa sisa?",opts:["6","12","0","Semua"],ans:1,fb:"<b>Ikan tidak bisa tenggelam.</b> Jadi 12 semuanya masih ada."},
-    {q:"2² + 2² = ?",opts:["4","8","16","44"],ans:1,fb:"2² = 4. 4 + 4 = <b>8</b>. Jangan salah baca jadi (2+2)²."},
-    {q:"Setengah dari kata 'dua belas' adalah?",opts:["6","Enam","Tujuh","Dua"],ans:2,fb:"Setengah dari kata 'dua belas' secara huruf = 7 huruf pertama = '<b>tujuh</b>'. Atau 6 kalau angka — tapi ini jebakan bahasa!"},
-  ],
-  "🌍 Pengetahuan":[
-    {q:"Ayam betina di atap miring. Ke mana telurnya jatuh?",opts:["Ke kiri","Ke kanan","Ke bawah","Ayam tidak bertelur di atap"],ans:3,fb:"<b>Ayam tidak bertelur sambil berdiri di atap.</b> Butuh tempat nyaman. Soalnya yang salah."},
-    {q:"Tembok Besar China dibangun untuk mencegah apa?",opts:["Banjir","Angin","Invasi dari utara","Kabut"],ans:2,fb:"Dibangun untuk menahan <b>invasi bangsa nomaden utara</b> seperti Mongol dan Xiongnu."},
-    {q:"Apa yang selalu datang tapi tidak pernah tiba?",opts:["Kematian","Besok","Mimpi","Uang"],ans:1,fb:"<b>Besok</b> — ketika tiba, ia sudah jadi hari ini. Besok tidak pernah benar-benar 'tiba'."},
-    {q:"Mana yang lebih tua: ayam atau telur?",opts:["Ayam","Telur","Sama tua","Tidak ada jawaban"],ans:1,fb:"Secara evolusi, <b>telur</b> — reptil bertelur jauh sebelum ayam ada sebagai spesies."},
-    {q:"Gunung Everest ditemukan. Sebelumnya gunung tertinggi di dunia apa?",opts:["K2","Gunung lain","Tetap Everest","Tidak ada"],ans:2,fb:"<b>Tetap Everest.</b> Ditemukan atau tidak, ia tetap gunung yang sama. Manusianya yang belum tahu."},
-    {q:"Api dibawa ke luar angkasa. Apa yang terjadi?",opts:["Terbakar lebih besar","Padam","Meledak","Berubah warna"],ans:1,fb:"Tidak ada oksigen di luar angkasa, jadi api <b>langsung padam</b>."},
-    {q:"Di mana ikan paus bayar tagihan?",opts:["Di bank laut","Di tepi pantai","Di kasir","Ikan paus tidak bayar tagihan"],ans:3,fb:"Karena <b>ikan paus tidak punya uang</b> dan tidak punya tagihan. Hidupnya damai."},
-    {q:"Negara mana yang tidak punya sungai permanen?",opts:["Vatican","Monaco","Saudi Arabia","Semua punya sungai"],ans:2,fb:"<b>Saudi Arabia</b> tidak punya sungai permanen — hanya wadi (sungai kering musiman)."},
-    {q:"Apa yang ada di ujung pelangi?",opts:["Pot emas","Hujan","Huruf 'i'","Tidak ada"],ans:2,fb:"Pelangi tak punya ujung fisik. Tapi ujung kata 'pelang<b>i</b>' = huruf '<b>i</b>'. Kejebak!"},
-    {q:"Manusia rata-rata butuh berapa jam tidur per hari?",opts:["6 jam","8 jam","10 jam","12 jam"],ans:1,fb:"Rekomendasi medis = <b>8 jam</b> per hari untuk orang dewasa. Tapi siapa yang beneran 8 jam?"},
-  ],
-  "🗣️ Bahasa":[
-    {q:"Kata SALAH dieja S-A-L-A-H. Apa yang salah dari kalimat ini?",opts:["Ejaannya salah","Tidak ada yang salah","Hurufnya kurang","Tidak lengkap"],ans:1,fb:"Ejaan S-A-L-A-H itu <b>benar</b>. Tidak ada yang salah. Otakmu yang ngejebak dirinya sendiri."},
-    {q:"Apa antonim kata 'bodoh'?",opts:["Nakal","Pintar","Baik","Malas"],ans:1,fb:"Antonim dari 'bodoh' adalah <b>'pintar'</b>. Semoga kamu tahu ini dari pengalaman pribadi."},
-    {q:"Manakah palindrom (dibaca sama dari kedua arah)?",opts:["Kasur","Katak","Kuda","Makan"],ans:1,fb:"<b>'Katak'</b>: K-A-T-A-K dari depan = K-A-T-A-K dari belakang. Palindrom sempurna."},
-    {q:"'Bisa' dalam bahasa Indonesia punya berapa arti?",opts:["1","2","3","Lebih dari 3"],ans:3,fb:"<b>'Bisa'</b>: mampu/sanggup, racun ular, dan mungkin/bisa jadi. Bahasa Indonesia penuh kejutan!"},
-    {q:"Kata benda dalam 'Anjing itu berlari kencang' adalah?",opts:["Berlari","Kencang","Itu","Anjing"],ans:3,fb:"<b>'Anjing'</b> = kata benda. 'Berlari' = kata kerja, 'kencang' = keterangan, 'itu' = kata tunjuk."},
-    {q:"Kalimat mana yang paling baku?",opts:["Saya sudah makan tadi","Saya makan sudah tadi","Tadi makan saya sudah","Makan saya sudah tadi"],ans:0,fb:"'<b>Saya sudah makan tadi</b>' = susunan S-P-K yang paling baku dalam bahasa Indonesia."},
-    {q:"Huruf apa yang paling sering muncul di bahasa Indonesia?",opts:["A","E","I","U"],ans:0,fb:"Huruf <b>'A'</b> adalah yang paling sering muncul dalam teks bahasa Indonesia."},
-    {q:"Apa yang punya gigi tapi tidak bisa menggigit?",opts:["Zombie tanpa mulut","Sisir","Buaya tidur","Gigi palsu di laci"],ans:1,fb:"<b>Sisir</b> punya 'gigi-gigi' tapi tidak bisa menggigit. Classic riddle."},
-    {q:"Sinonim kata 'cepat' adalah?",opts:["Lambat","Gesit","Lama","Pelan"],ans:1,fb:"<b>'Gesit'</b> adalah sinonim dari cepat, juga mengandung makna lincah."},
-    {q:"'Abu-abu' termasuk jenis kata apa?",opts:["Kata benda","Kata kerja","Kata sifat","Kata keterangan"],ans:2,fb:"<b>Kata sifat</b> — mendeskripsikan warna/kualitas. Abu-abu adalah warna, jadi kata sifat."},
-  ],
-  "😂 Absurd":[
-    {q:"Berapa kaki kucing jika kita sebut ekornya 'kaki'?",opts:["5","4","6","Tergantung"],ans:1,fb:"<b>Tetap 4 kaki.</b> Menyebut ekor sebagai 'kaki' tidak mengubah anatomi kucing."},
-    {q:"Roti ditaruh di punggung kucing lalu dilempar. Apa yang terjadi?",opts:["Melayang selamanya","Mendarat di kaki","Meledak","Tidak terjadi apa-apa"],ans:0,fb:"Paradoks: kucing mendarat di kaki, roti di sisi olesan. Digabung? <b>Melayang selamanya.</b>"},
-    {q:"Kenapa bebek menyeberang jalan?",opts:["Ke sisi seberang","Ke supermarket","Supaya tidak disebut ayam","Karena bebas"],ans:0,fb:"Untuk pergi ke <b>sisi seberang</b>. Versi bebek dari lelucon ayam klasik."},
-    {q:"Mana yang lebih banyak: bintang di langit atau pasir di pantai?",opts:["Bintang","Pasir","Sama","Tidak bisa dihitung"],ans:1,fb:"Ilmuwan perkirakan <b>butir pasir di Bumi lebih banyak</b> dari bintang di alam semesta teramati."},
-    {q:"Apa yang terjadi kalau kamu lempar batu ke laut?",opts:["Batu tenggelam","Laut basah","Ikan kaget","Batu jadi basah"],ans:3,fb:"Yang paling sering dilupakan: <b>batu jadi basah!</b> Laut sudah basah dari sononya."},
-    {q:"'Lemari berjalan' atau 'berjalan lemari' yang benar?",opts:["Lemari berjalan","Berjalan lemari","Itu monster","Tergantung kecepatan"],ans:0,fb:"<b>Lemari berjalan</b> = lemari yang sedang berjalan (subjek + predikat). Struktur yang benar."},
-    {q:"Kamu punya 10 jari. 2 dipotong. Berapa jari kamu sekarang?",opts:["8","10","2","Tidak ada"],ans:0,fb:"<b>8 jari</b> yang tersisa. 10 - 2 = 8. Semoga hanya di soal ini saja kejadiannya."},
-    {q:"Kalau kambing makan sepatu, apa yang dimakan kambing?",opts:["Rumput","Sepatu","Apapun","Kambing tidak makan sepatu"],ans:1,fb:"Soalnya bilang '<b>kambing makan sepatu</b>' — ya berarti sepatu. Percayai soalnya."},
-    {q:"Mana yang lebih cepat: panas atau dingin?",opts:["Panas","Dingin","Sama","Tergantung medium"],ans:0,fb:"<b>Panas lebih cepat</b>, karena kamu bisa nyegat dingin (pakai jaket). Ini lawakan, bukan sains."},
-    {q:"Berapa lubang yang ada di celana?",opts:["0","2","3","4"],ans:2,fb:"Lubang kaki kiri, kaki kanan, dan <b>lubang pinggang</b> = 3 lubang minimal."},
-  ],
+"🧠 Logika":[
+{q:"Kamu punya 3 apel. Kamu ambil 2. Kamu punya berapa?",opts:["1","2","3","0"],ans:1,fb:"Kamu yang <b>ambil 2</b>, jadi kamu pegang 2. Yang 1 sisa di tempat bukan punyamu."},
+{q:"Ada 10 burung di pohon. 1 ditembak. Berapa yang tersisa?",opts:["9","0","10","1"],ans:1,fb:"Bunyi tembakan bikin <b>semua terbang kabur</b>. Yang tertembak jatuh. Sisa = 0."},
+{q:"Kamu di lomba lari, menyalip orang ke-2. Kamu di posisi berapa?",opts:["Posisi 1","Posisi 2","Posisi 3","Posisi 4"],ans:1,fb:"Kamu gantiin posisi 2. <b>Posisi 1 masih di depan.</b> Belum menang bro."},
+{q:"Dokter kasih 3 pil, minum tiap 30 menit. Habis dalam berapa menit?",opts:["90 menit","60 menit","30 menit","120 menit"],ans:1,fb:"Pil 1 diminum, 30 menit kemudian pil 2, 30 menit lagi pil 3. Total = <b>60 menit</b>, bukan 90."},
+{q:"Rumah 4 sudut, kucing di tiap sudut. Tiap kucing lihat 3 kucing lain. Berapa kucing total?",opts:["4","16","12","8"],ans:0,fb:"Tetap <b>4 kucing</b>. Masing-masing lihat 3 lainnya. Ga ada kucing tambahan."},
+{q:"Pria lihat foto: 'Itu anak ayahku, tapi aku tak punya saudara.' Siapa di foto?",opts:["Temannya","Anaknya sendiri","Saudaranya","Bapaknya"],ans:1,fb:"'Anak dari ayahku' = anaknya sendiri. Dia <b>tidak punya saudara</b>, jadi ya anaknya."},
+{q:"Berapa kali kamu bisa ambil 6 dari 30?",opts:["5 kali","Sekali","Tidak bisa","30 kali"],ans:1,fb:"<b>Sekali</b>. Habis ambil pertama, 30 sudah bukan 30 lagi."},
+{q:"Ada 6 ikan di kolam dan 3 tenggelam. Berapa yang tersisa?",opts:["3","6","0","9"],ans:1,fb:"<b>Ikan tidak bisa tenggelam</b>, mereka hidup di air. Semua 6 masih ada."},
+{q:"Petani punya 17 domba, semua kecuali 9 mati. Berapa yang hidup?",opts:["8","9","17","Tidak ada"],ans:1,fb:"'<b>Semua kecuali 9</b>' = 9 yang masih hidup. Bukan 17-9=8. Kata 'kecuali' yang ngejebak."},
+{q:"Naik ke lantai 5 dari lantai 1. Berapa kali naik tangga antar lantai?",opts:["5 kali","4 kali","3 kali","6 kali"],ans:1,fb:"1 ke 2, 2 ke 3, 3 ke 4, 4 ke 5 = <b>4 kali</b> naik. Bukan 5."},
+{q:"Kamu punya satu korek api. Ada lilin, kompor, dan perapian. Apa yang pertama dinyalakan?",opts:["Lilin","Kompor","Perapian","Korek apinya"],ans:3,fb:"<b>Korek apinya dulu!</b> Tanpa korek menyala, kamu ga bisa nyalain apapun."},
+{q:"Sebuah pesawat jatuh di perbatasan Italia dan Swiss. Di mana korban dikubur?",opts:["Italia","Swiss","Keduanya","Korban tidak dikubur"],ans:3,fb:"Korban selamat <b>tidak dikubur</b>. Dikubur itu yang meninggal!"},
+{q:"Seorang pria berkata: 'Saya tidak punya saudara, tapi ayah pria itu adalah ayahku.' Siapa pria itu?",opts:["Sepupunya","Dirinya sendiri","Pamannya","Tidak ada"],ans:1,fb:"'Ayah pria itu = ayahku' berarti pria itu adalah <b>dirinya sendiri</b>."},
+{q:"Ada 5 saudara. Masing-masing punya 1 saudara perempuan yang sama. Berapa total saudara perempuan?",opts:["5","1","6","10"],ans:1,fb:"Mereka <b>berbagi 1 saudara perempuan yang sama</b>. Total = 1 orang perempuan saja."},
+{q:"Kamu di balapan. Kamu menyalip orang terakhir. Kamu di posisi berapa?",opts:["Terakhir","Kedua dari terakhir","Depan","Di luar jalur"],ans:0,fb:"Kalau menyalip orang <b>terakhir</b>, kamu ambil posisinya = kamu jadi terakhir."},
+{q:"Jika A lebih tua dari B, B lebih tua dari C. Siapa yang paling muda?",opts:["A","B","C","Sama semua"],ans:2,fb:"A > B > C, jadi <b>C paling muda</b>. Logika sederhana tapi bikin berpikir dua kali."},
+{q:"Kamu tidur jam 8 malam, alarm jam 9 pagi. Berapa jam kamu tidur?",opts:["13 jam","1 jam","9 jam","Tidak bisa tahu"],ans:1,fb:"Jam 8 malam sampai jam 9 MALAM = 1 jam. Alarm jam 9 = 9 malam bukan pagi! <b>1 jam tidur.</b>"},
+{q:"Lampu merah berarti berhenti, lampu hijau jalan. Kalau lampu kuning?",opts:["Jalan cepat","Bersiap berhenti","Gas pollll","Tidur sebentar"],ans:1,fb:"Kuning artinya <b>bersiap berhenti</b>. Bukan gas sebelum merah. Di Indonesia mungkin beda... tapi secara aturan begitu."},
+{q:"Kata 'salah eja' — apakah dieja dengan benar?",opts:["Tidak","Ya","Tergantung","Paradoks"],ans:1,fb:"'Salah eja' dieja <b>S-A-L-A-H E-J-A</b>, ejaannya benar kok. Paradoks kecil yang lucu."},
+{q:"Sebuah kereta berangkat jam 6 pagi, jarak 300km, kecepatan 100km/jam. Jam berapa tiba?",opts:["Jam 9 pagi","Jam 6 sore","Jam 3 sore","Jam 12 siang"],ans:0,fb:"300 ÷ 100 = 3 jam. Berangkat jam 6 pagi + 3 jam = <b>jam 9 pagi</b>."},
+],
+"🔢 Matematika":[
+{q:"Mana yang lebih berat: 1 kg besi atau 1 kg kapas?",opts:["Besi","Kapas","Sama berat","Tergantung"],ans:2,fb:"Keduanya <b>1 kg</b>. Berat sama persis. Yang beda cuma volumenya."},
+{q:"Berapa bulan dalam setahun yang punya 28 hari?",opts:["1 (Februari)","2","6","12"],ans:3,fb:"<b>Semua 12 bulan</b> punya minimal 28 hari. Februari cuma 28/29, tapi bulan lain juga lewati tanggal 28."},
+{q:"1000 + 40 + 1000 + 30 + 1000 + 20 + 1000 + 10 = ?",opts:["5000","4100","4000","4010"],ans:1,fb:"Coba hitung ulang perlahan: hasilnya <b>4100</b>, bukan 5000! Otak auto-isi 5000."},
+{q:"10 dibagi setengah, ditambah 10. Hasilnya?",opts:["15","25","30","Lainnya"],ans:2,fb:"10 dibagi setengah = 10 dikali 2 = 20. Lalu 20 + 10 = <b>30</b>. Dibagi setengah bukan dibagi 2!"},
+{q:"Ada 3 pembunuh di ruangan. Masuk 1 orang, bunuh 1. Berapa pembunuh sekarang?",opts:["2","3","4","0"],ans:1,fb:"Yang baru masuk juga pembunuh. Pembunuh lama tetap pembunuh. Total masih <b>3</b>."},
+{q:"Apapun dikali 0 hasilnya?",opts:["0","Angka itu sendiri","Tidak terdefinisi","1"],ans:0,fb:"Apapun dikali 0 = <b>0</b>. Aturan paling dasar matematika."},
+{q:"Ada 30 sapi, 20 makan rumput. Sisanya berapa?",opts:["10","30","0","20"],ans:0,fb:"30 - 20 = <b>10 sapi</b> yang tidak makan rumput. Gampang tapi bikin curiga kan?"},
+{q:"2 kuadrat ditambah 2 kuadrat berapa?",opts:["4","8","16","44"],ans:1,fb:"2 kuadrat = 4. 4 + 4 = <b>8</b>. Jangan salah baca jadi (2+2) kuadrat."},
+{q:"Sebuah bata beratnya 1 kg ditambah setengah bata. Berapa berat satu bata?",opts:["1 kg","1.5 kg","2 kg","0.5 kg"],ans:2,fb:"Satu bata = 1 kg + setengah bata. Jadi setengah bata = 1 kg. Satu bata = <b>2 kg</b>."},
+{q:"Jika 5 mesin bisa bikin 5 widget dalam 5 menit, 100 mesin bikin 100 widget dalam berapa menit?",opts:["100 menit","25 menit","5 menit","50 menit"],ans:2,fb:"Setiap mesin tetap butuh <b>5 menit</b> untuk 1 widget. 100 mesin = 100 widget dalam 5 menit yang sama."},
+{q:"Berapa nol di angka satu juta?",opts:["5","6","7","8"],ans:1,fb:"1.000.000 punya <b>6 nol</b>. Hitung lagi kalau tidak percaya."},
+{q:"1/3 dari 90 plus 1/2 dari 50 berapa?",opts:["45","30","55","50"],ans:2,fb:"1/3 dikali 90 = 30. 1/2 dikali 50 = 25. 30 + 25 = <b>55</b>."},
+{q:"Akar kuadrat dari 144 adalah?",opts:["11","12","13","14"],ans:1,fb:"12 dikali 12 = 144. Jadi akar 144 = <b>12</b>."},
+{q:"Berapa angka bulat antara 1 dan 10 (tidak termasuk 1 dan 10)?",opts:["8","9","10","7"],ans:0,fb:"2,3,4,5,6,7,8,9 = <b>8 angka</b>. Jangan hitung 1 dan 10 karena 'tidak termasuk'."},
+{q:"Setengah dari dua belas, ditambah sepertiga dari dua puluh empat, hasilnya?",opts:["14","13","12","15"],ans:0,fb:"Setengah dari 12 = 6. Sepertiga dari 24 = 8. 6 + 8 = <b>14</b>."},
+{q:"Sisi persegi panjang bilangan bulat, keliling 14. Luas terbesar yang mungkin?",opts:["10","12","9","6"],ans:1,fb:"Keliling 14 berarti panjang + lebar = 7. Kombinasi: 1x6=6, 2x5=10, 3x4=12. <b>Maksimal = 12</b>."},
+{q:"Jika kamu punya 0 buah, dapat 3, lalu beri 1, kamu punya berapa?",opts:["2","3","1","4"],ans:0,fb:"0 + 3 = 3. 3 - 1 = <b>2</b>. Paling gampang tapi bikin otak mau skip."},
+{q:"99 ditambah 1 sama dengan?",opts:["99","100","101","1000"],ans:1,fb:"<b>100</b>. Gampang banget tapi otakmu pasti ngecheck dua kali. Itulah gunanya soal ini."},
+{q:"Kalau kamu punya 2 koin senilai 550 rupiah, satu bukan koin 500. Koin apa mereka?",opts:["500 + 50","250 + 300","Tidak mungkin","50 + 500"],ans:0,fb:"Satu bukan koin 500, tapi yang satunya boleh! Jadi <b>500 + 50</b>. Yang bukan koin 500 itu koin 50-nya."},
+{q:"Berapa banyak bulan yang punya 30 hari?",opts:["4","6","11","Semua"],ans:2,fb:"April, Juni, September, November, ditambah semua bulan lain yang lewati tanggal 30 kecuali Februari. Total = <b>11 bulan</b>."},
+],
+"🌍 Pengetahuan":[
+{q:"Ayam betina di atap miring. Ke mana telurnya jatuh?",opts:["Ke kiri","Ke kanan","Ke bawah","Ayam tidak bertelur di atap"],ans:3,fb:"<b>Ayam tidak bertelur sambil berdiri di atap.</b> Butuh tempat nyaman. Soalnya yang salah."},
+{q:"Tembok Besar China dibangun untuk mencegah apa?",opts:["Banjir","Angin","Invasi dari utara","Kabut"],ans:2,fb:"Dibangun untuk menahan <b>invasi bangsa nomaden utara</b> seperti Mongol dan Xiongnu."},
+{q:"Apa yang selalu datang tapi tidak pernah tiba?",opts:["Kematian","Besok","Mimpi","Uang"],ans:1,fb:"<b>Besok</b>, ketika tiba, ia sudah jadi hari ini. Besok tidak pernah benar-benar tiba."},
+{q:"Mana yang lebih tua: ayam atau telur?",opts:["Ayam","Telur","Sama tua","Tidak ada jawaban"],ans:1,fb:"Secara evolusi, <b>telur</b>, karena reptil bertelur jauh sebelum ayam ada sebagai spesies."},
+{q:"Gunung Everest baru ditemukan. Sebelumnya gunung tertinggi dunia apa?",opts:["K2","Gunung lain","Tetap Everest","Tidak ada"],ans:2,fb:"<b>Tetap Everest.</b> Ditemukan atau tidak, ia tetap gunung yang sama. Manusianya yang belum tahu."},
+{q:"Api dibawa ke luar angkasa. Apa yang terjadi?",opts:["Terbakar lebih besar","Padam","Meledak","Berubah warna"],ans:1,fb:"Tidak ada oksigen di luar angkasa, jadi api <b>langsung padam</b>."},
+{q:"Negara mana yang tidak punya sungai permanen?",opts:["Vatican","Monaco","Saudi Arabia","Semua punya sungai"],ans:2,fb:"<b>Saudi Arabia</b> tidak punya sungai permanen, hanya wadi (sungai kering musiman)."},
+{q:"Apa yang ada di ujung pelangi?",opts:["Pot emas","Hujan","Huruf I","Tidak ada"],ans:2,fb:"Pelangi tak punya ujung fisik. Tapi ujung kata 'pelangi' = huruf '<b>i</b>'. Kejebak!"},
+{q:"Planet mana yang paling dekat ke Matahari?",opts:["Venus","Bumi","Merkurius","Mars"],ans:2,fb:"<b>Merkurius</b> adalah planet terdekat ke Matahari dalam tata surya."},
+{q:"Apa ibu kota Australia?",opts:["Sydney","Melbourne","Canberra","Brisbane"],ans:2,fb:"<b>Canberra</b>! Bukan Sydney. Banyak yang salah kaprah karena Sydney lebih terkenal."},
+{q:"Bahasa apa yang paling banyak penutur aslinya di dunia?",opts:["Inggris","Mandarin","Spanyol","Hindi"],ans:1,fb:"<b>Mandarin</b> paling banyak penutur asli. Inggris lebih luas sebagai bahasa kedua."},
+{q:"Berapa sisi yang dimiliki oktagon?",opts:["6","7","8","10"],ans:2,fb:"'Okta' = 8. Oktagon punya <b>8 sisi</b>. Seperti rambu stop."},
+{q:"Organ terbesar pada tubuh manusia?",opts:["Hati","Paru-paru","Otak","Kulit"],ans:3,fb:"<b>Kulit</b> adalah organ terbesar. Luas rata-rata sekitar 2 meter persegi dan berat sekitar 4 kg."},
+{q:"Benua mana yang tidak ada semutnya?",opts:["Antartika","Arktik","Greenland","Tidak ada, semut ada di mana-mana"],ans:0,fb:"<b>Antartika</b>, terlalu dingin untuk semut. Satu-satunya benua bebas semut."},
+{q:"Siapa yang menulis novel Laskar Pelangi?",opts:["Pramoedya Ananta Toer","Andrea Hirata","Habiburrahman El Shirazy","Dee Lestari"],ans:1,fb:"<b>Andrea Hirata</b> menulis Laskar Pelangi (2005), novel fenomenal dari Belitong."},
+{q:"Mata uang Jepang adalah?",opts:["Yuan","Won","Yen","Baht"],ans:2,fb:"Mata uang Jepang adalah <b>Yen</b>. Yuan = China, Won = Korea, Baht = Thailand."},
+{q:"Air mendidih pada suhu berapa di permukaan laut?",opts:["90 derajat","95 derajat","100 derajat","110 derajat"],ans:2,fb:"<b>100 derajat Celsius</b> atau 212 Fahrenheit di permukaan laut. Di dataran tinggi lebih rendah."},
+{q:"Manusia rata-rata butuh berapa jam tidur per hari?",opts:["6 jam","8 jam","10 jam","12 jam"],ans:1,fb:"Rekomendasi medis = <b>8 jam</b> per hari untuk orang dewasa. Tapi siapa yang beneran 8 jam?"},
+{q:"Di mana ikan paus bayar tagihan?",opts:["Di bank laut","Di tepi pantai","Di kasir","Ikan paus tidak bayar tagihan"],ans:3,fb:"Karena <b>ikan paus tidak punya uang</b> dan tidak punya tagihan. Hidupnya damai."},
+{q:"Hewan apa yang bisa tidur paling lama?",opts:["Beruang","Kelelawar","Siput","Koala"],ans:2,fb:"<b>Siput</b> bisa tidur hingga 3 tahun. Koala 22 jam sehari, tapi siput juaranya."},
+],
+"🗣️ Bahasa":[
+{q:"Kata SALAH dieja S-A-L-A-H. Apa yang salah dari kalimat ini?",opts:["Ejaannya salah","Tidak ada yang salah","Hurufnya kurang","Tidak lengkap"],ans:1,fb:"Ejaan S-A-L-A-H itu <b>benar</b>. Tidak ada yang salah. Otakmu yang ngejebak dirinya sendiri."},
+{q:"Apa antonim kata 'bodoh'?",opts:["Nakal","Pintar","Baik","Malas"],ans:1,fb:"Antonim dari 'bodoh' adalah <b>'pintar'</b>. Semoga kamu tahu ini dari pengalaman pribadi."},
+{q:"Manakah palindrom (dibaca sama dari kedua arah)?",opts:["Kasur","Katak","Kuda","Makan"],ans:1,fb:"<b>Katak</b>: K-A-T-A-K dari depan sama dengan dari belakang. Palindrom sempurna."},
+{q:"Kata 'bisa' dalam bahasa Indonesia punya berapa arti?",opts:["1","2","3","Lebih dari 3"],ans:3,fb:"<b>'Bisa'</b>: mampu/sanggup, racun ular, dan mungkin/bisa jadi. Bahasa Indonesia penuh kejutan!"},
+{q:"Kata benda dalam kalimat 'Anjing itu berlari kencang' adalah?",opts:["Berlari","Kencang","Itu","Anjing"],ans:3,fb:"<b>'Anjing'</b> = kata benda. 'Berlari' = kata kerja, 'kencang' = keterangan, 'itu' = kata tunjuk."},
+{q:"Kalimat mana yang paling baku?",opts:["Saya sudah makan tadi","Saya makan sudah tadi","Tadi makan saya sudah","Makan saya sudah tadi"],ans:0,fb:"'<b>Saya sudah makan tadi</b>' = susunan S-P-K yang paling baku dalam bahasa Indonesia."},
+{q:"Huruf apa yang paling sering muncul di bahasa Indonesia?",opts:["A","E","I","U"],ans:0,fb:"Huruf <b>A</b> adalah yang paling sering muncul dalam teks bahasa Indonesia."},
+{q:"Apa yang punya gigi tapi tidak bisa menggigit?",opts:["Zombie tanpa mulut","Sisir","Buaya tidur","Gigi palsu di laci"],ans:1,fb:"<b>Sisir</b> punya gigi-gigi tapi tidak bisa menggigit. Classic riddle."},
+{q:"Sinonim kata 'cepat' adalah?",opts:["Lambat","Gesit","Lama","Pelan"],ans:1,fb:"<b>'Gesit'</b> adalah sinonim dari cepat, juga mengandung makna lincah."},
+{q:"'Abu-abu' termasuk jenis kata apa?",opts:["Kata benda","Kata kerja","Kata sifat","Kata keterangan"],ans:2,fb:"<b>Kata sifat</b>, mendeskripsikan warna/kualitas. Abu-abu adalah warna, jadi kata sifat."},
+{q:"Apa itu homonim?",opts:["Kata bermakna sama","Kata berlawanan arti","Kata berbeda arti tapi sama bunyi","Kata gabungan"],ans:2,fb:"<b>Homonim</b> = kata yang bunyi/ejaan sama tapi beda makna. Contoh: 'bulan' waktu dan 'bulan' di langit."},
+{q:"Manakah yang merupakan kata majemuk?",opts:["Rumah sakit","Berlari","Cepat lambat","Kebaikan"],ans:0,fb:"<b>'Rumah sakit'</b> adalah kata majemuk, dua kata yang bergabung membentuk makna baru."},
+{q:"Apa itu imbuhan 'me-' pada kata 'menulis'?",opts:["Prefiks","Sufiks","Konfiks","Infiks"],ans:0,fb:"'Me-' ditambahkan di <b>depan</b> kata dasar, disebut <b>prefiks</b>."},
+{q:"Berapa jumlah huruf vokal dalam abjad Indonesia?",opts:["4","5","6","7"],ans:1,fb:"Huruf vokal dalam bahasa Indonesia: A, I, U, E, O = <b>5 huruf vokal</b>."},
+{q:"Apa lawan kata 'sementara'?",opts:["Sesaat","Sebentar","Permanen","Sejenak"],ans:2,fb:"Lawan 'sementara' (tidak tetap) adalah <b>'permanen'</b> (tetap/abadi)."},
+{q:"Akronim KBBI singkatan dari?",opts:["Kamus Besar Bahasa Indonesia","Kumpulan Buku Bahasa Indonesia","Komite Bahasa Baku Indonesia","Kaidah Baku Bahasa Indonesia"],ans:0,fb:"KBBI = <b>Kamus Besar Bahasa Indonesia</b>, diterbitkan oleh Badan Bahasa Kemdikbud."},
+{q:"'Berlari-lari' adalah contoh kata ulang apa?",opts:["Dwipurwa","Dwilingga","Dwiwasana","Berimbuhan"],ans:1,fb:"<b>Dwilingga</b> = pengulangan seluruh kata dasar. 'Lari-lari' atau 'berlari-lari' termasuk ini."},
+{q:"Kalimat aktif yang benar adalah?",opts:["Buku itu dibaca Ani","Ani membaca buku","Buku dibacakan oleh Ani","Dibaca buku oleh Ani"],ans:1,fb:"<b>'Ani membaca buku'</b>, subjek Ani melakukan pekerjaan secara aktif. Pola S-P-O."},
+{q:"Kata 'meja' termasuk kata benda jenis apa?",opts:["Abstrak","Konkret","Kolektif","Tak terhitung"],ans:1,fb:"'Meja' adalah benda <b>konkret</b>, bisa dilihat dan disentuh. Bukan abstrak seperti 'cinta'."},
+{q:"'Saya minum kopi' dalam bentuk pasif yang benar menjadi?",opts:["Kopi diminum saya","Kopi saya minum","Kopi diminum oleh saya","Diminum kopi oleh saya"],ans:2,fb:"Bentuk pasif baku: <b>'Kopi diminum oleh saya'</b>. Objek jadi subjek, verba diberi 'di-'."},
+],
+"😂 Absurd":[
+{q:"Berapa kaki kucing jika kita sebut ekornya 'kaki'?",opts:["5","4","6","Tergantung"],ans:1,fb:"<b>Tetap 4 kaki.</b> Menyebut ekor sebagai 'kaki' tidak mengubah anatomi kucing."},
+{q:"Roti ditaruh di punggung kucing lalu dilempar. Apa yang terjadi?",opts:["Melayang selamanya","Mendarat di kaki","Meledak","Tidak terjadi apa-apa"],ans:0,fb:"Paradoks: kucing mendarat di kaki, roti di sisi olesan. Digabung? <b>Melayang selamanya.</b>"},
+{q:"Kenapa bebek menyeberang jalan?",opts:["Ke sisi seberang","Ke supermarket","Supaya tidak disebut ayam","Karena bebas"],ans:0,fb:"Untuk pergi ke <b>sisi seberang</b>. Versi bebek dari lelucon ayam klasik."},
+{q:"Mana yang lebih banyak: bintang di langit atau pasir di pantai?",opts:["Bintang","Pasir","Sama","Tidak bisa dihitung"],ans:1,fb:"Ilmuwan perkirakan <b>butir pasir di Bumi lebih banyak</b> dari bintang di alam semesta teramati."},
+{q:"Apa yang terjadi kalau kamu lempar batu ke laut?",opts:["Batu tenggelam","Laut basah","Ikan kaget","Batu jadi basah"],ans:3,fb:"Yang paling sering dilupakan: <b>batu jadi basah!</b> Laut sudah basah dari sononya."},
+{q:"Kamu punya 10 jari. 2 dipotong. Berapa jari kamu sekarang?",opts:["8","10","2","Tidak ada"],ans:0,fb:"<b>8 jari</b> yang tersisa. 10 - 2 = 8. Semoga hanya di soal ini saja kejadiannya."},
+{q:"Kalau kambing makan sepatu, apa yang dimakan kambing?",opts:["Rumput","Sepatu","Apapun","Kambing tidak makan sepatu"],ans:1,fb:"Soalnya bilang <b>kambing makan sepatu</b>, ya berarti sepatu. Percayai soalnya."},
+{q:"Mana yang lebih cepat: panas atau dingin?",opts:["Panas","Dingin","Sama","Tergantung medium"],ans:0,fb:"<b>Panas lebih cepat</b>, karena kamu bisa nyegat dingin (pakai jaket). Ini lawakan, bukan sains."},
+{q:"Berapa lubang yang ada di celana?",opts:["0","2","3","4"],ans:2,fb:"Lubang kaki kiri, kaki kanan, dan <b>lubang pinggang</b> = 3 lubang minimal."},
+{q:"Apa yang basah ketika mengeringkan?",opts:["Lap","Handuk","Spons","Angin"],ans:1,fb:"<b>Handuk!</b> Semakin kamu pakai untuk mengeringkan orang, semakin basah dia."},
+{q:"Apa yang bisa terbang tanpa sayap?",opts:["Superman","Waktu","Mimpi","Debu"],ans:1,fb:"<b>Waktu</b> terbang, 'time flies'. Dan waktu tidak punya sayap. Filosofis tapi absurd."},
+{q:"Seorang pria lahir tahun 70 tapi umurnya 30 tahun. Bagaimana mungkin?",opts:["Dia bohong","Dia lahir tahun 70-an","Lahir di lantai 70","Lahir di kamar nomor 70"],ans:2,fb:"Dia lahir di <b>lantai 70</b>. Bukan tahun 70-an! Angka 70 itu nomor lantai."},
+{q:"Apa yang punya kepala dan ekor tapi tidak punya badan?",opts:["Ular tanpa badan","Koin","Meteor","Komet"],ans:1,fb:"<b>Koin</b> punya sisi 'kepala' dan 'ekor'. Tanpa badan."},
+{q:"Kalau kamu buang sesuatu tapi tetap punya, itu apa?",opts:["Ilmu","Waktu","Jangkar","Bola yang balik"],ans:0,fb:"<b>Ilmu</b>, semakin dibagi, semakin bertambah. Buang ke orang lain, tapi kamu tetap punya."},
+{q:"Ada 7 saudara, masing-masing punya seorang kakak yang sama. Berapa total orang?",opts:["14","8","7","15"],ans:1,fb:"7 saudara + 1 kakak yang sama-sama mereka miliki = <b>8 orang</b> total."},
+{q:"Sebuah toko buka 24 jam sehari 7 hari seminggu. Kenapa ada gembok di pintu?",opts:["Dekorasi","Untuk malam minggu","Cadangan kalau tutup darurat","Tidak ada alasan logis"],ans:0,fb:"Gembok itu mungkin cuma <b>dekorasi</b> atau sisa dari sebelum toko jadi 24 jam."},
+{q:"Kamu punya 3 jeruk dan makan 1 setengah. Sisa berapa?",opts:["1.5","2","2.5","1"],ans:0,fb:"3 - 1.5 = <b>1.5 jeruk</b>. Setengah jeruk masih dihitung."},
+{q:"Apa yang selalu di depanmu tapi tidak bisa dilihat?",opts:["Masa depan","Hidung","Kening","Otak"],ans:0,fb:"<b>Masa depan</b> selalu ada di depanmu, tapi tidak bisa kamu lihat secara harfiah."},
+{q:"Seorang dokter beri 3 pil, minum satu tiap setengah jam. Mulai jam 1. Jam berapa pil habis?",opts:["Jam 2","Jam 2.30","Jam 1.30","Jam 3"],ans:0,fb:"Pil 1 jam 1:00, pil 2 jam 1:30, pil 3 jam 2:00. Habis jam <b>2 siang</b>."},
+{q:"Lemari berjalan masuk hutan. Apa yang lemari temukan?",opts:["Beruang","Jalan keluar","Soal yang lebih susah","Lemari tidak bisa berjalan"],ans:3,fb:"<b>Lemari tidak bisa berjalan.</b> Itu benda mati. Pertanyaan ini tidak logis dari awal."},
+],
 };
+
+const ROASTS_LAYAR_MATOT=[
+"Entah gimana bisa salah sebanyak itu. Tapi tenang, layar matot juga berguna, buat cermin.",
+"Otakmu nge-lag parah. Coba restart, tekan tombol tidur 8 jam.",
+"WiFi otakmu 2G di area blank spot. Gapapa, sinyal bisa dicari.",
+"Kamu jawab dengan percaya diri yang luar biasa... sayangnya percaya diri bukan substitut otak.",
+"Bahkan Google Maps nyasar pun lebih bisa dipercaya dari jawabanmu.",
+"Selamat! Kamu berhasil membuktikan bahwa menebak acak pun susah.",
+"Kalau IQ ini dikonversi ke kecepatan internet, kamu masih pakai dial-up.",
+"Layar matot minimal masih bisa jadi cermin. Ini lebih parah dari itu.",
+"Bukan soalnya yang sulit. Kamu yang terlalu... kreatif dalam salah.",
+"Otak kamu mungkin lagi maintenance. Coba cek besok.",
+"Rekomendasi: minum air putih dulu. Banyak. Sekarang.",
+"HP kentang pun bisa loading lebih cepat dari sambungan neuronmu.",
+"Semua jawaban salah itu statistik yang membutuhkan usaha. Respect.",
+"Kamu jawab soal ini kayak input random, hasilnya pun random.",
+"Jangan sedih. Einstein juga pernah salah. Bedanya dia cuma sekali.",
+"Otakmu kayak SSD penuh, perlu dihapus dulu biar jalan lagi.",
+"Ini bukan tentang kalah. Ini tentang menemukan dirimu yang sejati.",
+"Mungkin kamu salah jurusan. IQ ini lebih cocok jadi penguji kasur.",
+"Kata orang bijak: dari kesalahan kita belajar. Kamu harusnya profesor sekarang.",
+"Baterai otakmu 2%. Sambungkan ke charger (tidur plus makan) sebelum tes lagi.",
+"Bahkan koin yang dilempar punya peluang 50-50. Kamu somehow lebih buruk.",
+"Tidak apa-apa. Kucing pun bisa lulus kalau nginjak keyboard. Masih ada harapan.",
+"Soal ini memang jebakan. Tapi kamu masuk semua jebakan sekaligus.",
+"Ada sisi positifnya: kamu konsisten salah. Itu juga butuh skill.",
+"Kalau salah itu mata pelajaran, kamu summa cum laude.",
+"Neuronmu kayak lampu disco, nyalanya bergantian, tidak pernah bareng.",
+];
 
 const CATS=Object.keys(BANK);
 const CAT_COLORS={
-  "🧠 Logika":{color:"#c084fc",bg:"rgba(192,132,252,.1)",border:"rgba(192,132,252,.25)"},
-  "🔢 Matematika":{color:"#38bdf8",bg:"rgba(56,189,248,.1)",border:"rgba(56,189,248,.25)"},
-  "🌍 Pengetahuan":{color:"#34d399",bg:"rgba(52,211,153,.1)",border:"rgba(52,211,153,.25)"},
-  "🗣️ Bahasa":{color:"#fbbf24",bg:"rgba(251,191,36,.1)",border:"rgba(251,191,36,.25)"},
-  "😂 Absurd":{color:"#fb7185",bg:"rgba(251,113,133,.1)",border:"rgba(251,113,133,.25)"},
+"🧠 Logika":{color:"#c084fc",bg:"rgba(192,132,252,.1)",border:"rgba(192,132,252,.25)"},
+"🔢 Matematika":{color:"#38bdf8",bg:"rgba(56,189,248,.1)",border:"rgba(56,189,248,.25)"},
+"🌍 Pengetahuan":{color:"#34d399",bg:"rgba(52,211,153,.1)",border:"rgba(52,211,153,.25)"},
+"🗣️ Bahasa":{color:"#fbbf24",bg:"rgba(251,191,36,.1)",border:"rgba(251,191,36,.25)"},
+"😂 Absurd":{color:"#fb7185",bg:"rgba(251,113,133,.1)",border:"rgba(251,113,133,.25)"},
 };
 
 const TIMER_MAX=20;
-
 function shuffle(arr){return[...arr].sort(()=>Math.random()-.5);}
 function buildQuiz(){
   const quiz=[];
@@ -235,18 +299,18 @@ function startGame(){
 function loadQ(){
   answered=false;
   const q=Q[cur];
-  $('q-num').textContent=`Soal ${cur+1} / ${Q.length}`;
-  $('q-pf').style.width=`${((cur+1)/Q.length)*100}%`;
+  $('q-num').textContent='Soal '+(cur+1)+' / '+Q.length;
+  $('q-pf').style.width=(((cur+1)/Q.length)*100)+'%';
   $('q-text').textContent=q.q;
   $('q-feedback').classList.remove('show');$('q-feedback').innerHTML='';
   $('btn-next').classList.remove('show');
   const badge=$('q-cat-badge'),col=CAT_COLORS[q.cat];
-  badge.textContent=q.cat;badge.style.color=col.color;badge.style.background=col.bg;badge.style.border=`1px solid ${col.border}`;
+  badge.textContent=q.cat;badge.style.color=col.color;badge.style.background=col.bg;badge.style.border='1px solid '+col.border;
   const opts=$('q-options');opts.innerHTML='';
-  ['A','B','C','D'].forEach((l,i)=>{
+  ['A','B','C','D'].forEach(function(l,i){
     const b=document.createElement('button');b.className='q-opt';
-    b.innerHTML=`<span class="q-opt-letter">${l}</span>${q.opts[i]}`;
-    b.onclick=()=>pick(i);opts.appendChild(b);
+    b.innerHTML='<span class="q-opt-letter">'+l+'</span>'+q.opts[i];
+    b.onclick=function(){pick(i);};opts.appendChild(b);
   });
   startTimer();qStart=Date.now();
 }
@@ -254,14 +318,14 @@ function loadQ(){
 function startTimer(){
   clearInterval(tid);tl=TIMER_MAX;
   const el=$('q-timer');el.textContent=tl;el.classList.remove('urgent');
-  tid=setInterval(()=>{tl--;el.textContent=tl;if(tl<=5)el.classList.add('urgent');if(tl<=0){clearInterval(tid);if(!answered)timeUp();}},1000);
+  tid=setInterval(function(){tl--;el.textContent=tl;if(tl<=5)el.classList.add('urgent');if(tl<=0){clearInterval(tid);if(!answered)timeUp();}},1000);
 }
 
 function timeUp(){
   answered=true;times.push(TIMER_MAX);
   const q=Q[cur];catScores[q.cat].total++;
-  $('q-options').querySelectorAll('.q-opt').forEach((b,i)=>{b.classList.add('disabled');if(i===q.ans)b.classList.add('correct');});
-  $('q-feedback').innerHTML='⏰ Waktu habis! '+q.fb;$('q-feedback').classList.add('show');
+  $('q-options').querySelectorAll('.q-opt').forEach(function(b,i){b.classList.add('disabled');if(i===q.ans)b.classList.add('correct');});
+  $('q-feedback').innerHTML='Waktu habis! '+q.fb;$('q-feedback').classList.add('show');
   $('btn-next').classList.add('show');
 }
 
@@ -269,13 +333,13 @@ function pick(idx){
   if(answered)return;answered=true;clearInterval(tid);
   times.push((Date.now()-qStart)/1000);
   const q=Q[cur];catScores[q.cat].total++;
-  $('q-options').querySelectorAll('.q-opt').forEach((b,i)=>{
+  $('q-options').querySelectorAll('.q-opt').forEach(function(b,i){
     b.classList.add('disabled');
     if(i===q.ans)b.classList.add('correct');
     else if(i===idx&&idx!==q.ans)b.classList.add('wrong');
   });
   if(idx===q.ans){score++;catScores[q.cat].correct++;}
-  $('q-feedback').innerHTML=(idx===q.ans?'✓ Benar! ':'✗ Salah. ')+q.fb;
+  $('q-feedback').innerHTML=(idx===q.ans?'Benar! ':'Salah. ')+q.fb;
   $('q-feedback').classList.add('show');$('btn-next').classList.add('show');
 }
 
@@ -284,23 +348,26 @@ function nextQ(){cur++;if(cur>=Q.length){showResult();return;}loadQ();}
 function showResult(){
   showScreen('screen-result');
   const iq=Math.round(72+(score/Q.length)*55);
-  const avg=(times.reduce((a,b)=>a+b,0)/times.length).toFixed(1);
+  const avg=(times.reduce(function(a,b){return a+b;},0)/times.length).toFixed(1);
   $('result-iq').textContent=iq;$('res-c').textContent=score;$('res-w').textContent=Q.length-score;$('res-t').textContent=avg+'s';
   const catDiv=$('result-cats');catDiv.innerHTML='';
-  CATS.forEach(cat=>{
+  CATS.forEach(function(cat){
     const cs=catScores[cat],col=CAT_COLORS[cat];
     const d=document.createElement('div');d.className='cat-result';
-    d.innerHTML=`<span class="cat-result-name">${cat}</span><span class="cat-result-score" style="color:${col.color}">${cs.correct}/${cs.total}</span>`;
+    d.innerHTML='<span class="cat-result-name">'+cat+'</span><span class="cat-result-score" style="color:'+col.color+'">'+cs.correct+'/'+cs.total+'</span>';
     catDiv.appendChild(d);
   });
+  const randomRoast=ROASTS_LAYAR_MATOT[Math.floor(Math.random()*ROASTS_LAYAR_MATOT.length)];
   const data=[
-    {min:9,t:'Otak Dewa, Manusia Langka 🧠',r:'Hampir sempurna. Kamu tidak bisa dijebak soal beginian. Skripsi pasti selesai tepat waktu.'},
-    {min:7,t:'Lumayan, Tapi Tetap Kena Jebak 😏',r:'Di atas rata-rata, tapi otakmu masih auto-pilot di beberapa soal. Latih lagi.'},
-    {min:5,t:'Standar Banget, Kayak WiFi Indekos 📶',r:'Tidak jelek, tidak juga bagus. Tepat di tengah-tengah zona nyaman.'},
-    {min:3,t:'Otak Butuh Di-charge Dulu 🔋',r:'Soalnya sengaja dibuat gampang dan masih banyak salah. Coba minum air dulu.'},
-    {min:0,t:'IQ Setara Layar Matot 📺',r:'Entah gimana bisa salah sebanyak itu. Tapi tenang, layar matot juga berguna — buat cermin.'}
+    {min:18,t:'Otak Dewa, Manusia Langka 🧠',r:'Hampir sempurna. Kamu tidak bisa dijebak soal beginian. Skripsi pasti selesai tepat waktu.'},
+    {min:16,t:'Hampir Sempurna, Sayang Banget 😤',r:'Lebih dari 80% benar. Tapi satu-dua soal lolos juga. Detail itu penting, bro.'},
+    {min:14,t:'Lumayan, Tapi Tetap Kena Jebak 😏',r:'Di atas rata-rata, tapi otakmu masih auto-pilot di beberapa soal. Latih lagi.'},
+    {min:11,t:'Standar Banget, Kayak WiFi Indekos 📶',r:'Tidak jelek, tidak juga bagus. Tepat di tengah-tengah zona nyaman.'},
+    {min:8,t:'Otak Sedang Maintenance 🔧',r:'Potensial ada, tapi koneksinya masih putus-putus. Coba fokus lebih.'},
+    {min:5,t:'Otak Butuh Di-charge Dulu 🔋',r:'Soalnya sengaja dibuat gampang dan masih banyak salah. Coba minum air dulu.'},
+    {min:0,t:'IQ Setara Layar Matot 📺',r:randomRoast}
   ];
-  const d=data.find(x=>score>=x.min);
+  const d=data.find(function(x){return score>=x.min;});
   $('result-title').textContent=d.t;$('result-roast').textContent=d.r;
 }
 
@@ -310,20 +377,20 @@ $('btn-retry').onclick=startGame;
 
 const cvs=$('bg'),ctx=cvs.getContext('2d');
 function resize(){cvs.width=window.innerWidth||680;cvs.height=window.innerHeight||600;}
-resize();window.addEventListener('resize',()=>{resize();buildStars();});
+resize();window.addEventListener('resize',function(){resize();buildStars();});
 let stars=[];
 function buildStars(){
   const W=cvs.width,H=cvs.height;
-  stars=Array.from({length:260},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,baseA:.05+Math.random()*.5,phase:Math.random()*Math.PI*2,spd:.4+Math.random()*1.1,col:Math.random()<.15?(Math.random()<.5?'160,210,255':'255,200,150'):'255,255,255'}));
+  stars=Array.from({length:260},function(){return{x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,baseA:.05+Math.random()*.5,phase:Math.random()*Math.PI*2,spd:.4+Math.random()*1.1,col:Math.random()<.15?(Math.random()<.5?'160,210,255':'255,200,150'):'255,255,255'};});
 }
 buildStars();
 let t=0;
 function draw(){
   ctx.clearRect(0,0,cvs.width,cvs.height);t+=.016;
-  stars.forEach(s=>{
+  stars.forEach(function(s){
     const a=s.baseA*(.5+.5*Math.sin(t*s.spd+s.phase));
-    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(${s.col},${a.toFixed(2)})`;ctx.fill();
-    if(s.r>1){ctx.beginPath();ctx.arc(s.x,s.y,s.r*2.5,0,Math.PI*2);ctx.fillStyle=`rgba(${s.col},${(a*.08).toFixed(3)})`;ctx.fill();}
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle='rgba('+s.col+','+a.toFixed(2)+')';ctx.fill();
+    if(s.r>1){ctx.beginPath();ctx.arc(s.x,s.y,s.r*2.5,0,Math.PI*2);ctx.fillStyle='rgba('+s.col+','+(a*.08).toFixed(3)+')';ctx.fill();}
   });
   requestAnimationFrame(draw);
 }
