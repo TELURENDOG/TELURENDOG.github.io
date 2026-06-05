@@ -270,10 +270,7 @@ a,button{touch-action:manipulation}
 
 .glass{background:var(--surface);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--border);border-radius:20px}
 .glass-strong{background:rgba(8,12,28,0.72);-webkit-backdrop-filter:blur(32px) saturate(1.8);backdrop-filter:blur(32px) saturate(1.8);border:1px solid var(--border);border-radius:32px}
-.glass-card{background:var(--surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:20px;transition:background 0.3s,border-color 0.3s,transform 0.4s cubic-bezier(.2,.8,.2,1)}
-@media(hover:hover){
-  .glass-card:hover{background:var(--surface2);border-color:var(--border2);transform:translateY(-5px)}
-}
+.glass-card{background:var(--surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:20px}
 
 #navbar{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:100;transition:opacity 0.4s,transform 0.4s;will-change:transform,opacity;width:calc(100% - 24px);max-width:700px}
 .nav-inner{display:flex;align-items:center;gap:2px;padding:7px 9px;background:rgba(6,10,26,0.85);-webkit-backdrop-filter:blur(28px);backdrop-filter:blur(28px);border:1px solid var(--border);border-radius:50px;overflow:hidden}
@@ -342,9 +339,8 @@ section{position:relative;z-index:10}
 
 #projects{padding:100px 16px}
 .projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.proj-card{padding:0;overflow:hidden;cursor:pointer;transition:transform 0.4s cubic-bezier(.2,.8,.2,1),border-color 0.3s}
-@media(hover:hover){.proj-card:hover{transform:translateY(-6px);border-color:var(--border2)}}
-.proj-card:active{transform:scale(0.98)}
+.proj-card{padding:0;overflow:visible;cursor:pointer}
+.proj-card .proj-thumb{border-radius:20px 20px 0 0;overflow:hidden}
 .proj-thumb{height:140px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .proj-thumb-inner{font-size:2.4rem;position:relative;z-index:1}
 .proj-thumb-bg{position:absolute;inset:0;opacity:0.7;transition:opacity 0.3s}
@@ -387,16 +383,43 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 
 .hero-wave{display:inline-block;animation:waveHand 1.8s ease-in-out infinite;transform-origin:70% 70%;font-size:0.85em;vertical-align:middle}
 @keyframes waveHand{0%,100%{transform:rotate(0deg)}15%{transform:rotate(18deg)}30%{transform:rotate(-8deg)}45%{transform:rotate(16deg)}60%{transform:rotate(-4deg)}75%{transform:rotate(12deg)}90%{transform:rotate(-4deg)}}
-.nav-smile{display:inline-block;animation:smileBounce 2.5s ease-in-out infinite}
-@keyframes smileBounce{0%,100%{transform:scale(1) rotate(0deg)}25%{transform:scale(1.2) rotate(-10deg)}50%{transform:scale(1.1) rotate(8deg)}75%{transform:scale(1.15) rotate(-5deg)}}
-@media(prefers-reduced-motion:reduce){.hero-wave,.nav-smile{animation:none}}
+
+.hero-hi{
+  position:relative;
+  display:inline-block;
+  animation:hiPop 0.7s cubic-bezier(.2,1.6,.4,1) both, hiGlow 3s ease-in-out 0.7s infinite;
+  letter-spacing:-0.06em;
+}
+@keyframes hiPop{
+  0%{opacity:0;transform:scale(0.4) translateY(30px) skewX(-8deg)}
+  60%{transform:scale(1.08) translateY(-6px) skewX(2deg)}
+  80%{transform:scale(0.97) translateY(2px)}
+  100%{opacity:1;transform:scale(1) translateY(0) skewX(0)}
+}
+@keyframes hiGlow{
+  0%,100%{filter:drop-shadow(0 0 18px rgba(167,139,250,0.5)) drop-shadow(0 0 40px rgba(34,211,238,0.2))}
+  30%{filter:drop-shadow(0 0 30px rgba(167,139,250,0.9)) drop-shadow(0 0 60px rgba(34,211,238,0.5)) drop-shadow(0 0 90px rgba(124,106,247,0.3))}
+  60%{filter:drop-shadow(0 0 20px rgba(34,211,238,0.7)) drop-shadow(0 0 50px rgba(167,139,250,0.4))}
+}
+
+.nav-smile{display:inline-block;animation:sparkSpin 2s ease-in-out infinite}
+@keyframes sparkSpin{
+  0%{transform:scale(1) rotate(0deg);filter:brightness(1)}
+  20%{transform:scale(1.4) rotate(72deg);filter:brightness(1.8) drop-shadow(0 0 6px #a78bfa)}
+  40%{transform:scale(0.9) rotate(144deg);filter:brightness(1)}
+  60%{transform:scale(1.3) rotate(216deg);filter:brightness(1.6) drop-shadow(0 0 8px #22d3ee)}
+  80%{transform:scale(1) rotate(288deg);filter:brightness(1)}
+  100%{transform:scale(1) rotate(360deg);filter:brightness(1)}
+}
+@media(prefers-reduced-motion:reduce){.hero-wave,.nav-smile,.hero-hi{animation:none}}
 .float-a{animation:floatA 6s ease-in-out infinite}
 .float-b{animation:floatA 7.5s ease-in-out 2s infinite}
 @keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @media(prefers-reduced-motion:reduce){.float-a,.float-b{animation:none}}
+.tilt-card.float-a:hover,.tilt-card.float-b:hover{animation-play-state:paused}
 
-.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s cubic-bezier(.2,.8,.2,1),transform 0.7s cubic-bezier(.2,.8,.2,1)}
-.reveal.in{opacity:1;transform:translateY(0)}
+.reveal{opacity:0;translate:0 28px;transition:opacity 0.7s cubic-bezier(.2,.8,.2,1),translate 0.7s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;translate:0 0}
 .reveal-d1{transition-delay:0.08s}
 .reveal-d2{transition-delay:0.15s}
 .reveal-d3{transition-delay:0.22s}
@@ -467,8 +490,8 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
   }
 }
 
-.tilt-card{transform-style:preserve-3d;will-change:transform;transition:transform 0.15s ease,box-shadow 0.15s ease}
-.tilt-card .tilt-shine{position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,0.12),transparent 65%);opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:2}
+.tilt-card{transform-style:preserve-3d;will-change:transform;transition:box-shadow 0.06s ease}
+.tilt-card .tilt-shine{position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,0.18),transparent 65%);opacity:0;transition:opacity 0.15s;pointer-events:none;z-index:2}
 .tilt-card:hover .tilt-shine{opacity:1}
 
 @keyframes starPop{0%{transform:scale(0.5);opacity:0}50%{transform:scale(1.4);opacity:1}100%{transform:scale(1);opacity:0.7}}
@@ -505,7 +528,7 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 
   <nav id="navbar" aria-label="Main navigation">
     <div class="nav-inner">
-      <div class="nav-logo">Hello! <span class="nav-smile">😊</span></div>
+      <div class="nav-logo">Hello! <span class="nav-smile">✨</span></div>
       <div class="nav-sep"></div>
       <div class="nav-links">
         <a href="#home" class="nav-link active">Home</a>
@@ -524,7 +547,7 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
       Available for work
     </div>
     <h1 class="hero-h1 reveal reveal-d1">
-      <span class="grad">Hi there!</span> <span class="hero-wave">👋</span>
+      <span class="grad hero-hi">Hi!</span> <span class="hero-wave">👋</span>
     </h1>
     <p class="hero-byline reveal reveal-d2">
       <span class="riski-name">RISKI RM</span> — Digital Kuli From Earth 🌍
@@ -1701,30 +1724,81 @@ function initTilt(){
       card.style.position = 'relative';
       card.appendChild(shine);
     }
-    card.addEventListener('mousemove', e => {
+
+    function getCardColor(){
+      const badge = card.querySelector('.proj-badge');
+      if(badge){ const cs = getComputedStyle(badge); return cs.color; }
+      const ring = card.querySelector('.ring-fg');
+      if(ring) return ring.getAttribute('stroke') || '#7c6af7';
+      return '#7c6af7';
+    }
+    function colorToRgb(col){
+      if(col.startsWith('rgb')){ const m=col.match(/\d+/g); if(m&&m.length>=3) return {r:+m[0],g:+m[1],b:+m[2]}; }
+      const m=col.replace('#','').match(/.{2}/g);
+      if(m) return {r:parseInt(m[0],16),g:parseInt(m[1],16),b:parseInt(m[2],16)};
+      return {r:124,g:106,b:247};
+    }
+
+    let cardColor = null;
+    let clickActive = false;
+    let rafId = null;
+    let lastX = 0, lastY = 0;
+    const hasFloat = card.classList.contains('float-a') || card.classList.contains('float-b');
+
+    function applyTilt(){
+      if(!cardColor) cardColor = colorToRgb(getCardColor());
+      const {r,g,b} = cardColor;
       const rect = card.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
-      const dx = (e.clientX - cx) / (rect.width / 2);
-      const dy = (e.clientY - cy) / (rect.height / 2);
-      const tiltX = dy * -12;
-      const tiltY = dx * 12;
-      card.style.transform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-6px) scale(1.02)`;
-      card.style.boxShadow = `${-tiltY*2}px ${tiltX*2}px 40px rgba(124,106,247,0.3), 0 16px 50px rgba(0,0,0,0.5)`;
+      const dx = (lastX - cx) / (rect.width / 2);
+      const dy = (lastY - cy) / (rect.height / 2);
+      const tiltX = dy * -20;
+      const tiltY = dx * 20;
+      card.style.transform = `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-10px) scale(1.04)`;
+      card.style.boxShadow = [
+        `${-tiltY*3}px ${tiltX*3}px 50px rgba(${r},${g},${b},0.5)`,
+        `0 0 40px rgba(${r},${g},${b},0.35)`,
+        `0 20px 60px rgba(0,0,0,0.6)`,
+        `inset 0 1px 0 rgba(255,255,255,0.12)`
+      ].join(', ');
+      card.style.borderColor = `rgba(${r},${g},${b},0.55)`;
       const shine = card.querySelector('.tilt-shine');
       if(shine){
-        const px = ((e.clientX - rect.left) / rect.width) * 100;
-        const py = ((e.clientY - rect.top) / rect.height) * 100;
-        shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.18), transparent 65%)`;
+        const px = ((lastX - rect.left) / rect.width) * 100;
+        const py = ((lastY - rect.top) / rect.height) * 100;
+        shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.22), transparent 60%)`;
         shine.style.opacity = '1';
       }
-    }, { passive: true });
-    card.addEventListener('mouseleave', () => {
+      rafId = null;
+    }
+
+    function resetTilt(){
+      clickActive = false;
+      if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+      if(hasFloat) card.style.animationPlayState = 'running';
       card.style.transform = '';
       card.style.boxShadow = '';
+      card.style.borderColor = '';
       const shine = card.querySelector('.tilt-shine');
       if(shine) shine.style.opacity = '0';
+    }
+
+    card.addEventListener('mousedown', e => {
+      clickActive = true;
+      if(hasFloat) card.style.animationPlayState = 'paused';
+      lastX = e.clientX; lastY = e.clientY;
+      if(!rafId) rafId = requestAnimationFrame(applyTilt);
     }, { passive: true });
+
+    card.addEventListener('mousemove', e => {
+      if(!clickActive) return;
+      lastX = e.clientX; lastY = e.clientY;
+      if(!rafId) rafId = requestAnimationFrame(applyTilt);
+    }, { passive: true });
+
+    card.addEventListener('mouseup', resetTilt, { passive: true });
+    card.addEventListener('mouseleave', resetTilt, { passive: true });
   });
 }
 setTimeout(initTilt, 800);
