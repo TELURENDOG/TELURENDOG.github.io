@@ -591,7 +591,7 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
     </p>
     <div class="hero-btns reveal reveal-d4">
       <a href="#projects" class="btn-primary">
-        Explore Work
+        Let's Play My Game
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
       <a href="#contact" class="btn-ghost">Get in Touch</a>
@@ -750,6 +750,18 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
   gap: 24px;
   margin-top: 8px;
 }
+/* Top row: Gaming cards side by side */
+.gaming-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+@media(max-width: 640px) {
+  .gaming-row {
+    grid-template-columns: 1fr;
+  }
+}
 .proj-card-v2 {
   position: relative;
   border-radius: 24px;
@@ -813,6 +825,82 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
 @keyframes cosmicSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 @keyframes nebulaPulse { from{opacity:0.6} to{opacity:1} }
 
+/* Card IQ — IQ Test */
+.card-iq .card-bg-anim::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: conic-gradient(from 45deg at 50% 50%,
+    rgba(52,211,153,0.20) 0deg,
+    rgba(34,211,238,0.15) 72deg,
+    rgba(167,139,250,0.18) 144deg,
+    rgba(251,191,36,0.12) 216deg,
+    rgba(52,211,153,0.20) 360deg
+  );
+  animation: iqSpin 8s linear infinite reverse;
+  border-radius: 50%;
+}
+.card-iq .card-bg-anim::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(52,211,153,0.22) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(251,191,36,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 55% 20%, rgba(34,211,238,0.12) 0%, transparent 40%);
+  animation: iqNebula 5s ease-in-out infinite alternate;
+}
+@keyframes iqSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes iqNebula { from{opacity:0.5;transform:scale(1)} to{opacity:1;transform:scale(1.05)} }
+
+/* IQ circuit lines */
+.iq-circuits {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 24px;
+  z-index: 0;
+  opacity: 0.25;
+}
+.iq-circuits svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.iq-circuit-line {
+  stroke: rgba(52,211,153,0.7);
+  stroke-width: 1;
+  fill: none;
+  stroke-dasharray: 8 4;
+  animation: circuitDash 3s linear infinite;
+}
+.iq-circuit-line:nth-child(2) { stroke: rgba(34,211,238,0.7); animation-delay: -1s; }
+.iq-circuit-line:nth-child(3) { stroke: rgba(251,191,36,0.6); animation-delay: -2s; }
+@keyframes circuitDash { to { stroke-dashoffset: -60; } }
+
+/* IQ brain nodes */
+.iq-nodes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.iq-node {
+  position: absolute;
+  border-radius: 50%;
+  animation: nodeOrbit var(--ndur,4s) ease-in-out var(--ndelay,0s) infinite;
+}
+@keyframes nodeOrbit {
+  0%,100% { transform: translateY(0) scale(1); opacity: 0.6; }
+  50%      { transform: translateY(-12px) scale(1.4); opacity: 1; }
+}
+
 /* Card 2 — Coming Soon */
 .card-soon .card-bg-anim::before {
   content: '';
@@ -852,6 +940,38 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
   0%,100% { box-shadow: 0 0 24px rgba(124,106,247,0.35), 0 0 48px rgba(34,211,238,0.15); }
   50%      { box-shadow: 0 0 40px rgba(124,106,247,0.55), 0 0 70px rgba(34,211,238,0.3); }
 }
+/* IQ card icon */
+.card-iq .card-emoji-wrap {
+  background: linear-gradient(135deg, rgba(52,211,153,0.3), rgba(251,191,36,0.2));
+  border: 1px solid rgba(52,211,153,0.4);
+  box-shadow: 0 0 24px rgba(52,211,153,0.35), 0 0 48px rgba(251,191,36,0.15);
+  animation: iqIconPulse 2.5s ease-in-out infinite;
+  position: relative;
+  overflow: visible;
+}
+@keyframes iqIconPulse {
+  0%,100% { box-shadow: 0 0 24px rgba(52,211,153,0.35), 0 0 48px rgba(251,191,36,0.15); transform: scale(1); }
+  33%      { box-shadow: 0 0 40px rgba(52,211,153,0.6), 0 0 70px rgba(34,211,238,0.3); transform: scale(1.06) rotate(-3deg); }
+  66%      { box-shadow: 0 0 30px rgba(251,191,36,0.5), 0 0 55px rgba(52,211,153,0.25); transform: scale(1.03) rotate(2deg); }
+}
+/* IQ badge */
+.card-iq .card-badge {
+  color: #34d399;
+  background: rgba(52,211,153,0.1);
+  border: 1px solid rgba(52,211,153,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.card-iq .card-badge::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(52,211,153,0.3), transparent);
+  transform: translateX(-100%);
+  animation: badgeSweep 2.5s ease-in-out infinite;
+}
+@keyframes badgeSweep { to { transform: translateX(200%); } }
+
 .card-soon .card-emoji-wrap {
   background: linear-gradient(135deg, rgba(244,114,182,0.2), rgba(124,106,247,0.15));
   border: 1px solid rgba(244,114,182,0.3);
@@ -927,6 +1047,10 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
   white-space: nowrap;
   flex-shrink: 0;
 }
+/* IQ card arrow green */
+.card-iq .card-arrow {
+  color: #34d399;
+}
 
 /* Coming Soon Badge Pulse */
 .soon-badge-pulse {
@@ -982,9 +1106,225 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
   80%  { opacity: 0.4; }
   100% { opacity: 0; transform: translateY(-60px) scale(1.5); }
 }
+
+/* IQ floating symbols */
+.iq-symbols {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 24px;
+  z-index: 0;
+}
+.iq-sym {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: rgba(52,211,153,0.5);
+  animation: symFloat var(--sdur,5s) ease-in-out var(--sdelay,0s) infinite;
+  user-select: none;
+}
+@keyframes symFloat {
+  0%   { opacity: 0; transform: translateY(10px) scale(0.7); }
+  20%  { opacity: 1; }
+  80%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-50px) scale(1.2) rotate(15deg); }
+}
+
+/* IQ brain scan bar */
+.iq-scan-bar {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(52,211,153,0.7), rgba(34,211,238,0.5), transparent);
+  top: 0;
+  animation: iqScan 3s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+@keyframes iqScan {
+  0%   { top: 0%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* IQ score flicker ring */
+.iq-score-ring {
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 48px; height: 48px;
+  z-index: 2;
+  pointer-events: none;
+}
+.iq-score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.iq-ring-track { stroke: rgba(52,211,153,0.12); stroke-width: 3; fill: none; }
+.iq-ring-fill  {
+  stroke: rgba(52,211,153,0.85);
+  stroke-width: 3;
+  fill: none;
+  stroke-dasharray: 125.7;
+  stroke-dashoffset: 125.7;
+  stroke-linecap: round;
+  animation: iqRingFill 2.8s cubic-bezier(0.4,0,0.2,1) 0.5s forwards, iqRingPulse 3s ease-in-out 3.5s infinite;
+}
+@keyframes iqRingFill {
+  to { stroke-dashoffset: 18; }
+}
+@keyframes iqRingPulse {
+  0%,100% { opacity: 1; }
+  50%     { opacity: 0.55; stroke: rgba(34,211,238,0.85); }
+}
+.iq-score-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #34d399;
+  letter-spacing: 0.05em;
+  animation: iqScoreCount 2.8s ease-out 0.5s both;
+}
+@keyframes iqScoreCount {
+  0%  { opacity: 0; }
+  30% { opacity: 1; }
+}
+
+/* IQ hover: card glows emerald */
+@media(hover:hover){
+  .card-iq:hover {
+    transform: translateY(-8px) scale(1.02) !important;
+    box-shadow: 0 20px 60px rgba(52,211,153,0.35), 0 0 40px rgba(34,211,238,0.15), 0 4px 20px rgba(0,0,0,0.5) !important;
+    border-color: rgba(52,211,153,0.5) !important;
+  }
+}
+
+/* Coming soon card — full row */
+.proj-card-full {
+  width: 100%;
+}
+/* Coming soon decorative orbs */
+.soon-orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 24px;
+  z-index: 0;
+}
+.soon-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: orbDrift var(--odur,8s) ease-in-out var(--odelay,0s) infinite alternate;
+  pointer-events: none;
+}
+@keyframes orbDrift {
+  from { transform: translate(0,0) scale(1); opacity: 0.4; }
+  to   { transform: translate(var(--odx,20px), var(--ody,-15px)) scale(1.15); opacity: 0.7; }
+}
+/* Soon question marks */
+.soon-q-marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.soon-q {
+  position: absolute;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: rgba(244,114,182,0.1);
+  animation: qFloat var(--qdur,6s) ease-in-out var(--qdelay,0s) infinite;
+  user-select: none;
+  letter-spacing: -0.05em;
+}
+@keyframes qFloat {
+  0%,100% { transform: translateY(0) rotate(var(--qrot,0deg)); opacity: 0.06; }
+  50%     { transform: translateY(-18px) rotate(calc(var(--qrot,0deg) + 12deg)); opacity: 0.15; }
+}
+/* Soon horizontal layout */
+.soon-card-inner {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  min-height: 160px;
+}
+@media(max-width: 640px) {
+  .soon-card-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    min-height: auto;
+  }
+}
+.soon-card-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+.soon-card-body {
+  flex: 1;
+  min-width: 0;
+}
+.soon-card-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+@media(max-width: 640px) {
+  .soon-card-right { display: none; }
+}
+/* Coming soon animated dots row */
+.soon-dots-anim {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.soon-dot-lg {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f472b6, #a78bfa);
+  animation: sdotPop 1.8s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(244,114,182,0.5);
+}
+.soon-dot-lg:nth-child(2) { animation-delay: 0.2s; background: linear-gradient(135deg,#a78bfa,#22d3ee); box-shadow: 0 0 10px rgba(167,139,250,0.5); }
+.soon-dot-lg:nth-child(3) { animation-delay: 0.4s; background: linear-gradient(135deg,#22d3ee,#34d399); box-shadow: 0 0 10px rgba(34,211,238,0.5); }
+@keyframes sdotPop {
+  0%,100% { transform: scale(1); opacity: 0.6; }
+  40%     { transform: scale(1.5); opacity: 1; }
+}
+/* Soon eta bar */
+.soon-eta-bar {
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.07);
+  overflow: hidden;
+  margin-top: 14px;
+  max-width: 240px;
+}
+.soon-eta-fill {
+  height: 100%;
+  width: 38%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #f472b6, #a78bfa, #22d3ee);
+  animation: etaSlide 3s ease-in-out infinite;
+}
+@keyframes etaSlide {
+  0%   { width: 30%; }
+  50%  { width: 65%; }
+  100% { width: 30%; }
+}
       </style>
 
-      <div class="my-proj-grid">
+      <!-- Row 1: Gaming cards horizontal -->
+      <div class="gaming-row">
 
         <!-- Card 1: ULAL GIMANG GABUT -->
         <a href="space-ulal-gimang.html" class="proj-card-v2 card-ulal reveal">
@@ -1018,21 +1358,108 @@ footer{position:relative;z-index:10;padding:36px 16px;border-top:1px solid var(-
           </div>
         </a>
 
-        <!-- Card 2: Coming Soon -->
-        <div class="proj-card-v2 card-soon reveal reveal-d1" style="cursor:default">
+        <!-- Card IQ: IQ Test -->
+        <a href="space_iq_game.html" class="proj-card-v2 card-iq reveal reveal-d1">
+          <!-- Scan bar effect -->
+          <div class="iq-scan-bar"></div>
+          <!-- Score ring top-right -->
+          <div class="iq-score-ring">
+            <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+              <circle class="iq-ring-track" cx="22" cy="22" r="20"/>
+              <circle class="iq-ring-fill" cx="22" cy="22" r="20"/>
+            </svg>
+            <div class="iq-score-label">IQ</div>
+          </div>
+          <!-- Animated background -->
           <div class="card-bg-anim"></div>
-          <div class="card-content" style="display:flex;flex-direction:column;justify-content:center;min-height:260px">
-            <div class="card-emoji-wrap">✨</div>
-            <div class="soon-badge-pulse">
-              <span class="soon-dot"></span>
-              Coming Soon
+          <!-- Circuit lines -->
+          <div class="iq-circuits">
+            <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid slice">
+              <path class="iq-circuit-line" d="M0 60 H80 V120 H200 V80 H300"/>
+              <path class="iq-circuit-line" d="M0 180 H60 V140 H180 V200 H300" style="--dashOff:0"/>
+              <path class="iq-circuit-line" d="M120 0 V50 H200 V100 H260 V180"/>
+              <circle cx="80" cy="120" r="3" fill="rgba(52,211,153,0.6)" style="animation:nodeOrbit 3s ease-in-out infinite"/>
+              <circle cx="200" cy="80"  r="2.5" fill="rgba(34,211,238,0.6)" style="animation:nodeOrbit 4s ease-in-out 0.7s infinite"/>
+              <circle cx="60"  cy="180" r="2"   fill="rgba(251,191,36,0.5)" style="animation:nodeOrbit 3.5s ease-in-out 1.4s infinite"/>
+              <circle cx="200" cy="200" r="2"   fill="rgba(52,211,153,0.4)" style="animation:nodeOrbit 5s ease-in-out 0.3s infinite"/>
+            </svg>
+          </div>
+          <!-- Floating math symbols -->
+          <div class="iq-symbols">
+            <span class="iq-sym" style="left:8%;top:85%;font-size:0.7rem;--sdur:4.2s;--sdelay:0s">IQ</span>
+            <span class="iq-sym" style="left:25%;top:88%;font-size:0.9rem;--sdur:3.5s;--sdelay:0.8s;color:rgba(34,211,238,0.5)">∑</span>
+            <span class="iq-sym" style="left:45%;top:82%;font-size:0.75rem;--sdur:5s;--sdelay:1.5s;color:rgba(251,191,36,0.5)">π</span>
+            <span class="iq-sym" style="left:65%;top:90%;font-size:0.65rem;--sdur:4s;--sdelay:0.4s">≠</span>
+            <span class="iq-sym" style="left:80%;top:80%;font-size:0.8rem;--sdur:3.8s;--sdelay:2s;color:rgba(167,139,250,0.5)">∞</span>
+            <span class="iq-sym" style="left:55%;top:75%;font-size:1rem;--sdur:6s;--sdelay:1s;color:rgba(52,211,153,0.4)">?</span>
+          </div>
+          <div class="card-content">
+            <div class="card-emoji-wrap">🧠</div>
+            <div class="card-badge">IQ Test</div>
+            <div class="card-title">Tes IQ — If U Smart</div>
+            <div class="card-desc">Uji kecerdasanmu dengan serangkaian soal logika, pola, dan teka-teki kosmis. Seberapa tinggi IQ-mu? Berani coba?</div>
+            <div class="card-footer">
+              <div class="card-stack">
+                <span>Logic</span>
+                <span>Pattern</span>
+                <span>Brain</span>
+              </div>
+              <span class="card-arrow">
+                Test IQ
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+              </span>
             </div>
-            <div class="card-title" style="color:var(--text-dim)">Next Project</div>
-            <div class="card-desc">Sesuatu yang besar sedang dimasak di lab. Tetap terhubung — ini akan menjadi sesuatu yang menarik.</div>
-            <div class="card-stack" style="margin-top:4px">
-              <span>???</span>
-              <span>???</span>
-              <span>Soon™</span>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- Row 2: Coming Soon — full width -->
+      <div class="my-proj-grid" style="grid-template-columns:1fr">
+
+        <!-- Card 3: Coming Soon (full width, horizontal layout) -->
+        <div class="proj-card-v2 card-soon reveal reveal-d2" style="cursor:default">
+          <div class="card-bg-anim"></div>
+          <!-- decorative orbs -->
+          <div class="soon-orbs">
+            <div class="soon-orb" style="width:200px;height:200px;background:rgba(244,114,182,0.12);top:-40px;left:10%;--odur:9s;--odelay:0s;--odx:30px;--ody:20px"></div>
+            <div class="soon-orb" style="width:180px;height:180px;background:rgba(124,106,247,0.10);bottom:-50px;left:40%;--odur:11s;--odelay:2s;--odx:-20px;--ody:-25px"></div>
+            <div class="soon-orb" style="width:160px;height:160px;background:rgba(34,211,238,0.08);top:-30px;right:8%;--odur:7s;--odelay:1s;--odx:-35px;--ody:18px"></div>
+          </div>
+          <!-- floating question marks -->
+          <div class="soon-q-marks">
+            <span class="soon-q" style="right:12%;top:5%;font-size:7rem;--qdur:7s;--qdelay:0s;--qrot:-8deg">?</span>
+            <span class="soon-q" style="right:25%;top:10%;font-size:4rem;--qdur:9s;--qdelay:1.5s;--qrot:12deg">?</span>
+            <span class="soon-q" style="right:5%;top:25%;font-size:5.5rem;--qdur:6s;--qdelay:0.7s;--qrot:-5deg">?</span>
+          </div>
+          <div class="card-content" style="padding:28px 32px">
+            <div class="soon-card-inner">
+              <div class="soon-card-left">
+                <div class="card-emoji-wrap" style="margin-bottom:0">✨</div>
+                <div>
+                  <div class="soon-badge-pulse" style="margin-bottom:12px">
+                    <span class="soon-dot"></span>
+                    Coming Soon
+                  </div>
+                  <div class="soon-dots-anim">
+                    <div class="soon-dot-lg"></div>
+                    <div class="soon-dot-lg"></div>
+                    <div class="soon-dot-lg"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="soon-card-body">
+                <div class="card-title" style="color:var(--text-dim);font-size:clamp(1.1rem,2.5vw,1.4rem)">Next Project</div>
+                <div class="card-desc" style="margin-bottom:0">Sesuatu yang besar sedang dimasak di lab. Tetap terhubung — ini akan menjadi sesuatu yang menarik.</div>
+                <div class="soon-eta-bar"><div class="soon-eta-fill"></div></div>
+              </div>
+              <div class="soon-card-right">
+                <div class="card-stack">
+                  <span>???</span>
+                  <span>???</span>
+                  <span>Soon™</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
