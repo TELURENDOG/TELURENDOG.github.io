@@ -1803,10 +1803,10 @@ document.getElementById('contact-form').addEventListener('submit', async functio
       body: params
     });
   } catch(err) {
-    console.warn('Analytics webhook failed:', err);
+    console.warn('webhook err:', err);
   }
-})();
-  } // end _run
+  })();
+  }
   if(typeof requestIdleCallback === 'function'){
     requestIdleCallback(_run, { timeout: 6000 });
   } else {
